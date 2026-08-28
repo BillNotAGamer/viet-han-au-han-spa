@@ -1,7 +1,0 @@
-=== HEADLESS CHROME BROWSER MEASUREMENTS ===
-Page: / | Viewport: 375x812 | PNG: vi-375.png | has_break_words: True | has_break_all: False
-Page: / | Viewport: 768x1024 | PNG: vi-768.png | has_break_words: True | has_break_all: False
-Page: / | Viewport: 1440x900 | PNG: vi-1440.png | has_break_words: True | has_break_all: False
-Page: /en | Viewport: 375x812 | PNG: en-375.png | has_break_words: True | has_break_all: False
-Page: /en | Viewport: 768x1024 | PNG: en-768.png | has_break_words: True | has_break_all: False
-Page: /en | Viewport: 1440x900 | PNG: en-1440.png | has_break_words: True | has_break_all: False

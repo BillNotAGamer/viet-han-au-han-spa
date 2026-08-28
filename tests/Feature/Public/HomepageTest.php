@@ -20,9 +20,11 @@ use App\Models\ServiceTranslation;
 use App\Models\TrainingCourse;
 use App\Models\TrainingCourseTranslation;
 use App\Models\User;
+use App\Services\PublicSite\HomepageContent;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
 class HomepageTest extends TestCase
@@ -34,12 +36,12 @@ class HomepageTest extends TestCase
         $viResponse = $this->get('/');
         $viResponse->assertStatus(200);
         $viResponse->assertSee(__('home.hero.title', [], 'vi'), false);
-        $viResponse->assertSee(__('home.cta.button', [], 'vi'), false);
+        $viResponse->assertSee(__('home.cta.button_empty', [], 'vi'), false);
 
         $enResponse = $this->get('/en');
         $enResponse->assertStatus(200);
         $enResponse->assertSee(__('home.hero.title', [], 'en'), false);
-        $enResponse->assertSee(__('home.cta.button', [], 'en'), false);
+        $enResponse->assertSee(__('home.cta.button_empty', [], 'en'), false);
     }
 
     public function test_home_page_exact_locale_isolation_and_no_fallback_to_vi(): void
@@ -401,6 +403,39 @@ class HomepageTest extends TestCase
 
     public function test_rich_html_in_page_content_is_safely_rendered_as_plain_text(): void
     {
+        // 1. Direct unit test of HomepageContent::deriveSafeExcerpt with both literal and entity-encoded blocks
+        $service = app(HomepageContent::class);
+        $rawHtml = '<p>Không gian thư giãn dành cho hành trình chăm sóc bản thân.</p>'
+            .'<script>alert("literal-xss")</script>'
+            .'<style>.literal-bad { display:none }</style>'
+            .'&lt;script&gt;alert("encoded-xss")&lt;/script&gt;'
+            .'&lt;style&gt;.encoded-bad { display:none }&lt;/style&gt;'
+            .'<iframe src="https://evil.com">frame content</iframe>'
+            .'&lt;iframe src="https://evil.com"&gt;encoded frame&lt;/iframe&gt;'
+            .'<noscript>noscript content</noscript>';
+
+        $derived = $service->deriveSafeExcerpt($rawHtml, 300);
+
+        // Assert normal editorial text remains present
+        $this->assertStringContainsString('Không gian thư giãn dành cho hành trình chăm sóc bản thân.', $derived);
+
+        // Assert literal tags and payloads are absent
+        $this->assertStringNotContainsString('<script>', $derived);
+        $this->assertStringNotContainsString('literal-xss', $derived);
+        $this->assertStringNotContainsString('.literal-bad', $derived);
+        $this->assertStringNotContainsString('<iframe>', $derived);
+        $this->assertStringNotContainsString('frame content', $derived);
+
+        // Assert entity-encoded tags and payloads are absent
+        $this->assertStringNotContainsString('&lt;script&gt;', $derived);
+        $this->assertStringNotContainsString('encoded-xss', $derived);
+        $this->assertStringNotContainsString('.encoded-bad', $derived);
+        $this->assertStringNotContainsString('encoded frame', $derived);
+        $this->assertStringNotContainsString('alert(', $derived);
+        $this->assertStringNotContainsString('display:none', $derived);
+        $this->assertStringNotContainsString('noscript', $derived);
+
+        // 2. Integration HTTP test rendering via Blade template (proves normal Blade escaping remains intact)
         $page = Page::create([
             'key' => 'home',
             'status' => ContentStatus::PUBLISHED,
@@ -409,18 +444,21 @@ class HomepageTest extends TestCase
         PageTranslation::create([
             'page_id' => $page->id,
             'locale' => 'vi',
-            'title' => 'Trang Chủ Bảo Mật',
-            'slug' => 'trang-chu-bao-mat',
-            'content' => '<p>Chào mừng bạn đến với <strong>Việt Hàn Spa</strong>.</p><script>alert("xss")</script><div class="bad">Nơi thư giãn tuyệt vời.</div>',
+            'title' => 'Trang Chủ An Toàn',
+            'slug' => 'trang-chu-an-toan',
+            'content' => $rawHtml,
         ]);
 
         $response = $this->get('/');
         $response->assertStatus(200);
-        // Plain text content is visible
-        $response->assertSee('Chào mừng bạn đến với Việt Hàn Spa.');
-        // Executable script tag is completely stripped
+        $response->assertSee('Không gian thư giãn dành cho hành trình chăm sóc bản thân.');
         $response->assertDontSee('<script>', false);
-        $response->assertDontSee('alert("xss")', false);
+        $response->assertDontSee('&lt;script&gt;', false);
+        $response->assertDontSee('alert(', false);
+        $response->assertDontSee('literal-xss', false);
+        $response->assertDontSee('encoded-xss', false);
+        $response->assertDontSee('display:none', false);
+        $response->assertDontSee('<iframe>', false);
     }
 
     public function test_rendered_cards_contain_zero_broken_detail_links(): void
@@ -473,5 +511,147 @@ class HomepageTest extends TestCase
         $response->assertDontSee('/dich-vu/', false);
         $response->assertDontSee('/dao-tao-hoc-vien/', false);
         $response->assertDontSee('/blog/', false);
+    }
+
+    /**
+     * Reusable helper to assert that all internal fragment links (href="#...") in the response
+     * resolve to an existing element id (id="...") present in the rendered document.
+     */
+    protected function assertRenderedFragmentLinksResolve(TestResponse $response): void
+    {
+        $content = $response->getContent();
+
+        // 1. Collect all fragment hrefs: href="#..."
+        preg_match_all('/href=["\']#([^"\'\s>]+)["\']/i', $content, $hrefMatches);
+        $fragmentHrefs = array_unique($hrefMatches[1] ?? []);
+
+        // 2. Collect all element IDs: id="..."
+        preg_match_all('/id=["\']([^"\'\s>]+)["\']/i', $content, $idMatches);
+        $elementIds = array_flip($idMatches[1] ?? []);
+
+        $this->assertNotEmpty($fragmentHrefs, 'Expected at least one internal fragment link in rendered Homepage.');
+
+        foreach ($fragmentHrefs as $fragment) {
+            $this->assertArrayHasKey(
+                $fragment,
+                $elementIds,
+                "Rendered internal fragment link '#{$fragment}' does not resolve to any id=\"{$fragment}\" in the document."
+            );
+        }
+    }
+
+    public function test_rendered_internal_fragment_links_always_resolve_across_representative_data_states(): void
+    {
+        // State A: Empty business database
+        $respViEmpty = $this->get('/');
+        $respViEmpty->assertStatus(200);
+        $this->assertRenderedFragmentLinksResolve($respViEmpty);
+
+        $respEnEmpty = $this->get('/en');
+        $respEnEmpty->assertStatus(200);
+        $this->assertRenderedFragmentLinksResolve($respEnEmpty);
+
+        // State B: Services present, Training absent
+        $cat = ServiceCategory::create(['sort_order' => 1]);
+        $service = Service::create([
+            'service_category_id' => $cat->id,
+            'status' => ContentStatus::PUBLISHED,
+            'is_featured' => true,
+            'sort_order' => 1,
+        ]);
+        ServiceTranslation::create([
+            'service_id' => $service->id,
+            'locale' => 'vi',
+            'name' => 'Massage Trị Liệu Đá Nóng',
+            'slug' => 'massage-tri-lieu-da-nong',
+        ]);
+        ServiceTranslation::create([
+            'service_id' => $service->id,
+            'locale' => 'en',
+            'name' => 'Hot Stone Therapy Massage',
+            'slug' => 'hot-stone-therapy-massage',
+        ]);
+
+        $respViServices = $this->get('/');
+        $respViServices->assertStatus(200);
+        $this->assertRenderedFragmentLinksResolve($respViServices);
+
+        $respEnServices = $this->get('/en');
+        $respEnServices->assertStatus(200);
+        $this->assertRenderedFragmentLinksResolve($respEnServices);
+
+        // State C: Training present, Services absent (simulate by un-featuring service)
+        $service->update(['is_featured' => false]);
+
+        $course = TrainingCourse::create([
+            'status' => ContentStatus::PUBLISHED,
+            'is_featured' => true,
+            'sort_order' => 1,
+            'tuition_fee' => 12000000,
+            'published_at' => Carbon::now()->subDay(),
+        ]);
+        TrainingCourseTranslation::create([
+            'training_course_id' => $course->id,
+            'locale' => 'vi',
+            'title' => 'Khóa Học Kỹ Thuật Viên Spa',
+            'slug' => 'khoa-hoc-ky-thuat-vien-spa',
+        ]);
+        TrainingCourseTranslation::create([
+            'training_course_id' => $course->id,
+            'locale' => 'en',
+            'title' => 'Spa Practitioner Master Course',
+            'slug' => 'spa-practitioner-master-course',
+        ]);
+
+        $respViTraining = $this->get('/');
+        $respViTraining->assertStatus(200);
+        $this->assertRenderedFragmentLinksResolve($respViTraining);
+
+        $respEnTraining = $this->get('/en');
+        $respEnTraining->assertStatus(200);
+        $this->assertRenderedFragmentLinksResolve($respEnTraining);
+
+        // State D: Both Services and Training present
+        $service->update(['is_featured' => true]);
+
+        $respViBoth = $this->get('/');
+        $respViBoth->assertStatus(200);
+        $this->assertRenderedFragmentLinksResolve($respViBoth);
+
+        $respEnBoth = $this->get('/en');
+        $respEnBoth->assertStatus(200);
+        $this->assertRenderedFragmentLinksResolve($respEnBoth);
+    }
+
+    public function test_cms_home_page_narrative_excerpt_is_rendered_only_once_and_not_duplicated_in_editorial_section(): void
+    {
+        $distinctiveNarrative = 'Duy nhat ban sac thu gian tai khong gian tinh lang Viet Han Au Han 2026.';
+
+        $page = Page::create([
+            'key' => 'home',
+            'status' => ContentStatus::PUBLISHED,
+        ]);
+
+        PageTranslation::create([
+            'page_id' => $page->id,
+            'locale' => 'vi',
+            'title' => 'Trang Chủ Đặc Sắc',
+            'slug' => 'trang-chu-dac-sac',
+            'content' => "<p>{$distinctiveNarrative}</p>",
+        ]);
+
+        $response = $this->get('/');
+        $response->assertStatus(200);
+
+        // Narrative appears in Hero
+        $response->assertSee($distinctiveNarrative);
+
+        // Crucial regression check: The CMS excerpt must appear EXACTLY ONCE in the page
+        $occurrences = substr_count($response->getContent(), $distinctiveNarrative);
+        $this->assertSame(
+            1,
+            $occurrences,
+            "CMS homepage narrative excerpt was rendered {$occurrences} times; it must not be duplicated in the Editorial section."
+        );
     }
 }

@@ -20,13 +20,21 @@
                     </p>
 
                     <div class="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-4">
-                        <x-public.button as="a" href="#featured-services" variant="primary" size="lg">
-                            {{ __('home.hero.primary_cta') }}
-                        </x-public.button>
+                        @if(!empty($featuredServices))
+                            <x-public.button as="a" href="#featured-services" variant="primary" size="lg">
+                                {{ __('home.hero.primary_cta') }}
+                            </x-public.button>
+                        @else
+                            <x-public.button as="a" href="#wellness-philosophy" variant="primary" size="lg">
+                                {{ __('home.hero.primary_cta_empty') }}
+                            </x-public.button>
+                        @endif
 
-                        <x-public.button as="a" href="#training" variant="secondary" size="lg">
-                            {{ __('home.hero.secondary_cta') }}
-                        </x-public.button>
+                        @if(!empty($featuredCourses))
+                            <x-public.button as="a" href="#training" variant="secondary" size="lg">
+                                {{ __('home.hero.secondary_cta') }}
+                            </x-public.button>
+                        @endif
                     </div>
                 </div>
 
@@ -106,7 +114,7 @@
     @endif
 
     {{-- 3. BRAND / EDITORIAL INTRODUCTION --}}
-    <section class="w-full bg-brand-ivory py-16 sm:py-24 border-b border-brand-border">
+    <section id="wellness-philosophy" class="w-full bg-brand-ivory py-16 sm:py-24 border-b border-brand-border scroll-mt-20">
         <x-public.container size="lg">
             <div class="rounded-3xl bg-brand-warm border border-brand-border p-8 sm:p-12 lg:p-16 text-center space-y-6">
                 <span class="text-xs sm:text-sm font-semibold tracking-widest uppercase text-brand-gold-hover">
@@ -118,7 +126,7 @@
                 </h2>
 
                 <p class="text-base sm:text-lg text-brand-text-secondary leading-relaxed max-w-3xl mx-auto break-words">
-                    {{ !empty($page['excerpt']) ? $page['excerpt'] : __('home.editorial.content') }}
+                    {{ __('home.editorial.content') }}
                 </p>
             </div>
         </x-public.container>
@@ -244,9 +252,15 @@
                 </p>
 
                 <div class="pt-4 flex flex-wrap items-center justify-center gap-4">
-                    <x-public.button as="a" href="#featured-services" variant="gold" size="lg">
-                        {{ __('home.cta.button') }}
-                    </x-public.button>
+                    @if(!empty($featuredServices))
+                        <x-public.button as="a" href="#featured-services" variant="gold" size="lg">
+                            {{ __('home.cta.button') }}
+                        </x-public.button>
+                    @else
+                        <x-public.button as="a" href="#wellness-philosophy" variant="gold" size="lg">
+                            {{ __('home.cta.button_empty') }}
+                        </x-public.button>
+                    @endif
                 </div>
             </div>
         </x-public.container>

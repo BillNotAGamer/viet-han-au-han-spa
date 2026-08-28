@@ -19,7 +19,7 @@ public/build/assets/fonts-C9MNnjVw.css                          2.35 kB â”‚
 public/build/assets/app-DEDR5jAA.css                           58.95 kB â”‚ gzip: 10.39 kB
 public/build/assets/app-_swCgE72.js                            52.89 kB â”‚ gzip: 18.67 kB
 
-[32mâœ“ built in 548ms[39m
+[32mâœ“ built in 641ms[39m
 
 --- STDERR ---
 [33m[plugin laravel:fonts] Optimized font fallbacks require the optional "fontaine" package. Install it, or set "optimizedFallbacks: false" on your fonts to disable the feature.[39m

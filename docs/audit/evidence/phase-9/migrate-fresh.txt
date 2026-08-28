@@ -1,37 +1,37 @@
 ﻿
- Dropping all tables .. 4.76ms DONE
+ Dropping all tables .. 5.96ms DONE
 
  INFO Preparing database. 
 
- Creating migration table .. 5.70ms DONE
+ Creating migration table .. 5.40ms DONE
 
  INFO Running migrations. 
 
- 0001_01_01_000000_create_users_table .. 14.37ms DONE
- 0001_01_01_000001_create_cache_table .. 12.38ms DONE
- 0001_01_01_000002_create_jobs_table .. 14.12ms DONE
- 2026_08_26_000001_create_media_table .. 9.76ms DONE
- 2026_08_26_000002_create_media_translations_table .. 6.40ms DONE
- 2026_08_26_000003_create_service_categories_table .. 6.92ms DONE
- 2026_08_26_000004_create_service_category_translations_table .. 11.33ms DONE
- 2026_08_26_000005_create_services_table .. 13.67ms DONE
- 2026_08_26_000006_create_service_translations_table .. 11.24ms DONE
- 2026_08_26_000007_create_service_prices_table .. 11.19ms DONE
+ 0001_01_01_000000_create_users_table .. 13.89ms DONE
+ 0001_01_01_000001_create_cache_table .. 8.95ms DONE
+ 0001_01_01_000002_create_jobs_table .. 13.58ms DONE
+ 2026_08_26_000001_create_media_table .. 8.73ms DONE
+ 2026_08_26_000002_create_media_translations_table .. 6.64ms DONE
+ 2026_08_26_000003_create_service_categories_table .. 7.63ms DONE
+ 2026_08_26_000004_create_service_category_translations_table .. 11.48ms DONE
+ 2026_08_26_000005_create_services_table .. 12.87ms DONE
+ 2026_08_26_000006_create_service_translations_table .. 11.03ms DONE
+ 2026_08_26_000007_create_service_prices_table .. 11.77ms DONE
  2026_08_26_000008_create_service_price_translations_table .. 6.61ms DONE
- 2026_08_26_000009_create_service_media_table .. 7.05ms DONE
- 2026_08_26_000010_create_training_courses_table .. 17.12ms DONE
- 2026_08_26_000011_create_training_course_translations_table .. 11.11ms DONE
- 2026_08_26_000012_create_training_course_media_table .. 6.73ms DONE
- 2026_08_26_000013_create_training_inquiries_table .. 21.76ms DONE
- 2026_08_26_000014_create_post_categories_table .. 6.82ms DONE
- 2026_08_26_000015_create_post_category_translations_table .. 11.66ms DONE
- 2026_08_26_000016_create_posts_table .. 16.04ms DONE
- 2026_08_26_000017_create_post_translations_table .. 10.94ms DONE
- 2026_08_26_000018_create_post_media_table .. 7.01ms DONE
- 2026_08_26_000019_create_pages_table .. 6.52ms DONE
- 2026_08_26_000020_create_page_translations_table .. 10.38ms DONE
- 2026_08_26_000021_create_page_media_table .. 6.52ms DONE
- 2026_08_26_000022_create_bookings_table .. 23.90ms DONE
- 2026_08_26_000023_create_site_settings_table .. 10.41ms DONE
- 2026_08_27_000001_add_is_admin_to_users_table .. 2.62ms DONE
+ 2026_08_26_000009_create_service_media_table .. 6.85ms DONE
+ 2026_08_26_000010_create_training_courses_table .. 18.70ms DONE
+ 2026_08_26_000011_create_training_course_translations_table .. 12.20ms DONE
+ 2026_08_26_000012_create_training_course_media_table .. 6.94ms DONE
+ 2026_08_26_000013_create_training_inquiries_table .. 23.42ms DONE
+ 2026_08_26_000014_create_post_categories_table .. 7.86ms DONE
+ 2026_08_26_000015_create_post_category_translations_table .. 11.97ms DONE
+ 2026_08_26_000016_create_posts_table .. 17.42ms DONE
+ 2026_08_26_000017_create_post_translations_table .. 12.67ms DONE
+ 2026_08_26_000018_create_post_media_table .. 7.89ms DONE
+ 2026_08_26_000019_create_pages_table .. 7.34ms DONE
+ 2026_08_26_000020_create_page_translations_table .. 12.64ms DONE
+ 2026_08_26_000021_create_page_media_table .. 6.99ms DONE
+ 2026_08_26_000022_create_bookings_table .. 27.26ms DONE
+ 2026_08_26_000023_create_site_settings_table .. 12.00ms DONE
+ 2026_08_27_000001_add_is_admin_to_users_table .. 2.64ms DONE
 

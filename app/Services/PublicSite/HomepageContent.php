@@ -211,7 +211,8 @@ class HomepageContent
     }
 
     /**
-     * Derive a safe plain-text excerpt from potential rich HTML content.
+     * Derive a safe plain-text presentation excerpt from potential rich HTML content.
+     * Note: This performs narrow Homepage plain-text presentation cleaning, not general-purpose HTML sanitization.
      */
     public function deriveSafeExcerpt(?string $content, int $limit = 200): string
     {
@@ -219,17 +220,20 @@ class HomepageContent
             return '';
         }
 
-        // 1. Strip tags
-        $clean = strip_tags($content);
+        // 1. Decode HTML entities first to expose any entity-encoded non-editorial blocks
+        $clean = html_entity_decode($content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
-        // 2. Decode HTML entities
-        $clean = html_entity_decode($clean, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        // 2. Remove complete non-content blocks and their contents case-insensitively across multiple lines
+        $clean = (string) preg_replace('/<(script|style|iframe|object|embed|noscript)\b[^>]*>.*?<\/\1>/is', '', $clean);
 
-        // 3. Normalize whitespace
+        // 3. Strip remaining HTML tags
+        $clean = strip_tags($clean);
+
+        // 4. Normalize whitespace
         $clean = (string) preg_replace('/\s+/u', ' ', $clean);
         $clean = trim($clean);
 
-        // 4. Truncate safely
+        // 5. Truncate safely
         if (mb_strlen($clean, 'UTF-8') <= $limit) {
             return $clean;
         }
