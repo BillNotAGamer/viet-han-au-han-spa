@@ -8,60 +8,60 @@
     $hours = $siteSettings->getPublic('business.hours', '09:00 - 20:30 (Thứ 2 - Chủ Nhật)');
 @endphp
 
-<footer class="w-full bg-brand-warm border-t border-brand-border text-brand-text-secondary mt-auto">
+<footer class="w-full bg-[#140F0E] border-t border-[#C5A880]/15 text-white/70 mt-auto">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12">
             <!-- Col 1: Brand -->
             <div class="md:col-span-2 space-y-4">
-                <div class="font-serif font-bold text-2xl text-brand-primary">
+                <div class="font-serif font-bold text-2xl text-[#C5A880]">
                     Việt Hàn Âu Hàn Spa
                 </div>
-                <p class="text-sm leading-relaxed text-brand-text-secondary max-w-sm">
+                <p class="text-sm leading-relaxed text-white/70 max-w-sm">
                     {{ __('common.tagline') }}. Trải nghiệm chăm sóc sắc đẹp và trị liệu sức khỏe chuẩn Hàn Quốc trong không gian tinh tế và thư giãn.
                 </p>
                 @if($address)
-                    <p class="text-xs text-brand-text-muted">
-                        <span class="font-semibold text-brand-text">{{ $isVi ? 'Địa chỉ:' : 'Address:' }}</span> {{ $address }}
+                    <p class="text-xs text-white/50">
+                        <span class="font-semibold text-white/80">{{ $isVi ? 'Địa chỉ:' : 'Address:' }}</span> {{ $address }}
                     </p>
                 @endif
             </div>
 
             <!-- Col 2: Quick Navigation -->
             <div class="space-y-4">
-                <div class="text-xs font-semibold uppercase tracking-wider text-brand-primary">
+                <div class="text-xs font-semibold uppercase tracking-wider text-[#C5A880]">
                     {{ $isVi ? 'Liên kết nhanh' : 'Quick Links' }}
                 </div>
                 <ul class="space-y-2 text-sm">
-                    <li><a href="{{ $isVi ? url('/') : url('/en') }}" class="hover:text-brand-primary transition">{{ __('navigation.home') }}</a></li>
-                    <li><a href="{{ $isVi ? url('/dich-vu') : url('/en/services') }}" class="hover:text-brand-primary transition">{{ __('navigation.services') }}</a></li>
-                    <li><a href="{{ $isVi ? url('/dao-tao-hoc-vien') : url('/en/training') }}" class="hover:text-brand-primary transition">{{ __('navigation.training') }}</a></li>
-                    <li><a href="{{ $isVi ? url('/blog') : url('/en/blog') }}" class="hover:text-brand-primary transition">{{ __('navigation.blog') }}</a></li>
-                    <li><a href="{{ $isVi ? url('/gioi-thieu') : url('/en/about') }}" class="hover:text-brand-primary transition">{{ __('navigation.about') }}</a></li>
-                    <li><a href="{{ $isVi ? url('/lien-he') : url('/en/contact') }}" class="hover:text-brand-primary transition">{{ __('navigation.contact') }}</a></li>
+                    <li><a href="#home" class="hover:text-[#C5A880] transition">{{ __('navigation.home') }}</a></li>
+                    <li><a href="#about-preview" class="hover:text-[#C5A880] transition">{{ __('navigation.about') }}</a></li>
+                    <li><a href="#services-preview" class="hover:text-[#C5A880] transition">{{ __('navigation.services') }}</a></li>
+                    <li><a href="#training-preview" class="hover:text-[#C5A880] transition">{{ __('navigation.training') }}</a></li>
+                    <li><a href="#blog-preview" class="hover:text-[#C5A880] transition">{{ __('navigation.blog') }}</a></li>
+                    <li><a href="#contact-preview" class="hover:text-[#C5A880] transition">{{ __('navigation.contact') }}</a></li>
                 </ul>
             </div>
 
             <!-- Col 3: Contact & Hours -->
             <div class="space-y-4">
-                <div class="text-xs font-semibold uppercase tracking-wider text-brand-primary">
+                <div class="text-xs font-semibold uppercase tracking-wider text-[#C5A880]">
                     {{ $isVi ? 'Thông tin liên hệ' : 'Contact & Hours' }}
                 </div>
                 <ul class="space-y-2 text-sm">
                     @if($phone)
                         <li>
-                            <span class="text-brand-text-muted">{{ $isVi ? 'Hotline:' : 'Phone:' }}</span>
-                            <a href="tel:{{ preg_replace('/[^0-9+]/', '', $phone) }}" class="font-medium hover:text-brand-primary transition">{{ $phone }}</a>
+                            <span class="text-white/50">{{ $isVi ? 'Hotline:' : 'Phone:' }}</span>
+                            <a href="tel:{{ preg_replace('/[^0-9+]/', '', $phone) }}" class="font-medium hover:text-[#C5A880] transition text-white/90">{{ $phone }}</a>
                         </li>
                     @endif
                     @if($email)
                         <li>
-                            <span class="text-brand-text-muted">Email:</span>
-                            <a href="mailto:{{ $email }}" class="font-medium hover:text-brand-primary transition">{{ $email }}</a>
+                            <span class="text-white/50">Email:</span>
+                            <a href="mailto:{{ $email }}" class="font-medium hover:text-[#C5A880] transition text-white/90">{{ $email }}</a>
                         </li>
                     @endif
                     @if($hours)
-                        <li class="pt-1 text-xs leading-relaxed text-brand-text-muted">
-                            <span class="font-semibold text-brand-text">{{ $isVi ? 'Giờ mở cửa:' : 'Hours:' }}</span><br>
+                        <li class="pt-1 text-xs leading-relaxed text-white/50">
+                            <span class="font-semibold text-white/80">{{ $isVi ? 'Giờ mở cửa:' : 'Hours:' }}</span><br>
                             {{ $hours }}
                         </li>
                     @endif
@@ -70,10 +70,10 @@
         </div>
 
         <!-- Bottom Copyright -->
-        <div class="mt-12 pt-8 border-t border-brand-border flex flex-col sm:flex-row items-center justify-between text-xs text-brand-text-muted">
+        <div class="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs text-white/40">
             <p>&copy; {{ date('Y') }} Việt Hàn Âu Hàn Spa. {{ __('common.all_rights_reserved') }}.</p>
-            <p class="mt-2 sm:mt-0 font-serif italic text-brand-primary">
-                Beauty & Wellness Sanctuary
+            <p class="mt-2 sm:mt-0 font-serif italic text-[#C5A880]/80">
+                Beauty &amp; Wellness Sanctuary
             </p>
         </div>
     </div>
