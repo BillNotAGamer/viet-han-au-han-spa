@@ -1,0 +1,4 @@
+﻿
+--- STDERR ---
+warning: in the working copy of 'AGENTS.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'scripts/verification/run-phase-verification.ps1', CRLF will be replaced by LF the next time Git touches it

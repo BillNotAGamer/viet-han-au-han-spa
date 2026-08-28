@@ -34,7 +34,7 @@ function Run-VerificationCommand {
     Write-Host "[RUNNING] $Name..."
 
     $outPath = Join-Path $evidencePath $OutputFile
-    
+
     # Execute command via powershell
     $process = Start-Process -FilePath "powershell.exe" -ArgumentList "-NoProfile", "-Command", "$Command" -NoNewWindow -Wait -PassThru -RedirectStandardOutput "$outPath.tmp.out" -RedirectStandardError "$outPath.tmp.err"
 
@@ -103,7 +103,7 @@ Run-VerificationCommand -Name "Database Rollback and Re-Migration" -Command "php
 # 4. Full PHPUnit test suite with JUnit XML artifact
 $junitFile = "phpunit.xml"
 $junitFullPath = (Join-Path $evidencePath $junitFile)
-Run-VerificationCommand -Name "PHPUnit Automated Test Suite" -Command "php vendor/bin/phpunit --log-junit docs/audit/evidence/phase-8/phpunit.xml" -OutputFile "tests.txt" -MachineArtifact "phpunit.xml"
+Run-VerificationCommand -Name "PHPUnit Automated Test Suite" -Command "php vendor/bin/phpunit --log-junit docs/audit/evidence/phase-$Phase/phpunit.xml" -OutputFile "tests.txt" -MachineArtifact "phpunit.xml"
 
 # 5. Pint styling verification
 Run-VerificationCommand -Name "Laravel Pint Code Style Check" -Command "php vendor/bin/pint --test" -OutputFile "pint.txt"
@@ -125,6 +125,9 @@ Run-VerificationCommand -Name "Git Status Short" -Command "git status --short" -
 
 # 11. Git diff name status
 Run-VerificationCommand -Name "Git Diff Name Status" -Command "git diff --name-status" -OutputFile "git-diff-name-status.txt"
+
+# 12. Git diff stat
+Run-VerificationCommand -Name "Git Diff Stat" -Command "git diff --stat" -OutputFile "git-diff-stat.txt"
 
 # 12. Source Review: Blade DB query check
 $bladeQueryStarted = (Get-Date).ToString("yyyy-MM-ddTHH:mm:sszzz")

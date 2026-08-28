@@ -28,7 +28,7 @@ class Utf8IntegrityTest extends TestCase
         $response->assertSee('Liên hệ');
         $response->assertSee('Đặt lịch');
 
-        // Status text
-        $response->assertSee('Hệ Thống Trực Tuyến Đang Được Xây Dựng');
+        // Real Vietnamese Homepage headline string without mojibake
+        $response->assertSee('Nâng Niêu Vẻ Đẹp và Phục Hồi Thân Tâm Chuẩn Hàn Quốc');
     }
 }

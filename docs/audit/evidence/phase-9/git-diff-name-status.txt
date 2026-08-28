@@ -1,0 +1,10 @@
+﻿M	AGENTS.md
+M	docs/audit/evidence/phase-8.zip
+D	resources/views/welcome.blade.php
+M	routes/web.php
+M	scripts/verification/run-phase-verification.ps1
+M	tests/Feature/Localization/Utf8IntegrityTest.php
+
+--- STDERR ---
+warning: in the working copy of 'AGENTS.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'scripts/verification/run-phase-verification.ps1', CRLF will be replaced by LF the next time Git touches it

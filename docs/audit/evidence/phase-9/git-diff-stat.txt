@@ -1,0 +1,11 @@
+﻿ AGENTS.md                                        |  10 ++++++
+ docs/audit/evidence/phase-8.zip                  | Bin 17668 -> 17755 bytes
+ resources/views/welcome.blade.php                |  40 -----------------------
+ routes/web.php                                   |  13 +++-----
+ scripts/verification/run-phase-verification.ps1  |   7 ++--
+ tests/Feature/Localization/Utf8IntegrityTest.php |   4 +--
+ 6 files changed, 22 insertions(+), 52 deletions(-)
+
+--- STDERR ---
+warning: in the working copy of 'AGENTS.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'scripts/verification/run-phase-verification.ps1', CRLF will be replaced by LF the next time Git touches it

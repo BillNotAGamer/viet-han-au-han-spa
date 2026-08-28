@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Public\HomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,16 +16,12 @@ Route::get('/vi', function () {
     return redirect('/', 301);
 });
 
-// Vietnamese (Default Canonical — No Prefix)
+// Vietnamese (Default Canonical – No Prefix)
 Route::middleware('set.locale:vi')->group(function () {
-    Route::get('/', function () {
-        return view('welcome');
-    })->name('vi.home');
+    Route::get('/', [HomeController::class, 'index'])->name('vi.home');
 });
 
-// English (Secondary Canonical — /en Prefix)
+// English (Secondary Canonical – /en Prefix)
 Route::prefix('en')->middleware('set.locale:en')->group(function () {
-    Route::get('/', function () {
-        return view('welcome');
-    })->name('en.home');
+    Route::get('/', [HomeController::class, 'index'])->name('en.home');
 });

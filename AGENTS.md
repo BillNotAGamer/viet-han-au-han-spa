@@ -196,3 +196,13 @@ Do **NOT** add arbitrary Composer or npm packages. Any new dependency must:
    - Language switching adheres to `/` <-> `/en` mapping; never generate `/vi`.
    - Mobile interactivity is limited to Alpine.js; no secondary JS frameworks.
    - Global components remain domain-content agnostic; homepage is implemented in Phase 9.
+
+### Phase 9 Homepage Invariants
+- **Exact-Locale Content**: Public Homepage content requires exact requested locale; Vietnamese content never leaks or falls back to `/en`.
+- **Publication & Scheduling**: Only `PUBLISHED` records are queried; future scheduled `published_at > now()` courses and posts must never leak publicly.
+- **Home Page Record**: The `home` Page key is optional editorial content; never auto-create or seed it during GET requests.
+- **Hero Media Convention**: The first ordered media (`page_media.sort_order = 0`) attached to the `home` Page acts as the Homepage hero visual.
+- **Safe Content Excerpt**: Rich HTML from Page records is stripped of tags and normalized to plain text before presentation.
+- **Blade Query Isolation**: Public Blade templates must execute zero direct Eloquent or DB queries; all composition belongs in `HomepageContent`.
+- **Phase 10 Boundary**: Homepage cards are preview-only semantic `<article>` elements and must not link to unimplemented detail routes (`/dich-vu/{slug}`, etc.).
+- **Evidence-Driven**: No fake business metrics, fabricated testimonials, or unverified claims.

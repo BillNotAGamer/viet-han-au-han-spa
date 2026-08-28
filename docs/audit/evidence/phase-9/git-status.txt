@@ -1,0 +1,15 @@
+﻿ M AGENTS.md
+ M docs/audit/evidence/phase-8.zip
+ D resources/views/welcome.blade.php
+ M routes/web.php
+ M scripts/verification/run-phase-verification.ps1
+ M tests/Feature/Localization/Utf8IntegrityTest.php
+?? app/Http/Controllers/Public/
+?? app/Services/PublicSite/
+?? docs/architecture/HOMEPAGE_ARCHITECTURE.md
+?? docs/architecture/adr/ADR-021-homepage-content-composition.md
+?? docs/audit/evidence/phase-9/
+?? lang/en/home.php
+?? lang/vi/home.php
+?? resources/views/public/
+?? tests/Feature/Public/HomepageTest.php
