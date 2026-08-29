@@ -1,67 +1,45 @@
 <x-layouts.public>
-    {{-- 1. HERO SECTION (Zen-Style Full-Width Cinematic Hero) --}}
-    <section id="home" class="relative w-full min-h-[85vh] lg:min-h-[90vh] flex items-center bg-[#181312] text-white overflow-hidden border-b border-[#C5A880]/15">
-        <!-- Ambient & Cinematic Background Layers -->
-        @if(!empty($heroMedia['url']))
-            <img src="{{ $heroMedia['url'] }}" alt="{{ $heroMedia['alt'] }}" class="absolute inset-0 w-full h-full object-cover object-center scale-105 transition-transform duration-1000" loading="eager">
-        @else
-            <!-- Dark Luxury CSS Ambient Spa Background Canvas -->
-            <div class="absolute inset-0 bg-gradient-to-br from-[#2A0810] via-[#181312] to-[#120D0C]"></div>
-            <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 sm:w-[500px] sm:h-[500px] rounded-full bg-[#C5A880]/10 blur-3xl pointer-events-none"></div>
-            <div class="absolute bottom-10 right-10 w-80 h-80 rounded-full bg-[#5B1121]/30 blur-2xl pointer-events-none"></div>
-        @endif
+    {{-- 1. HERO SECTION (Zen-Style Full-Width Cinematic Hero with Local Banner Image) --}}
+    @php
+        $defaultHeroUrl = Vite::asset('resources/images/homepage/viet-han-banner-hero.png');
+        $heroImageUrl = !empty($heroMedia['url']) ? $heroMedia['url'] : $defaultHeroUrl;
+        $heroImageAlt = !empty($heroMedia['alt']) ? $heroMedia['alt'] : (!empty($page['title']) ? $page['title'] : __('home.hero.title'));
+    @endphp
+    <section id="home" class="public-hero">
+        <div class="public-hero__media">
+            <img src="{{ $heroImageUrl }}" alt="{{ $heroImageAlt }}" class="public-hero__image" loading="eager">
+        </div>
 
-        <!-- Dark Gradient Overlays for Optimal Legibility -->
-        <div class="absolute inset-0 bg-gradient-to-r from-[#181312]/95 via-[#181312]/80 to-[#181312]/40"></div>
-        <div class="absolute inset-0 bg-gradient-to-t from-[#181312] via-transparent to-[#181312]/50"></div>
+        <div class="public-hero__wash"></div>
+        <div class="hero-readability-overlay"></div>
 
-        <x-public.container class="relative z-10 py-20 sm:py-28 lg:py-36">
-            <div class="max-w-3xl space-y-6 sm:space-y-8 text-center lg:text-left">
-                <!-- Eyebrow Badge -->
-                <div class="inline-flex items-center space-x-2">
-                    <span class="inline-flex items-center px-4 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-[#C5A880]/15 text-[#C5A880] border border-[#C5A880]/30 backdrop-blur-sm shadow-xs">
-                        {{ __('home.hero.badge') }}
-                    </span>
-                </div>
+        <div class="public-hero__content-wrap">
+            <div class="public-hero__content">
+                <span class="public-hero__eyebrow">
+                    {{ __('home.hero.badge') }}
+                </span>
 
-                <!-- Display Headline -->
-                <h1 class="font-serif text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-white leading-[1.12] break-words [text-wrap:balance]">
+                <h1 class="public-hero__title">
                     {{ !empty($page['title']) ? $page['title'] : __('home.hero.title') }}
                 </h1>
 
-                <!-- Narrative Subtitle / Excerpt -->
-                <p class="text-base sm:text-lg lg:text-xl text-white/80 font-light leading-relaxed max-w-2xl mx-auto lg:mx-0 break-words">
+                <p class="public-hero__copy">
                     {{ !empty($page['excerpt']) ? $page['excerpt'] : __('home.hero.subtitle') }}
                 </p>
 
-                <!-- Actions Strip -->
-                <div class="pt-4 flex flex-wrap items-center justify-center lg:justify-start gap-4">
+                <div class="public-hero__actions">
                     @if(!empty($featuredServices))
-                        <x-public.button as="a" href="#services-preview" variant="gold" size="lg" class="rounded-full px-8 py-4 bg-gradient-to-r from-[#C5A880] to-[#B3956B] text-[#181312] font-bold shadow-xl hover:shadow-[#C5A880]/30 hover:scale-105 transition duration-200 border-0">
+                        <a href="#services-preview" class="public-hero__cta">
                             {{ __('home.hero.primary_cta') }}
-                        </x-public.button>
+                        </a>
                     @else
-                        <x-public.button as="a" href="#about-preview" variant="gold" size="lg" class="rounded-full px-8 py-4 bg-gradient-to-r from-[#C5A880] to-[#B3956B] text-[#181312] font-bold shadow-xl hover:shadow-[#C5A880]/30 hover:scale-105 transition duration-200 border-0">
+                        <a href="#about-preview" class="public-hero__cta">
                             {{ __('home.hero.primary_cta_empty') }}
-                        </x-public.button>
+                        </a>
                     @endif
-
-                    @if(!empty($featuredCourses))
-                        <x-public.button as="a" href="#training-preview" variant="outline" size="lg" class="rounded-full px-8 py-4 border-[#C5A880]/60 text-[#C5A880] hover:bg-[#C5A880]/10 hover:text-white transition duration-200">
-                            {{ __('home.hero.secondary_cta') }}
-                        </x-public.button>
-                    @endif
-                </div>
-
-                <!-- Zen-Style Subtle Slide Indicators -->
-                <div class="pt-8 flex items-center justify-center lg:justify-start space-x-6 text-xs text-white/40 tracking-widest uppercase">
-                    <span class="font-serif text-[#C5A880] font-semibold text-sm">01</span>
-                    <div class="w-12 h-px bg-[#C5A880]/40"></div>
-                    <span>03</span>
-                    <span class="text-[11px] text-white/50 tracking-normal italic">{{ __('common.tagline') }}</span>
                 </div>
             </div>
-        </x-public.container>
+        </div>
     </section>
 
     {{-- 2. BRAND STORY & WELLNESS PHILOSOPHY (#about-preview & #wellness-philosophy) --}}

@@ -149,7 +149,10 @@ class PublicLayoutTest extends TestCase
         $response->assertSee('break-words', false);
         $response->assertDontSee('break-all', false);
 
-        // Verify mobile brand lockup sizing
-        $response->assertSee('text-lg sm:text-2xl', false);
+        // Verify logo-only header branding remains accessible after the Phase 9.5 header rebuild
+        $response->assertSee('aria-label="Việt Hàn Âu Hàn Spa"', false);
+        $response->assertSee('class="public-header__logo"', false);
+        $response->assertSee('class="public-header__mobile-logo"', false);
+        $response->assertSee('<span class="sr-only">Việt Hàn Âu Hàn Spa</span>', false);
     }
 }
