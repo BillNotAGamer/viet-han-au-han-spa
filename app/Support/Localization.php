@@ -6,6 +6,7 @@ namespace App\Support;
 
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
+use Throwable;
 
 class Localization
 {
@@ -70,6 +71,11 @@ class Localization
             $targetLocale = static::defaultLocale();
         }
 
+        $localizedUrls = request()?->attributes->get('localized_urls', []);
+        if (is_array($localizedUrls) && isset($localizedUrls[$targetLocale]) && is_string($localizedUrls[$targetLocale])) {
+            return $localizedUrls[$targetLocale];
+        }
+
         $routeName = $currentRouteName ?? Route::currentRouteName();
 
         if ($routeName !== null && $routeName !== '') {
@@ -78,7 +84,11 @@ class Localization
             if (count($parts) === 2 && static::isSupported($parts[0])) {
                 $targetRouteName = $targetLocale.'.'.$parts[1];
                 if (Route::has($targetRouteName)) {
-                    return route($targetRouteName, $parameters);
+                    try {
+                        return route($targetRouteName, $parameters);
+                    } catch (Throwable) {
+                        // Dynamic detail routes require explicit translated parameters.
+                    }
                 }
             }
         }

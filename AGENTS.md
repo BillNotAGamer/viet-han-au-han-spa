@@ -134,6 +134,12 @@ Do **NOT** add arbitrary Composer or npm packages. Any new dependency must:
    - `price_amount` is strictly integer VND; `duration_minutes` is strictly positive integer minutes.
    - Service categories with services and services with bookings cannot be hard-deleted.
    - Phase 4 media behavior is association-only; file uploads and physical media deletions are strictly forbidden until Phase 7.
+   - Public Service routes require exact requested-locale translations.
+   - Service detail slugs are locale-specific; Vietnamese slugs must not resolve under `/en`.
+   - No Vietnamese Service fallback may render under English public URLs.
+   - Only `PUBLISHED` Services are public; `DRAFT` and `ARCHIVED` detail requests return 404.
+   - Public Services Blade templates must perform no direct database or Eloquent queries.
+   - Missing Service media files must not crash public listing or detail pages.
 
 9. **Training CMS & Lead Governance Standards:**
    - Training courses use relational translation rows with required Vietnamese and optional English.
@@ -204,5 +210,5 @@ Do **NOT** add arbitrary Composer or npm packages. Any new dependency must:
 - **Hero Media Convention**: The first ordered media (`page_media.sort_order = 0`) attached to the `home` Page acts as the Homepage hero visual.
 - **Safe Content Excerpt**: Rich HTML from Page records is stripped of tags and normalized to plain text before presentation.
 - **Blade Query Isolation**: Public Blade templates must execute zero direct Eloquent or DB queries; all composition belongs in `HomepageContent`.
-- **Phase 10 Boundary**: Homepage cards are preview-only semantic `<article>` elements and must not link to unimplemented detail routes (`/dich-vu/{slug}`, etc.).
+- **Phase 10 Boundary**: Homepage cards are preview-only semantic `<article>` elements unless a later public-content subphase has implemented the target route with exact-locale routing. They must never link to unimplemented detail routes.
 - **Evidence-Driven**: No fake business metrics, fabricated testimonials, or unverified claims.

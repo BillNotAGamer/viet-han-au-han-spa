@@ -1,32 +1,47 @@
+@props([
+    'mode' => 'overlay',
+])
+
 @php
     $locale = app()->getLocale();
     $isVi = $locale === 'vi';
-    $homeUrl = $isVi ? url('/') : url('/en');
+    $homeUrl = $isVi ? route('vi.home') : route('en.home');
+    $isSolid = $mode === 'solid';
+    $isHomeRoute = in_array(\Illuminate\Support\Facades\Route::currentRouteName(), ['vi.home', 'en.home'], true);
+    $homeFragment = fn (string $fragment) => $isHomeRoute ? "#{$fragment}" : "{$homeUrl}#{$fragment}";
     $brandName = __('common.brand_name');
     $logoUrl = Vite::asset('resources/images/general/viet-han-logo.png');
+    $servicesUrl = $isVi ? route('vi.services.index') : route('en.services.index');
+    $contactUrl = $homeFragment('contact-preview');
 
     $leftNavLinks = [
-        ['label' => __('navigation.home'), 'url' => '#home', 'has_chevron' => false],
-        ['label' => __('navigation.about'), 'url' => '#about-preview', 'has_chevron' => false],
-        ['label' => __('navigation.services'), 'url' => '#services-preview', 'has_chevron' => true],
+        ['label' => __('navigation.home'), 'url' => $isHomeRoute ? '#home' : $homeUrl, 'has_chevron' => false],
+        ['label' => __('navigation.about'), 'url' => $homeFragment('about-preview'), 'has_chevron' => false],
+        ['label' => __('navigation.services'), 'url' => $servicesUrl, 'has_chevron' => true],
     ];
 
     $rightNavLinks = [
-        ['label' => __('navigation.training'), 'url' => '#training-preview'],
-        ['label' => __('navigation.blog'), 'url' => '#blog-preview'],
-        ['label' => __('navigation.contact'), 'url' => '#contact-preview'],
+        ['label' => __('navigation.training'), 'url' => $homeFragment('training-preview')],
+        ['label' => __('navigation.blog'), 'url' => $homeFragment('blog-preview')],
+        ['label' => __('navigation.contact'), 'url' => $contactUrl],
     ];
 
     $allNavLinks = array_merge($leftNavLinks, $rightNavLinks);
 @endphp
 
 <header
-    class="public-header public-header--overlay"
+    class="public-header {{ $isSolid ? 'public-header--sticky' : 'public-header--overlay' }}"
     x-data="{
         mobileOpen: false,
-        isSticky: false,
+        isSolid: @js($isSolid),
+        isSticky: @js($isSolid),
         init() {
             const updateHeader = () => {
+                if (this.isSolid) {
+                    this.isSticky = true;
+                    return;
+                }
+
                 this.isSticky = window.scrollY > 96;
             };
 
@@ -119,7 +134,7 @@
                 @endforeach
             </ul>
 
-            <a href="#contact-preview" @click="mobileOpen = false" class="public-header__drawer-cta">
+            <a href="{{ $contactUrl }}" @click="mobileOpen = false" class="public-header__drawer-cta">
                 {{ __('navigation.book_now') }}
             </a>
         </nav>

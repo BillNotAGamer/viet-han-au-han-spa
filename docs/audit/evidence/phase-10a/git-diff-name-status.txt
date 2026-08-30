@@ -1,0 +1,7 @@
+warning: in the working copy of 'AGENTS.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'resources/views/components/layouts/public.blade.php', CRLF will be replaced by LF the next time Git touches it
+M	AGENTS.md
+M	app/Support/Localization.php
+M	resources/views/components/layouts/public.blade.php
+M	resources/views/components/public/header.blade.php
+M	routes/web.php
