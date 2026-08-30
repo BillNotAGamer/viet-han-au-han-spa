@@ -1,0 +1,13 @@
+warning: in the working copy of 'docs/audit/evidence/phase-10b/composer-validate.txt', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'docs/audit/evidence/phase-10b/route-list.txt', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'docs/audit/evidence/phase-10b/tests.txt', CRLF will be replaced by LF the next time Git touches it
+M	docs/audit/PHASE_10B_TRAINING_PUBLIC_2026-08-30.md
+M	docs/audit/evidence/phase-10b/composer-validate.txt
+M	docs/audit/evidence/phase-10b/git-diff-check.txt
+M	docs/audit/evidence/phase-10b/git-diff-name-status.txt
+M	docs/audit/evidence/phase-10b/git-status.txt
+M	docs/audit/evidence/phase-10b/npm-build.txt
+M	docs/audit/evidence/phase-10b/phpunit.xml
+M	docs/audit/evidence/phase-10b/pint.txt
+M	docs/audit/evidence/phase-10b/route-list.txt
+M	docs/audit/evidence/phase-10b/tests.txt

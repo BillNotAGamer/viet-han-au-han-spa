@@ -150,6 +150,13 @@ Do **NOT** add arbitrary Composer or npm packages. Any new dependency must:
    - Training inquiry status transitions must use `TrainingInquiryWorkflow` with atomic lifecycle timestamps.
    - Permanent force deletion of training inquiries is strictly prohibited; soft delete is for recovery only.
    - Phase 5 media behavior is association-only; file uploads and deletions remain deferred to Phase 7.
+   - Public Training routes require exact requested-locale translations.
+   - Training detail slugs are locale-specific; Vietnamese slugs must not resolve under `/en`.
+   - No Vietnamese Training fallback may render under English public URLs.
+   - Only publicly eligible TrainingCourse records render publicly.
+   - Public Training Blade templates must perform no direct database or Eloquent queries.
+   - Missing Training media files must not crash public listing or detail pages.
+   - Do not invent instructor, schedule, certificate, employment, or class-date data absent from schema.
 
 10. **Blog CMS Governance Standards:**
    - Blog posts and categories use relational translation rows with required Vietnamese and optional English.
