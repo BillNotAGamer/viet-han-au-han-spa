@@ -136,9 +136,19 @@ Composer validate passed with exit code 0.
 
 ## Git Diff
 
-Phase 10B implementation is ready for commit after final machine verification. Human QA has been completed by the project owner. `git diff --check` passed with only the existing CRLF normalization warning for `AGENTS.md`; no whitespace errors were reported.
+Implementation commit: `1bf9a1ae28681169ea056198424194af2666e877`
 
-Dirty paths are limited to Phase 10B implementation, tests, architecture documentation, audit documentation, and machine evidence.
+Implementation commit message: `feat: add public training pages for phase 10b`
+
+Human QA: COMPLETED BY PROJECT OWNER.
+
+Implementation working tree after commit: CLEAN.
+
+The later audit-report correction is documentation only and does not change executable Phase 10B source. The final documentation-only closure commit hash is intentionally not embedded here to avoid a self-referential commit-hash requirement; final HEAD is recorded by external Git evidence and the handoff manifest.
+
+`git diff --check` passed with only the existing CRLF normalization warning for `AGENTS.md`; no whitespace errors were reported.
+
+The implementation commit diff is limited to Phase 10B implementation, tests, architecture documentation, audit documentation, and machine evidence.
 
 ## Human QA
 
