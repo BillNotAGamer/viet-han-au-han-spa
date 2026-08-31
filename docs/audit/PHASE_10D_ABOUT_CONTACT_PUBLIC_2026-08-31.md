@@ -166,6 +166,24 @@ Allowed public content routes after Phase 10D are Homepage, Services, Training, 
 
 Phase 10D dirty scope is limited to About/Contact implementation, tests, architecture documentation, audit report, and machine evidence. No local SQLite database or runtime QA data is included.
 
+## Implementation Commit
+
+Implementation commit:
+`dfb94d596574ac03f9dd56e3fdc0ad2b6213466c`
+
+Implementation commit message:
+`feat: add public about and contact pages for phase 10d`
+
+Owner browser verification:
+About VI/EN desktop PASS
+Contact VI/EN desktop PASS
+
+Owner authorized progression to Phase 10E:
+YES
+
+Implementation tree after commit:
+CLEAN
+
 ## Production DB Status
 
 NOT TESTED.
