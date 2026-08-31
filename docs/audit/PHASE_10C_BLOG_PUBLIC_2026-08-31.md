@@ -176,6 +176,20 @@ Schema changes: none.
 
 Phase 10C implementation is ready for commit after final machine verification.
 
+## Implementation Commit
+
+Implementation commit:
+`4009640bf718201dab9cc6a03ec9f47d6d51fd5b`
+
+Implementation commit message:
+`feat: add public blog pages for phase 10c`
+
+Human QA:
+COMPLETED BY PROJECT OWNER
+
+Implementation working tree after commit:
+CLEAN
+
 ## Evidence
 
 Evidence directory:
