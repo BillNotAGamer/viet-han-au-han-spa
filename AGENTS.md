@@ -196,6 +196,15 @@ Do **NOT** add arbitrary Composer or npm packages. Any new dependency must:
    - Pages can be hard-deleted only in `DRAFT` status; `PUBLISHED` and `ARCHIVED` pages must not be destroyed.
    - PageResource associates existing Media only; uploads remain owned by MediaResource.
    - Public page routing remains Phase 10.
+   - Public static Pages resolve by fixed machine key, not translation slug.
+   - About uses Page key `about`; Contact uses Page key `contact`.
+   - Public Page rendering requires `PUBLISHED` status and exact requested-locale translation.
+   - No Vietnamese static Page fallback may render under English public URLs.
+   - Public Contact data may use only explicitly supported SiteSettings read through public-safe access.
+   - Never dump all public settings automatically.
+   - Unsafe URL schemes are not rendered as active contact links.
+   - Phase 10D Contact has no mutation endpoint.
+   - Public static Page Blade templates must perform no direct database or Eloquent queries.
 
 13. **Site Settings & Global Configuration Standards:**
    - `site_settings.key` is a stable, untranslated machine identifier (`^[a-z0-9]+(?:[._-][a-z0-9]+)*$`).

@@ -11,14 +11,15 @@
     $homeFragment = fn (string $fragment) => $isHomeRoute ? "#{$fragment}" : "{$homeUrl}#{$fragment}";
     $brandName = __('common.brand_name');
     $logoUrl = Vite::asset('resources/images/general/viet-han-logo.png');
+    $aboutUrl = $isVi ? route('vi.about') : route('en.about');
     $servicesUrl = $isVi ? route('vi.services.index') : route('en.services.index');
     $trainingUrl = $isVi ? route('vi.training.index') : route('en.training.index');
     $blogUrl = $isVi ? route('vi.blog.index') : route('en.blog.index');
-    $contactUrl = $homeFragment('contact-preview');
+    $contactUrl = $isVi ? route('vi.contact') : route('en.contact');
 
     $leftNavLinks = [
         ['label' => __('navigation.home'), 'url' => $isHomeRoute ? '#home' : $homeUrl, 'has_chevron' => false],
-        ['label' => __('navigation.about'), 'url' => $homeFragment('about-preview'), 'has_chevron' => false],
+        ['label' => __('navigation.about'), 'url' => $aboutUrl, 'has_chevron' => false],
         ['label' => __('navigation.services'), 'url' => $servicesUrl, 'has_chevron' => true],
     ];
 
