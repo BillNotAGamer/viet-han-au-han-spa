@@ -225,6 +225,14 @@ Do **NOT** add arbitrary Composer or npm packages. Any new dependency must:
    - Language switching adheres to `/` <-> `/en` mapping; never generate `/vi`.
    - Mobile interactivity is limited to Alpine.js; no secondary JS frameworks.
    - Global components remain domain-content agnostic; homepage is implemented in Phase 9.
+   - Primary public navigation must use canonical locale routes.
+   - Vietnamese public navigation is prefixless; English public navigation uses `/en`.
+   - Do not add placeholder or future primary navigation routes.
+   - Do not add dropdown affordance without a real submenu.
+   - Entity detail locale switching uses translated entity slugs.
+   - Static Page locale switching uses fixed route pairs.
+   - Shared header geometry must be changed deliberately and documented.
+   - Do not route Booking CTAs to nonexistent Booking routes.
 
 ### Phase 9 Homepage Invariants
 - **Exact-Locale Content**: Public Homepage content requires exact requested locale; Vietnamese content never leaks or falls back to `/en`.

@@ -7,8 +7,16 @@
     $isVi = $locale === 'vi';
     $homeUrl = $isVi ? route('vi.home') : route('en.home');
     $isSolid = $mode === 'solid';
-    $isHomeRoute = in_array(\Illuminate\Support\Facades\Route::currentRouteName(), ['vi.home', 'en.home'], true);
-    $homeFragment = fn (string $fragment) => $isHomeRoute ? "#{$fragment}" : "{$homeUrl}#{$fragment}";
+    $routeName = \Illuminate\Support\Facades\Route::currentRouteName();
+    $isActive = fn (string $section) => match ($section) {
+        'home' => in_array($routeName, ['vi.home', 'en.home'], true),
+        'about' => in_array($routeName, ['vi.about', 'en.about'], true),
+        'services' => str_contains((string) $routeName, '.services.'),
+        'training' => str_contains((string) $routeName, '.training.'),
+        'blog' => str_contains((string) $routeName, '.blog.'),
+        'contact' => in_array($routeName, ['vi.contact', 'en.contact'], true),
+        default => false,
+    };
     $brandName = __('common.brand_name');
     $logoUrl = Vite::asset('resources/images/general/viet-han-logo.png');
     $aboutUrl = $isVi ? route('vi.about') : route('en.about');
@@ -18,15 +26,15 @@
     $contactUrl = $isVi ? route('vi.contact') : route('en.contact');
 
     $leftNavLinks = [
-        ['label' => __('navigation.home'), 'url' => $isHomeRoute ? '#home' : $homeUrl, 'has_chevron' => false],
-        ['label' => __('navigation.about'), 'url' => $aboutUrl, 'has_chevron' => false],
-        ['label' => __('navigation.services'), 'url' => $servicesUrl, 'has_chevron' => true],
+        ['key' => 'home', 'label' => __('navigation.home'), 'url' => $homeUrl],
+        ['key' => 'about', 'label' => __('navigation.about'), 'url' => $aboutUrl],
+        ['key' => 'services', 'label' => __('navigation.services'), 'url' => $servicesUrl],
     ];
 
     $rightNavLinks = [
-        ['label' => __('navigation.training'), 'url' => $trainingUrl],
-        ['label' => __('navigation.blog'), 'url' => $blogUrl],
-        ['label' => __('navigation.contact'), 'url' => $contactUrl],
+        ['key' => 'training', 'label' => __('navigation.training'), 'url' => $trainingUrl],
+        ['key' => 'blog', 'label' => __('navigation.blog'), 'url' => $blogUrl],
+        ['key' => 'contact', 'label' => __('navigation.contact'), 'url' => $contactUrl],
     ];
 
     $allNavLinks = array_merge($leftNavLinks, $rightNavLinks);
@@ -58,13 +66,8 @@
     <div class="public-header__desktop">
         <nav aria-label="{{ __('navigation.main_navigation') }}" class="public-header__nav public-header__nav--left">
             @foreach($leftNavLinks as $link)
-                <a href="{{ $link['url'] }}" class="public-header__link">
-                    <span>{{ $link['label'] }}</span>
-                    @if($link['has_chevron'])
-                        <svg class="public-header__chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
-                        </svg>
-                    @endif
+                <a href="{{ $link['url'] }}" class="{{ $isActive($link['key']) ? 'public-header__link public-header__link--active' : 'public-header__link' }}" @if($isActive($link['key'])) aria-current="page" @endif>
+                    {{ $link['label'] }}
                 </a>
             @endforeach
         </nav>
@@ -78,7 +81,7 @@
 
         <div class="public-header__nav public-header__nav--right">
             @foreach($rightNavLinks as $link)
-                <a href="{{ $link['url'] }}" class="public-header__link">
+                <a href="{{ $link['url'] }}" class="{{ $isActive($link['key']) ? 'public-header__link public-header__link--active' : 'public-header__link' }}" @if($isActive($link['key'])) aria-current="page" @endif>
                     {{ $link['label'] }}
                 </a>
             @endforeach
@@ -130,7 +133,7 @@
             <ul class="public-header__drawer-list">
                 @foreach($allNavLinks as $link)
                     <li>
-                        <a href="{{ $link['url'] }}" @click="mobileOpen = false" class="public-header__drawer-link">
+                        <a href="{{ $link['url'] }}" @click="mobileOpen = false" class="{{ $isActive($link['key']) ? 'public-header__drawer-link public-header__drawer-link--active' : 'public-header__drawer-link' }}" @if($isActive($link['key'])) aria-current="page" @endif>
                             {{ $link['label'] }}
                         </a>
                     </li>
