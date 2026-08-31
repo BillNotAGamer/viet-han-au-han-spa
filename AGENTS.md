@@ -168,6 +168,13 @@ Do **NOT** add arbitrary Composer or npm packages. Any new dependency must:
    - Posts can be hard-deleted only in `DRAFT` status; Categories containing posts cannot be deleted.
    - Phase 6 media behavior is association-only; file uploads remain deferred to Phase 7.
    - Public blog pages and controllers must not be created before Phase 10.
+   - Public Blog routes require exact requested-locale translations.
+   - Post detail slugs are locale-specific; Vietnamese slugs must not resolve under `/en`.
+   - Future-scheduled Posts are not public.
+   - No Vietnamese Blog fallback may render under English public URLs.
+   - Public Blog Blade templates must perform no direct database or Eloquent queries.
+   - Blog author public output must not expose account-sensitive fields.
+   - RichEditor content must use a verified safe renderer or escaped fallback.
 
 11. **Media CMS & Storage Governance Standards:**
    - All media storage operations must interact through `Storage::disk(config('media.disk'))`.

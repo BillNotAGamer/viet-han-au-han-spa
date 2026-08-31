@@ -1,0 +1,18 @@
+﻿Phase 10C rich-content safety review
+
+Source facts:
+- post_translations.content is a longText field authored through Filament RichEditor.
+- No project-approved public HTML sanitizer package or verified RichEditor public renderer is present.
+- Phase 10C intentionally avoids raw `{!! $content !!}` article-body rendering.
+
+Implementation:
+- App\Services\PublicSite\BlogContent::derivePlainText() decodes entities, removes script/style/iframe/object/embed/noscript blocks, strips remaining tags, normalizes whitespace, and returns plain text.
+- App\Services\PublicSite\BlogContent::plainTextParagraphs() prepares escaped plain-text paragraphs for Blade.
+- resources/views/public/blog/show.blade.php renders article paragraphs through escaped Blade output.
+- SEO fields `seo_title` and `seo_description` are not rendered as visible content.
+
+Test evidence:
+- Tests\Feature\Public\PublicBlogTest::test_rich_editor_content_is_rendered_as_safe_plain_text_without_raw_markup asserts visible safe body text and rejects CMS-injected script markup, event handlers, raw formatting tags, and visible SEO field leakage.
+
+Result:
+PASS. RichEditor content is rendered as an escaped/plain-text fallback and is not blindly emitted as raw HTML.

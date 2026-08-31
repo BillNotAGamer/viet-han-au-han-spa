@@ -13,6 +13,7 @@
     $logoUrl = Vite::asset('resources/images/general/viet-han-logo.png');
     $servicesUrl = $isVi ? route('vi.services.index') : route('en.services.index');
     $trainingUrl = $isVi ? route('vi.training.index') : route('en.training.index');
+    $blogUrl = $isVi ? route('vi.blog.index') : route('en.blog.index');
     $contactUrl = $homeFragment('contact-preview');
 
     $leftNavLinks = [
@@ -23,7 +24,7 @@
 
     $rightNavLinks = [
         ['label' => __('navigation.training'), 'url' => $trainingUrl],
-        ['label' => __('navigation.blog'), 'url' => $homeFragment('blog-preview')],
+        ['label' => __('navigation.blog'), 'url' => $blogUrl],
         ['label' => __('navigation.contact'), 'url' => $contactUrl],
     ];
 
