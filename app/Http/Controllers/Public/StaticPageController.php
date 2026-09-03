@@ -39,7 +39,7 @@ class StaticPageController extends Controller
             'title' => $page['title'],
             'page' => $page,
             'contact' => $key === 'contact' ? $this->staticPageContent->contactSettings() : null,
-            'contactHref' => $locale === 'en' ? route('en.contact') : route('vi.contact'),
+            'contactHref' => $locale === 'en' ? route('en.booking.create') : route('vi.booking.create'),
         ]);
     }
 }

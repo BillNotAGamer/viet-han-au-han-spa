@@ -28,7 +28,7 @@ class TrainingController extends Controller
             'locale' => $locale,
             'title' => __('training.meta.index_title'),
             'courses' => $this->trainingContent->listingForLocale($locale),
-            'contactHref' => $locale === 'en' ? route('en.home').'#contact-preview' : route('vi.home').'#contact-preview',
+            'contactHref' => $locale === 'en' ? route('en.booking.create') : route('vi.booking.create'),
         ]);
     }
 
@@ -45,7 +45,7 @@ class TrainingController extends Controller
             'locale' => $locale,
             'title' => $course['title'],
             'course' => $course,
-            'contactHref' => $locale === 'en' ? route('en.home').'#contact-preview' : route('vi.home').'#contact-preview',
+            'contactHref' => $locale === 'en' ? route('en.booking.create') : route('vi.booking.create'),
         ]);
     }
 }

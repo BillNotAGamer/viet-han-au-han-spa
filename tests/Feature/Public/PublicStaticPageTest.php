@@ -291,7 +291,7 @@ class PublicStaticPageTest extends TestCase
             ->assertSee('class="public-header__link"', false);
     }
 
-    public function test_phase_10d_adds_no_public_about_contact_or_booking_mutation_routes(): void
+    public function test_phase_11_keeps_static_contact_mutations_closed_while_booking_post_exists(): void
     {
         $publicStaticMutationRoutes = collect(Route::getRoutes())
             ->filter(function ($route) {
@@ -301,13 +301,14 @@ class PublicStaticPageTest extends TestCase
                     || str_contains($uri, 'lien-he')
                     || str_contains($uri, 'about')
                     || str_contains($uri, 'contact')
+                    || str_contains($uri, 'dat-lich')
                     || str_contains($uri, 'booking');
             })
             ->filter(fn ($route) => array_intersect(['POST', 'PUT', 'PATCH', 'DELETE'], $route->methods()) !== [])
             ->reject(fn ($route) => str_starts_with($route->uri(), 'admin'))
             ->values();
 
-        $this->assertCount(0, $publicStaticMutationRoutes);
+        $this->assertSame(['dat-lich', 'en/booking'], $publicStaticMutationRoutes->pluck('uri')->sort()->values()->all());
     }
 
     protected function createPageWithTranslation(

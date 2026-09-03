@@ -28,7 +28,7 @@ class BlogController extends Controller
             'locale' => $locale,
             'title' => __('blog.meta.index_title'),
             'posts' => $this->blogContent->listingForLocale($locale),
-            'contactHref' => $locale === 'en' ? route('en.home').'#contact-preview' : route('vi.home').'#contact-preview',
+            'contactHref' => $locale === 'en' ? route('en.booking.create') : route('vi.booking.create'),
         ]);
     }
 
@@ -45,7 +45,7 @@ class BlogController extends Controller
             'locale' => $locale,
             'title' => $post['title'],
             'post' => $post,
-            'contactHref' => $locale === 'en' ? route('en.home').'#contact-preview' : route('vi.home').'#contact-preview',
+            'contactHref' => $locale === 'en' ? route('en.booking.create') : route('vi.booking.create'),
         ]);
     }
 }

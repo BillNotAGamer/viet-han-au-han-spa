@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Public\BlogController;
+use App\Http\Controllers\Public\BookingController;
 use App\Http\Controllers\Public\HomeController;
 use App\Http\Controllers\Public\ServiceController;
 use App\Http\Controllers\Public\StaticPageController;
@@ -25,6 +26,8 @@ Route::middleware('set.locale:vi')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('vi.home');
     Route::get('/gioi-thieu', [StaticPageController::class, 'about'])->name('vi.about');
     Route::get('/lien-he', [StaticPageController::class, 'contact'])->name('vi.contact');
+    Route::get('/dat-lich', [BookingController::class, 'create'])->name('vi.booking.create');
+    Route::post('/dat-lich', [BookingController::class, 'store'])->middleware('throttle:booking-submissions')->name('vi.booking.store');
     Route::get('/dich-vu', [ServiceController::class, 'index'])->name('vi.services.index');
     Route::get('/dich-vu/{slug}', [ServiceController::class, 'show'])->name('vi.services.show');
     Route::get('/dao-tao', [TrainingController::class, 'index'])->name('vi.training.index');
@@ -38,6 +41,8 @@ Route::prefix('en')->middleware('set.locale:en')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('en.home');
     Route::get('/about', [StaticPageController::class, 'about'])->name('en.about');
     Route::get('/contact', [StaticPageController::class, 'contact'])->name('en.contact');
+    Route::get('/booking', [BookingController::class, 'create'])->name('en.booking.create');
+    Route::post('/booking', [BookingController::class, 'store'])->middleware('throttle:booking-submissions')->name('en.booking.store');
     Route::get('/services', [ServiceController::class, 'index'])->name('en.services.index');
     Route::get('/services/{slug}', [ServiceController::class, 'show'])->name('en.services.show');
     Route::get('/training', [TrainingController::class, 'index'])->name('en.training.index');

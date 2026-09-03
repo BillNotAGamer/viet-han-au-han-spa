@@ -28,7 +28,7 @@ class ServiceController extends Controller
             'locale' => $locale,
             'title' => __('services.meta.index_title'),
             'services' => $this->servicesContent->listingForLocale($locale),
-            'contactHref' => $locale === 'en' ? route('en.home').'#contact-preview' : route('vi.home').'#contact-preview',
+            'contactHref' => $locale === 'en' ? route('en.booking.create') : route('vi.booking.create'),
         ]);
     }
 
@@ -45,7 +45,7 @@ class ServiceController extends Controller
             'locale' => $locale,
             'title' => $service['name'],
             'service' => $service,
-            'contactHref' => $locale === 'en' ? route('en.home').'#contact-preview' : route('vi.home').'#contact-preview',
+            'contactHref' => $locale === 'en' ? route('en.booking.create') : route('vi.booking.create'),
         ]);
     }
 }

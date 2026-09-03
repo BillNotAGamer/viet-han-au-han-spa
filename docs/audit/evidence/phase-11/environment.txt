@@ -1,0 +1,16 @@
+﻿PHP
+PHP 8.4.24 (cli) (built: Jul 29 2026 06:00:34) (NTS Visual C++ 2022 x64)
+Copyright (c) The PHP Group
+Built by The PHP Group
+Zend Engine v4.4.24, Copyright (c) Zend Technologies
+    with Zend OPcache v8.4.24, Copyright (c), by Zend Technologies
+Composer
+Composer version 2.10.2 2026-07-01 11:24:45
+Node
+v24.19.0
+npm
+11.17.0
+Git
+git version 2.46.1.windows.1
+HEAD
+946462cdb3da052c8d6ef04356003f2aa95cdccb

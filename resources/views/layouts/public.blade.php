@@ -20,9 +20,13 @@
         {{ $slot }}
     </main>
 
+    @php
+        $legacyBookingHref = app()->getLocale() === 'en' ? route('en.booking.create') : route('vi.booking.create');
+    @endphp
+
     <!-- Zen-Style Floating Vertical Booking Tab (Desktop: docked right edge, vertically centered, rotated text) -->
     <div class="fixed right-0 top-1/2 -translate-y-1/2 z-50 hidden lg:flex">
-        <a href="#contact-preview" class="group flex flex-col items-center justify-center bg-[#5B1121] hover:bg-[#4a0d1a] border-t border-b border-l border-[#C5A880]/50 rounded-l-xl w-[58px] h-[175px] shadow-2xl transition-all duration-300 hover:pr-1" aria-label="{{ __('navigation.book_now') }}">
+        <a href="{{ $legacyBookingHref }}" class="group flex flex-col items-center justify-center bg-[#5B1121] hover:bg-[#4a0d1a] border-t border-b border-l border-[#C5A880]/50 rounded-l-xl w-[58px] h-[175px] shadow-2xl transition-all duration-300 hover:pr-1" aria-label="{{ __('navigation.book_now') }}">
             <!-- Spa Booking Calendar Icon -->
             <svg class="w-5 h-5 text-[#C5A880] mb-3 group-hover:scale-110 transition duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
@@ -49,7 +53,7 @@
             </a>
         @endif
 
-        <a href="#contact-preview" class="flex items-center space-x-1.5 px-4 py-2.5 rounded-full bg-gradient-to-r from-[#C5A880] to-[#B3956B] text-[#181312] font-semibold text-xs tracking-wider uppercase shadow-xl hover:scale-105 transition">
+        <a href="{{ $legacyBookingHref }}" class="flex items-center space-x-1.5 px-4 py-2.5 rounded-full bg-gradient-to-r from-[#C5A880] to-[#B3956B] text-[#181312] font-semibold text-xs tracking-wider uppercase shadow-xl hover:scale-105 transition">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
             </svg>

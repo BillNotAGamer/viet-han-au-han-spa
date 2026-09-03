@@ -24,6 +24,7 @@
     $trainingUrl = $isVi ? route('vi.training.index') : route('en.training.index');
     $blogUrl = $isVi ? route('vi.blog.index') : route('en.blog.index');
     $contactUrl = $isVi ? route('vi.contact') : route('en.contact');
+    $bookingUrl = $isVi ? route('vi.booking.create') : route('en.booking.create');
 
     $leftNavLinks = [
         ['key' => 'home', 'label' => __('navigation.home'), 'url' => $homeUrl],
@@ -140,7 +141,7 @@
                 @endforeach
             </ul>
 
-            <a href="{{ $contactUrl }}" @click="mobileOpen = false" class="public-header__drawer-cta">
+            <a href="{{ $bookingUrl }}" @click="mobileOpen = false" class="public-header__drawer-cta">
                 {{ __('navigation.book_now') }}
             </a>
         </nav>

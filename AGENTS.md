@@ -234,6 +234,16 @@ Do **NOT** add arbitrary Composer or npm packages. Any new dependency must:
    - Shared header geometry must be changed deliberately and documented.
    - Do not route Booking CTAs to nonexistent Booking routes.
 
+15. **Booking Request MVP Standards:**
+   - A public Booking submission creates a request, not an automatically confirmed appointment.
+   - Booking locale derives from canonical route context.
+   - Public customers cannot set Booking status, admin notes, lifecycle timestamps, or attribution/system fields.
+   - Selected Service must pass exact-locale public eligibility.
+   - Booking POST must remain CSRF protected and rate-limited.
+   - No public Booking request list/show/edit/delete route is allowed.
+   - Public Booking Blade templates must perform no direct database or Eloquent queries.
+   - Do not claim realtime availability without an availability engine.
+
 ### Phase 9 Homepage Invariants
 - **Exact-Locale Content**: Public Homepage content requires exact requested locale; Vietnamese content never leaks or falls back to `/en`.
 - **Publication & Scheduling**: Only `PUBLISHED` records are queried; future scheduled `published_at > now()` courses and posts must never leak publicly.

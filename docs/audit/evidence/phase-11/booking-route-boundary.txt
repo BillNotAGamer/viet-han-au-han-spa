@@ -1,0 +1,15 @@
+Phase 11 route boundary review
+
+Added public routes:
+- GET /dat-lich -> vi.booking.create
+- POST /dat-lich -> vi.booking.store
+- GET /en/booking -> en.booking.create
+- POST /en/booking -> en.booking.store
+
+Not added:
+- /vi/dat-lich
+- public booking index/show/edit/update/delete
+- public Contact POST
+- public Booking API
+
+Route-list raw evidence: docs/audit/evidence/phase-11/route-list.txt

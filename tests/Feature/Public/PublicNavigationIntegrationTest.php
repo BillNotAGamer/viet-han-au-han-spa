@@ -94,7 +94,7 @@ class PublicNavigationIntegrationTest extends TestCase
         $this->get('/en/contact')->assertStatus(200)->assertSee('href="'.route('vi.contact').'"', false);
     }
 
-    public function test_phase_10e_does_not_add_public_booking_or_mutation_routes(): void
+    public function test_phase_11_keeps_booking_mutations_limited_to_create_routes(): void
     {
         $publicMutationRoutes = collect(Route::getRoutes())
             ->filter(fn ($route) => array_intersect(['POST', 'PUT', 'PATCH', 'DELETE'], $route->methods()) !== [])
@@ -108,8 +108,14 @@ class PublicNavigationIntegrationTest extends TestCase
             ->reject(fn ($route) => str_starts_with($route->uri(), 'admin'))
             ->values();
 
-        $this->assertCount(0, $publicMutationRoutes);
-        $this->assertCount(0, $bookingRoutes);
+        $this->assertSame(['dat-lich', 'en/booking'], $publicMutationRoutes->pluck('uri')->sort()->values()->all());
+        $this->assertSame(['dat-lich', 'en/booking'], $bookingRoutes->pluck('uri')->unique()->sort()->values()->all());
+        $this->assertTrue($bookingRoutes->every(fn ($route) => in_array($route->getName(), [
+            'vi.booking.create',
+            'vi.booking.store',
+            'en.booking.create',
+            'en.booking.store',
+        ], true)));
     }
 
     public function test_shared_public_blade_navigation_files_do_not_query_the_database(): void
