@@ -128,8 +128,22 @@ PASS
 Booking CTA VI/EN:
 PASS
 
+## Implementation Commit
+
+Implementation commit:
+ac173c60ba8b5fde1592f8a744e496e40d77cf1c
+
+Implementation commit message:
+feat: add booking request MVP for phase 11
+
+Human QA:
+COMPLETED BY PROJECT OWNER
+
+Implementation working tree after commit:
+CLEAN
+
 ## Git Scope
 
-Phase 11 changes are intentionally uncommitted pending Human QA.
+Phase 11 executable source, tests, architecture docs, and verification evidence were committed in implementation commit `ac173c60ba8b5fde1592f8a744e496e40d77cf1c`.
 
 Executable/source scope includes public booking routes, request validation, booking creation services, Filament booking resource/workflow/policy, booking CTA routing, localized booking copy, and focused tests. No migration or package changes are included.
