@@ -1,0 +1,21 @@
+﻿ M app/Services/PublicSite/HomepageContent.php
+ D docs/audit/evidence/phase-9/browser/en-1440.png
+ D docs/audit/evidence/phase-9/browser/en-375.png
+ D docs/audit/evidence/phase-9/browser/en-768.png
+ D docs/audit/evidence/phase-9/browser/measurements.txt
+ D docs/audit/evidence/phase-9/browser/vi-1440.png
+ D docs/audit/evidence/phase-9/browser/vi-375.png
+ D docs/audit/evidence/phase-9/browser/vi-768.png
+ M docs/audit/evidence/phase-9/environment.txt
+ M docs/audit/evidence/phase-9/git-diff-check.txt
+ M docs/audit/evidence/phase-9/migrate-fresh.txt
+ M docs/audit/evidence/phase-9/migrate-refresh.txt
+ M docs/audit/evidence/phase-9/npm-build.txt
+ M docs/audit/evidence/phase-9/phpunit.xml
+ M docs/audit/evidence/phase-9/tests.txt
+ M lang/en/home.php
+ M lang/vi/home.php
+ M resources/views/public/home.blade.php
+ M tests/Feature/Public/HomepageTest.php
+?? docs/audit/evidence/phase-9/git-status.txt.tmp.err
+?? docs/audit/evidence/phase-9/git-status.txt.tmp.out

@@ -1,0 +1,15 @@
+ M AGENTS.md
+ M app/Support/Localization.php
+ M resources/views/components/layouts/public.blade.php
+ M resources/views/components/public/header.blade.php
+ M routes/web.php
+?? app/Http/Controllers/Public/ServiceController.php
+?? app/Services/PublicSite/ServicesContent.php
+?? docs/architecture/SERVICES_PUBLIC_ARCHITECTURE.md
+?? docs/architecture/adr/ADR-022-services-public-routing-and-locale.md
+?? docs/audit/PHASE_10A_SERVICES_PUBLIC_2026-08-29.md
+?? docs/audit/evidence/phase-10a/
+?? lang/en/services.php
+?? lang/vi/services.php
+?? resources/views/public/services/
+?? tests/Feature/Public/PublicServicesTest.php

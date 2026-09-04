@@ -1,0 +1,46 @@
+Phase 10C environment evidence
+
+PHP:
+PHP 8.4.24 (cli) (built: Jul 29 2026 06:00:34) (NTS Visual C++ 2022 x64)
+Copyright (c) The PHP Group
+Built by The PHP Group
+Zend Engine v4.4.24, Copyright (c) Zend Technologies
+    with Zend OPcache v8.4.24, Copyright (c), by Zend Technologies
+
+Composer:
+Composer version 2.10.2 2026-07-01 11:24:45
+
+Node:
+v24.19.0
+
+NPM:
+11.17.0
+
+Git HEAD:
+d09d1df1caa515dc2e89ac598381eae531aa79c7
+
+Git status:
+ M AGENTS.md
+ M resources/views/components/public/header.blade.php
+ M routes/web.php
+?? app/Http/Controllers/Public/BlogController.php
+?? app/Services/PublicSite/BlogContent.php
+?? docs/architecture/BLOG_PUBLIC_ARCHITECTURE.md
+?? docs/architecture/adr/ADR-024-blog-public-routing-and-publication.md
+?? docs/audit/evidence/phase-10c/composer-validate.txt
+?? docs/audit/evidence/phase-10c/environment.txt
+?? docs/audit/evidence/phase-10c/git-diff-check.txt
+?? docs/audit/evidence/phase-10c/git-diff-name-status.txt
+?? docs/audit/evidence/phase-10c/git-diff-stat.txt
+?? docs/audit/evidence/phase-10c/git-status.txt
+?? docs/audit/evidence/phase-10c/npm-build.txt
+?? docs/audit/evidence/phase-10c/phpunit.xml
+?? docs/audit/evidence/phase-10c/pint.txt
+?? docs/audit/evidence/phase-10c/rich-content-safety-review.txt
+?? docs/audit/evidence/phase-10c/route-list.txt
+?? docs/audit/evidence/phase-10c/tests.txt
+?? lang/en/blog.php
+?? lang/vi/blog.php
+?? resources/views/public/blog/index.blade.php
+?? resources/views/public/blog/show.blade.php
+?? tests/Feature/Public/PublicBlogTest.php

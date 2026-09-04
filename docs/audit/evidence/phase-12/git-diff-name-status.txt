@@ -1,0 +1,6 @@
+M	AGENTS.md
+M	app/Filament/Resources/Bookings/Schemas/BookingInfolist.php
+M	app/Http/Controllers/Public/BookingController.php
+M	app/Services/Booking/BookingRequestCreator.php
+M	bootstrap/app.php
+M	resources/views/components/layouts/public.blade.php

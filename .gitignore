@@ -1,66 +1,30 @@
-# 1. Environment & Credentials
+*.log
+.DS_Store
 .env
 .env.backup
 .env.production
-.env.*
-!.env.example
-auth.json
-/storage/*.key
-
-# 2. Dependencies
-/vendor
+.phpactor.json
+.phpunit.result.cache
+/.codex
+/.cursor/
+/.idea
+/.nova
+/.phpunit.cache
+/.vscode
+/.zed
+/auth.json
 /node_modules
-npm-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# 3. Frontend Build & Public Storage
 /public/build
+/public/fonts-manifest.dev.json
 /public/hot
 /public/storage
-/public/fonts-manifest.dev.json
-
-# 4. Storage Runtime, Cache, Sessions & Logs
-*.log
-/storage/logs/*.log
-/storage/framework/cache/*
-/storage/framework/sessions/*
-/storage/framework/views/*
-/storage/framework/testing/*
+/storage/*.key
 /storage/pail
-.phpunit.result.cache
-.phpunit.cache
-
-# Preserve directory structure in storage
-!/storage/framework/cache/.gitignore
-!/storage/framework/sessions/.gitignore
-!/storage/framework/views/.gitignore
-!/storage/app/public/.gitignore
-
-# 5. Local Database
-*.sqlite
-*.sqlite-journal
-database/database.sqlite
-
-# 6. Documentation & Tests
-/docs
-/tests
-phpunit.xml
-*_AUDIT_*.md
-
-# 7. IDE & Operating System Files
-.DS_Store
-Thumbs.db
-Desktop.ini
-/.vscode
-/.idea
-/.cursor
-/.zed
-/.nova
-/.codex
-.phpactor.json
+/vendor
 _ide_helper.php
-_ide_helper_models.php
-.phpstorm.meta.php
 Homestead.json
 Homestead.yaml
+Thumbs.db
+
+*.sqlite
+database/database.sqlite

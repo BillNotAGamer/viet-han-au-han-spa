@@ -1,0 +1,6 @@
+PHP: PHP 8.4.24 (cli) (built: Jul 29 2026 06:00:34) (NTS Visual C++ 2022 x64)
+Composer: Composer version 2.10.2 2026-07-01 11:24:45
+Node: v24.19.0
+npm: 11.17.0
+Branch: master
+HEAD: 2df4441dc01a5dba889cc16473296ab64ab176df

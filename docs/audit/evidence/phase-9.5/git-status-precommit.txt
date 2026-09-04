@@ -1,0 +1,12 @@
+﻿ M resources/css/app.css
+ M resources/js/app.js
+ M resources/views/components/layouts/public.blade.php
+ M resources/views/components/public/header.blade.php
+ M resources/views/components/public/language-switcher.blade.php
+ M resources/views/layouts/public.blade.php
+ M resources/views/public/home.blade.php
+ M tests/Feature/Public/PublicLayoutTest.php
+?? docs/audit/PHASE_9_5_HOMEPAGE_VISUAL_FIDELITY_2026-08-29.md
+?? docs/audit/evidence/phase-9.5/
+?? resources/images/
+EXIT_CODE=0

@@ -1,0 +1,28 @@
+﻿ app/Services/PublicSite/HomepageContent.php        |  18 +-
+ docs/audit/evidence/phase-9/browser/en-1440.png    | Bin 34543 -> 0 bytes
+ docs/audit/evidence/phase-9/browser/en-375.png     | Bin 12285 -> 0 bytes
+ docs/audit/evidence/phase-9/browser/en-768.png     | Bin 26257 -> 0 bytes
+ .../evidence/phase-9/browser/measurements.txt      |   7 -
+ docs/audit/evidence/phase-9/browser/vi-1440.png    | Bin 35530 -> 0 bytes
+ docs/audit/evidence/phase-9/browser/vi-375.png     | Bin 12786 -> 0 bytes
+ docs/audit/evidence/phase-9/browser/vi-768.png     | Bin 26854 -> 0 bytes
+ docs/audit/evidence/phase-9/environment.txt        |   2 +-
+ docs/audit/evidence/phase-9/git-diff-check.txt     |   8 +-
+ .../evidence/phase-9/git-diff-name-status.txt      |  32 +-
+ docs/audit/evidence/phase-9/git-status.txt         |  36 +-
+ docs/audit/evidence/phase-9/migrate-fresh.txt      |  56 +-
+ docs/audit/evidence/phase-9/migrate-refresh.txt    | 108 ++--
+ docs/audit/evidence/phase-9/npm-build.txt          |   2 +-
+ docs/audit/evidence/phase-9/phpunit.xml            | 686 +++++++++++----------
+ docs/audit/evidence/phase-9/tests.txt              |   2 +-
+ lang/en/home.php                                   |  16 +-
+ lang/vi/home.php                                   |  12 +-
+ resources/views/public/home.blade.php              |  36 +-
+ tests/Feature/Public/HomepageTest.php              | 198 +++++-
+ 21 files changed, 721 insertions(+), 498 deletions(-)
+
+--- STDERR ---
+warning: in the working copy of 'docs/audit/evidence/phase-9/migrate-fresh.txt', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'docs/audit/evidence/phase-9/migrate-refresh.txt', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'docs/audit/evidence/phase-9/tests.txt', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'resources/views/public/home.blade.php', CRLF will be replaced by LF the next time Git touches it

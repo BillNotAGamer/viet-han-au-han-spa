@@ -1,0 +1,2 @@
+﻿{"tool":"pint","result":"passed"}
+EXIT_CODE=0

@@ -1,0 +1,17 @@
+﻿Repository: F:\Coding\Web development\Viet Han Spa
+Date: 2026-08-30
+Baseline HEAD: b749ce0dbc8aecd11c9c05d2f6cb58a0a6df34af
+Current HEAD before Phase 10A commit: b749ce0dbc8aecd11c9c05d2f6cb58a0a6df34af
+Branch: master
+PHP:
+PHP 8.4.24 (cli) (built: Jul 29 2026 06:00:34) (NTS Visual C++ 2022 x64)
+Copyright (c) The PHP Group
+Built by The PHP Group
+Zend Engine v4.4.24, Copyright (c) Zend Technologies
+    with Zend OPcache v8.4.24, Copyright (c), by Zend Technologies
+Composer:
+Composer version 2.10.2 2026-07-01 11:24:45
+Node:
+v24.19.0
+NPM:
+11.17.0

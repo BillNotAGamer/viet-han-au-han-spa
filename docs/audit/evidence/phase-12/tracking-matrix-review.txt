@@ -1,0 +1,83 @@
+================================================================================
+PHASE 12 MARKETING TRACKING DELIVERY MATRIX AUDIT
+================================================================================
+Timestamp: 2026-09-03
+Scope: Google Tag Manager, Google Analytics 4, Meta Pixel
+Configuration Service: App\Services\Tracking\TrackingConfiguration
+
+1. CONFIGURATION SETTING KEYS
+--------------------------------------------------------------------------------
+- tracking.enabled (BOOLEAN) - Master switch for public tracking (default: false)
+- tracking.gtm_container_id (STRING) - Google Tag Manager Container ID
+- tracking.ga4_measurement_id (STRING) - Google Analytics 4 Measurement ID
+- tracking.meta_pixel_id (STRING) - Meta Pixel ID
+
+2. IDENTIFIER REGEX VALIDATION RULES
+--------------------------------------------------------------------------------
+- GTM Container ID: /^GTM-[A-Z0-9]+$/i
+  * Matches: GTM-XXXXXXX, GTM-123456
+  * Rejects: Invalid formats, XSS payloads (e.g., "GTM-123<script>alert(1)</script>")
+  * Result: Discarded if non-matching; null returned.
+
+- GA4 Measurement ID: /^G-[A-Z0-9]+$/i
+  * Matches: G-XXXXXXXXXX, G-ABCDEF12
+  * Rejects: Malformed characters, quotes, scripts
+  * Result: Discarded if non-matching; null returned.
+
+- Meta Pixel ID: /^[0-9]{5,25}$/
+  * Matches: Digits only between 5 and 25 characters
+  * Rejects: Non-numeric strings, SQL injection, script tags
+  * Result: Discarded if non-matching; null returned.
+
+3. DELIVERY MODE PRECEDENCE RESOLUTION
+--------------------------------------------------------------------------------
+Mode A: 'none' (Disabled)
+  - Condition: tracking.enabled is false OR no valid IDs configured
+  - Tags rendered: NONE
+  - GTM / GA4 / Meta Pixel scripts: SUPPRESSED
+  - GTM noscript iframe: SUPPRESSED
+  - Conversion events: SUPPRESSED
+
+Mode B: 'gtm' (GTM Priority Mode)
+  - Condition: tracking.enabled is true AND tracking.gtm_container_id is valid
+  - GTM Script (<head>): INJECTED
+  - GTM Noscript (<body>): INJECTED
+  - Direct GA4 tag: STRICTLY SUPPRESSED (even if tracking.ga4_measurement_id is configured)
+  - Direct Meta Pixel tag: STRICTLY SUPPRESSED (even if tracking.meta_pixel_id is configured)
+  - Rationale: Prevents double-counting of PageView and Lead conversions when GTM tags GA4/Meta internally.
+
+Mode C: 'direct' (Direct Delivery Mode)
+  - Condition: tracking.enabled is true AND tracking.gtm_container_id is absent/invalid AND (GA4 or Meta Pixel ID is valid)
+  - GA4 Script: INJECTED if tracking.ga4_measurement_id is valid
+  - Meta Pixel Script: INJECTED if tracking.meta_pixel_id is valid
+  - GTM Script & Noscript: SUPPRESSED
+
+4. CONVERSION EVENT MATRIX (POST-REDIRECT-GET ONLY)
+--------------------------------------------------------------------------------
+Trigger: Successful booking submission via BookingController::store -> flash session 'booking_conversion'
+Fired On: First GET request following successful PRG redirect
+Suppressed On: Validation error, subsequent page refresh, back navigation
+
+Provider      Event Name                  Payload Attributes
+--------------------------------------------------------------------------------
+GTM           booking_request_submitted   { locale: string, service_id: int }
+GA4           generate_lead               { locale: string, service_id: int }
+Meta Pixel    Lead                        { locale: string, service_id: int }
+
+5. AUTOMATED TEST EVIDENCE
+--------------------------------------------------------------------------------
+- Tests\Feature\Public\TrackingAndAttributionTest::test_tracking_disabled_by_default_and_renders_no_tags: PASS
+- Tests\Feature\Public\TrackingAndAttributionTest::test_gtm_mode_exclusive_delivery_when_all_providers_configured: PASS
+- Tests\Feature\Public\TrackingAndAttributionTest::test_direct_ga4_only_mode: PASS
+- Tests\Feature\Public\TrackingAndAttributionTest::test_direct_meta_only_mode: PASS
+- Tests\Feature\Public\TrackingAndAttributionTest::test_direct_mode_with_both_ga4_and_meta: PASS
+- Tests\Feature\Public\TrackingAndAttributionTest::test_gtm_container_id_validation_and_malicious_script_suppression: PASS
+- Tests\Feature\Public\TrackingAndAttributionTest::test_ga4_measurement_id_validation_and_malicious_script_suppression: PASS
+- Tests\Feature\Public\TrackingAndAttributionTest::test_meta_pixel_id_validation_and_malicious_script_suppression: PASS
+- Tests\Feature\Public\TrackingAndAttributionTest::test_gtm_conversion_event_fired_after_prg_and_never_on_validation_failure_or_refresh: PASS
+- Tests\Feature\Public\TrackingAndAttributionTest::test_direct_ga4_conversion_event_emits_generate_lead: PASS
+- Tests\Feature\Public\TrackingAndAttributionTest::test_direct_meta_conversion_event_emits_lead: PASS
+- Tests\Feature\Public\TrackingAndAttributionTest::test_no_double_conversion_when_all_providers_configured: PASS
+================================================================================
+AUDIT VERDICT: PASS
+================================================================================

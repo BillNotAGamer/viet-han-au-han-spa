@@ -1,0 +1,33 @@
+
+> build
+> vite build
+
+[36mvite v8.2.2 [32mbuilding client environment for production...[36m[39m
+cmd : [33m[plugin laravel:fonts] Optimized font fallbacks require the optional "fontaine" package. Install it, or set 
+"optimizedFallbacks: false" on your fonts to disable the feature.[39m
+At C:\Users\Admin\.gemini\antigravity-ide\brain\a71f500c-0b32-41b8-a2d1-0353de760168\scratch\fix_encoding.ps1:12 
+char:63
++ ... Text("$evidenceDir\npm-build.txt", (cmd /c npm run build 2>&1 | Out-S ...
++                                         ~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([33m[plugin la...e feature.[39m:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+transforming...
+✓ 6 modules transformed.
+rendering chunks...
+computing gzip size...
+public/build/manifest.json                                         1.82 kB │ gzip:  0.41 kB
+public/build/fonts-manifest.json                                   5.74 kB │ gzip:  0.71 kB
+public/build/assets/instrument-sans-400-normal-DRC__1Mx.woff2     16.86 kB
+public/build/assets/instrument-sans-500-normal-Dk9ku72i.woff2     17.23 kB
+public/build/assets/instrument-sans-600-normal-B7fBEWYG.woff2     17.40 kB
+public/build/assets/instrument-sans-400-normal-D1W7dsQl.woff      21.24 kB
+public/build/assets/instrument-sans-500-normal-Z6ESRlEs.woff      21.65 kB
+public/build/assets/instrument-sans-600-normal-B9e8oLYv.woff      21.67 kB
+public/build/assets/viet-han-logo-Cm6t92O3.png                   386.77 kB
+public/build/assets/viet-han-banner-hero-RzlzwBBv.png          2,204.07 kB
+public/build/assets/fonts-C9MNnjVw.css                             2.35 kB │ gzip:  0.38 kB
+public/build/assets/app-CXtbhyJ9.css                              81.57 kB │ gzip: 14.32 kB
+public/build/assets/app-_swCgE72.js                               52.89 kB │ gzip: 18.67 kB
+
+[32m✓ built in 557ms[39m

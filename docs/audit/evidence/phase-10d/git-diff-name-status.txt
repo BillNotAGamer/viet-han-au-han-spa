@@ -1,0 +1,4 @@
+M	AGENTS.md
+M	resources/views/components/public/footer.blade.php
+M	resources/views/components/public/header.blade.php
+M	routes/web.php

@@ -1,0 +1,15 @@
+ M AGENTS.md
+ M app/Filament/Resources/Bookings/Schemas/BookingInfolist.php
+ M app/Http/Controllers/Public/BookingController.php
+ M app/Services/Booking/BookingRequestCreator.php
+ M bootstrap/app.php
+ M resources/views/components/layouts/public.blade.php
+?? app/Http/Middleware/CaptureMarketingAttribution.php
+?? app/Services/Tracking/
+?? app/View/Components/Tracking/
+?? docs/architecture/MARKETING_TRACKING_ATTRIBUTION.md
+?? docs/architecture/adr/ADR-028-marketing-tracking-and-attribution.md
+?? docs/audit/PHASE_12_MARKETING_TRACKING_ATTRIBUTION_2026-09-03.md
+?? docs/audit/evidence/phase-12/
+?? resources/views/components/tracking/
+?? tests/Feature/Public/TrackingAndAttributionTest.php

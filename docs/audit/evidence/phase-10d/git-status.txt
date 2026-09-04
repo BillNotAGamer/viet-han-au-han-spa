@@ -1,0 +1,15 @@
+ M AGENTS.md
+ M resources/views/components/public/footer.blade.php
+ M resources/views/components/public/header.blade.php
+ M routes/web.php
+?? app/Http/Controllers/Public/StaticPageController.php
+?? app/Services/PublicSite/StaticPageContent.php
+?? docs/architecture/ABOUT_CONTACT_PUBLIC_ARCHITECTURE.md
+?? docs/architecture/adr/ADR-025-about-contact-static-page-routing.md
+?? docs/audit/PHASE_10D_ABOUT_CONTACT_PUBLIC_2026-08-31.md
+?? docs/audit/evidence/phase-10d/
+?? lang/en/pages.php
+?? lang/vi/pages.php
+?? resources/views/public/about.blade.php
+?? resources/views/public/contact.blade.php
+?? tests/Feature/Public/PublicStaticPageTest.php

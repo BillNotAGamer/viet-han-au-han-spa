@@ -1,0 +1,91 @@
+================================================================================
+PHASE 12 ATTRIBUTION STORAGE & DATA SANITIZATION AUDIT
+================================================================================
+Timestamp: 2026-09-03
+Scope: app/Services/Tracking/MarketingAttribution.php
+       app/Http/Middleware/CaptureMarketingAttribution.php
+       app/Services/Booking/BookingRequestCreator.php
+       app/Filament/Resources/Bookings/Schemas/BookingInfolist.php
+       database/migrations/2026_08_26_000022_create_bookings_table.php
+
+1. DATABASE COLUMN SCHEMA REUSE (ZERO MIGRATIONS)
+--------------------------------------------------------------------------------
+Phase 12 utilizes pre-existing columns from migration 2026_08_26_000022:
+Column Name       Type           Length / Constraints   Lifecycle Policy
+--------------------------------------------------------------------------------
+landing_page      string         500, nullable          First-touch (immutable)
+referrer          string         500, nullable          First-touch (immutable)
+utm_source        string         100, nullable          Latest-touch (mutable)
+utm_medium        string         50, nullable           Latest-touch (mutable)
+utm_campaign      string         150, nullable          Latest-touch (mutable)
+utm_content       string         100, nullable          Latest-touch (mutable)
+utm_term          string         100, nullable          Latest-touch (mutable)
+gclid             string         150, nullable          Latest-touch (mutable)
+gbraid            string         100, nullable          Latest-touch (mutable)
+wbraid            string         100, nullable          Latest-touch (mutable)
+fbclid            string         150, nullable          Latest-touch (mutable)
+fbp               string         255, nullable          Meta Browser Cookie (_fbp)
+fbc               string         255, nullable          Meta Browser Cookie (_fbc)
+
+Phase 12 migrations added: 0 (Strictly enforced)
+
+2. ATTRIBUTION LIFECYCLE SEMANTICS
+--------------------------------------------------------------------------------
+First-Touch Parameters:
+- 'landing_page': Captured on the very first incoming public request; never modified
+  during internal session browsing or subsequent page navigation.
+- 'referrer': Captured from the HTTP Referer header on the initial entry request;
+  never replaced by internal domain referrer headers.
+
+Latest-Touch Parameters:
+- Campaign UTMs ('utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term')
+- Paid Click IDs ('gclid', 'gbraid', 'wbraid', 'fbclid')
+- Updated whenever an incoming request carries new marketing query parameters.
+
+Cookie Mapping:
+- Request cookie '_fbp' is captured and persisted as 'fbp'.
+- Request cookie '_fbc' is captured and persisted as 'fbc'.
+
+3. SANITIZATION & BOUNDED TRUNCATION
+--------------------------------------------------------------------------------
+Implemented in: App\Services\Tracking\MarketingAttribution::cleanString()
+
+Sanitization steps:
+1. Discards non-scalar and array inputs.
+2. Removes ASCII and UTF-8 control characters: preg_replace('/[\x00-\x1F\x7F]/u', '', $val).
+3. Strips null bytes and whitespace.
+4. Enforces strict length truncation matching database column limits via mb_substr():
+   - landing_page: 500
+   - referrer: 500
+   - utm_source: 100
+   - utm_medium: 50
+   - utm_campaign: 150
+   - utm_content: 100
+   - utm_term: 100
+   - gclid: 150
+   - gbraid: 100
+   - wbraid: 100
+   - fbclid: 150
+   - fbp: 255
+   - fbc: 255
+
+4. FILAMENT ADMIN PRESENTATION
+--------------------------------------------------------------------------------
+File: app/Filament/Resources/Bookings/Schemas/BookingInfolist.php
+Section: "Nguồn tiếp thị & Attribution" (Marketing Attribution)
+Properties:
+- All 13 fields exposed as read-only TextEntry components.
+- Collapsible section to keep the primary booking details uncluttered.
+- Zero edit forms or mutation endpoints provided to public users or admin staff.
+
+5. AUTOMATED TEST EVIDENCE
+--------------------------------------------------------------------------------
+- Tests\Feature\Public\TrackingAndAttributionTest::test_primary_campaign_attribution_persistence_from_landing_to_booking: PASS
+- Tests\Feature\Public\TrackingAndAttributionTest::test_initial_touch_landing_page_and_referrer_are_preserved: PASS
+- Tests\Feature\Public\TrackingAndAttributionTest::test_attribution_parameters_are_strictly_truncated_to_column_lengths: PASS
+- Tests\Feature\Public\TrackingAndAttributionTest::test_meta_browser_cookies_fbp_and_fbc_persisted: PASS
+- Tests\Feature\Public\TrackingAndAttributionTest::test_filament_booking_infolist_displays_attribution_fields: PASS
+- Tests\Feature\Public\TrackingAndAttributionTest::test_attribution_middleware_skips_admin_and_livewire: PASS
+================================================================================
+AUDIT VERDICT: PASS
+================================================================================

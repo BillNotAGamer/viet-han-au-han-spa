@@ -1,0 +1,50 @@
+﻿
+ GET|HEAD / .. vi.home â€º routes/web.php:20
+ GET|HEAD admin .. filament.admin.pages.dashboard â€º Filament\Pages â€º Dashboard
+ GET|HEAD admin/login .. filament.admin.auth.login â€º Filament\Auth â€º Login
+ POST admin/logout .. filament.admin.auth.logout â€º Filament\Auth â€º LogoutController
+ GET|HEAD admin/media .. filament.admin.resources.media.index â€º App\Filament\Resources\Media\Pages\ListMedia
+ GET|HEAD admin/media/create filament.admin.resources.media.create â€º App\Filament\Resources\Media\Pages\CreateMedia
+ GET|HEAD admin/media/{record}/edit filament.admin.resources.media.edit â€º App\Filament\Resources\Media\Pages\EditMeâ€¦
+ GET|HEAD admin/pages .. filament.admin.resources.pages.index â€º App\Filament\Resources\Pages\Pages\ListPages
+ GET|HEAD admin/pages/create . filament.admin.resources.pages.create â€º App\Filament\Resources\Pages\Pages\CreatePage
+ GET|HEAD admin/pages/{record}/edit filament.admin.resources.pages.edit â€º App\Filament\Resources\Pages\Pages\EditPaâ€¦
+ GET|HEAD admin/post-categories filament.admin.resources.post-categories.index â€º App\Filament\Resources\PostCategorâ€¦
+ GET|HEAD admin/post-categories/create filament.admin.resources.post-categories.create â€º App\Filament\Resources\Posâ€¦
+ GET|HEAD admin/post-categories/{record}/edit filament.admin.resources.post-categories.edit â€º App\Filament\Resourceâ€¦
+ GET|HEAD admin/posts .. filament.admin.resources.posts.index â€º App\Filament\Resources\Posts\Pages\ListPosts
+ GET|HEAD admin/posts/create . filament.admin.resources.posts.create â€º App\Filament\Resources\Posts\Pages\CreatePost
+ GET|HEAD admin/posts/{record}/edit filament.admin.resources.posts.edit â€º App\Filament\Resources\Posts\Pages\EditPoâ€¦
+ GET|HEAD admin/service-categories filament.admin.resources.service-categories.index â€º App\Filament\Resources\Serviâ€¦
+ GET|HEAD admin/service-categories/create filament.admin.resources.service-categories.create â€º App\Filament\Resourcâ€¦
+ GET|HEAD admin/service-categories/{record}/edit filament.admin.resources.service-categories.edit â€º App\Filament\Reâ€¦
+ GET|HEAD admin/services filament.admin.resources.services.index â€º App\Filament\Resources\Services\Pages\ListServicâ€¦
+ GET|HEAD admin/services/create filament.admin.resources.services.create â€º App\Filament\Resources\Services\Pages\Crâ€¦
+ GET|HEAD admin/services/{record}/edit filament.admin.resources.services.edit â€º App\Filament\Resources\Services\Pagâ€¦
+ GET|HEAD admin/site-settings filament.admin.resources.site-settings.index â€º App\Filament\Resources\SiteSettings\Paâ€¦
+ GET|HEAD admin/site-settings/create filament.admin.resources.site-settings.create â€º App\Filament\Resources\SiteSetâ€¦
+ GET|HEAD admin/site-settings/{record}/edit filament.admin.resources.site-settings.edit â€º App\Filament\Resources\Siâ€¦
+ GET|HEAD admin/training-courses filament.admin.resources.training-courses.index â€º App\Filament\Resources\TrainingCâ€¦
+ GET|HEAD admin/training-courses/create filament.admin.resources.training-courses.create â€º App\Filament\Resources\Tâ€¦
+ GET|HEAD admin/training-courses/{record}/edit filament.admin.resources.training-courses.edit â€º App\Filament\Resourâ€¦
+ GET|HEAD admin/training-inquiries filament.admin.resources.training-inquiries.index â€º App\Filament\Resources\Trainâ€¦
+ GET|HEAD admin/training-inquiries/{record} filament.admin.resources.training-inquiries.view â€º App\Filament\Resourcâ€¦
+ GET|HEAD en .. en.home â€º routes/web.php:27
+ GET|HEAD filament/exports/{export}/download .. filament.exports.download â€º Filament\Actions â€º DownloadExport
+ GET|HEAD filament/imports/{import}/failed-rows/download filament.imports.failed-rows.download â€º Filament\Actions â€¦
+ GET|HEAD livewire-a141b8f1/css/{component}.css vendor/livewire/livewire/src/Features/SupportCssModules/SupportCssMâ€¦
+ GET|HEAD livewire-a141b8f1/css/{component}.global.css vendor/livewire/livewire/src/Features/SupportCssModules/Suppâ€¦
+ GET|HEAD livewire-a141b8f1/js/{component}.js vendor/livewire/livewire/src/Features/SupportJsModules/SupportJsModulâ€¦
+ GET|HEAD livewire-a141b8f1/livewire.csp.min.js.map .. Livewire\Mechanisms â€º FrontendAssets@cspMaps
+ GET|HEAD livewire-a141b8f1/livewire.js .. Livewire\Mechanisms â€º FrontendAssets@returnJavaScriptAsFile
+ GET|HEAD livewire-a141b8f1/livewire.min.js.map .. Livewire\Mechanisms â€º FrontendAssets@maps
+ GET|HEAD livewire-a141b8f1/preview-file/{filename} livewire.preview-file â€º Livewire\Features â€º FilePreviewControllâ€¦
+ POST livewire-a141b8f1/update .. default-livewire.update â€º Livewire\Mechanisms â€º HandleRequests@handleUpdate
+ POST livewire-a141b8f1/upload-file .. livewire.upload-file â€º Livewire\Features â€º FileUploadController@handle
+ GET|HEAD storage/{path} storage.local â€º vendor/laravel/framework/src/Illuminate/Filesystem/FilesystemServiceProvidâ€¦
+ PUT storage/{path} storage.local.upload â€º vendor/laravel/framework/src/Illuminate/Filesystem/FilesystemServicâ€¦
+ GET|HEAD up .. vendor/laravel/framework/src/Illuminate/Foundation/Configuration/ApplicationBuilder.php:224
+ GET|HEAD vi .. routes/web.php:14
+
+ Showing [46] routes
+

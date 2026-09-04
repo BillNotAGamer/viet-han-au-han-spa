@@ -1,0 +1,24 @@
+Phase 11 booking admin review
+
+Filament resource:
+- App\Filament\Resources\Bookings\BookingResource
+- Admin path: /admin/bookings
+
+Staff surface:
+- List page is available to admin users.
+- View page is available to admin users.
+- Create page is not exposed.
+- Generic edit page is not exposed.
+- Table default sort is created_at DESC.
+- Useful columns include created_at, customer_name, phone, service, preferred_date, preferred_time, and status.
+- Filters include status, service, preferred_date, and trashed records.
+
+Workflow:
+- BookingWorkflow can mark NEW requests as CONTACTED.
+- BookingWorkflow can mark NEW/CONTACTED requests as CONFIRMED.
+- BookingWorkflow can mark non-terminal requests as CANCELLED.
+- Admin note can be updated separately.
+
+Deletion:
+- No DeleteAction is exposed in the Booking resource table.
+- BookingPolicy prohibits delete and force-delete.

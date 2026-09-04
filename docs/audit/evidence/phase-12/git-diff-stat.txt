@@ -1,0 +1,7 @@
+ AGENTS.md                                          | 12 +++++++++++
+ .../Resources/Bookings/Schemas/BookingInfolist.php | 17 ++++++++++++++--
+ app/Http/Controllers/Public/BookingController.php  |  8 ++++++--
+ app/Services/Booking/BookingRequestCreator.php     | 23 ++++++++++++++++++----
+ bootstrap/app.php                                  |  4 ++++
+ .../views/components/layouts/public.blade.php      |  2 ++
+ 6 files changed, 58 insertions(+), 8 deletions(-)

@@ -1,0 +1,1 @@
+﻿No prohibited DB/Eloquent lookup patterns found in resources/views/public/services/index.blade.php or resources/views/public/services/show.blade.php.
