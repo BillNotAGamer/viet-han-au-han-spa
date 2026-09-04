@@ -67,9 +67,22 @@ class BookingInfolist
                         TextEntry::make('utm_campaign')->label('UTM Campaign')->placeholder('—'),
                     ]),
                     Grid::make(3)->schema([
-                        TextEntry::make('landing_page')->label('Landing Page')->placeholder('—'),
-                        TextEntry::make('referrer')->label('Referrer')->placeholder('—'),
+                        TextEntry::make('utm_content')->label('UTM Content')->placeholder('—'),
+                        TextEntry::make('utm_term')->label('UTM Term')->placeholder('—'),
+                        TextEntry::make('fbclid')->label('Facebook Click ID')->placeholder('—'),
+                    ]),
+                    Grid::make(3)->schema([
                         TextEntry::make('gclid')->label('Google Click ID')->placeholder('—'),
+                        TextEntry::make('gbraid')->label('GBRAID')->placeholder('—'),
+                        TextEntry::make('wbraid')->label('WBRAID')->placeholder('—'),
+                    ]),
+                    Grid::make(2)->schema([
+                        TextEntry::make('fbp')->label('Meta Browser ID (_fbp)')->placeholder('—'),
+                        TextEntry::make('fbc')->label('Meta Click ID (_fbc)')->placeholder('—'),
+                    ]),
+                    Grid::make(2)->schema([
+                        TextEntry::make('landing_page')->label('Landing Page')->placeholder('—')->wrap(),
+                        TextEntry::make('referrer')->label('Referrer')->placeholder('—')->wrap(),
                     ]),
                 ]),
         ]);

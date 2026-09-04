@@ -15,8 +15,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ isset($title) ? $title . ' — ' . __('common.brand_name') : __('common.brand_name') . ' — ' . __('common.tagline') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <x-tracking.head />
 </head>
 <body class="min-h-full flex flex-col bg-brand-ivory text-brand-text font-sans antialiased selection:bg-brand-gold-light selection:text-brand-primary">
+    <x-tracking.body />
     <!-- Accessible Skip Link (Targeting single primary #main-content) -->
     <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-5 focus:py-3 focus:bg-brand-primary focus:text-white focus:font-semibold focus:rounded-lg focus:shadow-xl focus:ring-2 focus:ring-brand-gold focus:outline-none transition">
         {{ __('navigation.skip_to_content') }}

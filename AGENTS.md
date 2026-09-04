@@ -244,6 +244,18 @@ Do **NOT** add arbitrary Composer or npm packages. Any new dependency must:
    - Public Booking Blade templates must perform no direct database or Eloquent queries.
    - Do not claim realtime availability without an availability engine.
 
+16. **Marketing Tracking & Attribution Standards (Phase 12):**
+   - Tracking injection is globally gated by the public site setting `tracking.enabled` (boolean, default false).
+   - Canonical tracking setting keys: `tracking.gtm_container_id`, `tracking.ga4_measurement_id`, `tracking.meta_pixel_id`, `tracking.enabled`.
+   - GTM Priority: When `tracking.gtm_container_id` is set and valid, GTM script and noscript are rendered exclusively; direct GA4 and direct Meta Pixel tags are strictly suppressed to prevent duplicate events.
+   - Direct Mode: Direct GA4 and/or Meta Pixel tags are rendered if and only if `tracking.gtm_container_id` is absent/invalid and respective IDs are valid.
+   - Strict Regex Validation: Identifier values must match strict patterns: GTM (`/^GTM-[A-Z0-9]+$/i`), GA4 (`/^G-[A-Z0-9]+$/i`), Meta Pixel (`/^[0-9]{5,25}$/`). Invalid values are dropped and never injected into templates.
+   - PII Prohibition: No Personally Identifiable Information (customer name, phone, email, notes) may ever appear in tracking scripts, dataLayer events, or client-side payload objects.
+   - PRG-Only Conversion Dispatch: Conversion tracking events (`booking_request_submitted`, `generate_lead`, `Lead`) fire strictly once upon successful Post-Redirect-Get session flash; they must never fire on validation failure or subsequent page refresh.
+   - Session Attribution Lifecycle: First-touch attribution (`landing_page`, `referrer`) is captured once and preserved; latest-touch attribution (`utm_*`, click IDs `gclid`, `fbclid`, `gbraid`, `wbraid`) updates on each visit. Meta cookies `_fbp` and `_fbc` map to `fbp` and `fbc`.
+   - String Truncation & Sanitization: All captured parameters are strictly stripped of control characters and truncated to schema-defined column limits prior to persistence.
+   - Admin & Filament Isolation: All tracking scripts and attribution middleware are strictly excluded from `/admin` and `/livewire` endpoints.
+
 ### Phase 9 Homepage Invariants
 - **Exact-Locale Content**: Public Homepage content requires exact requested locale; Vietnamese content never leaks or falls back to `/en`.
 - **Publication & Scheduling**: Only `PUBLISHED` records are queried; future scheduled `published_at > now()` courses and posts must never leak publicly.

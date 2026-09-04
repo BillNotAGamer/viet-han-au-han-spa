@@ -1,5 +1,0 @@
- AGENTS.md                                          |  9 +++++
- resources/views/components/public/footer.blade.php | 39 +++++++++++++---------
- resources/views/components/public/header.blade.php |  5 +--
- routes/web.php                                     |  5 +++
- 4 files changed, 41 insertions(+), 17 deletions(-)

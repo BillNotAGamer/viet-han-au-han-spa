@@ -1,9 +1,0 @@
- M AGENTS.md
- M resources/css/app.css
- M resources/views/components/public/header.blade.php
-?? docs/architecture/PUBLIC_NAVIGATION_INTEGRATION.md
-?? docs/architecture/adr/ADR-026-phase10-public-navigation-integration.md
-?? docs/audit/PHASE_10E_PUBLIC_NAVIGATION_INTEGRATION_2026-08-31.md
-?? docs/audit/PHASE_10_PUBLIC_SURFACE_CLOSURE_2026-09-01.md
-?? docs/audit/evidence/phase-10e/
-?? tests/Feature/Public/PublicNavigationIntegrationTest.php

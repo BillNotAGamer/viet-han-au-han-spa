@@ -8,6 +8,7 @@ use App\Enums\BookingStatus;
 use App\Models\Booking;
 use App\Models\Service;
 use App\Models\ServicePrice;
+use App\Services\Tracking\MarketingAttribution;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -17,7 +18,8 @@ class BookingRequestCreator
     public const BUSINESS_TIMEZONE = 'Asia/Ho_Chi_Minh';
 
     public function __construct(
-        protected BookingServiceCatalog $serviceCatalog
+        protected BookingServiceCatalog $serviceCatalog,
+        protected MarketingAttribution $marketingAttribution
     ) {}
 
     /**
@@ -29,7 +31,9 @@ class BookingRequestCreator
             throw new \InvalidArgumentException('Selected service is not publicly bookable for this locale.');
         }
 
-        return DB::transaction(function () use ($data, $locale, $request): Booking {
+        $attribution = $this->marketingAttribution->getAttributionData($request);
+
+        return DB::transaction(function () use ($data, $locale, $attribution): Booking {
             $service = Service::query()
                 ->with([
                     'translations' => fn ($query) => $query->where('locale', $locale),
@@ -62,8 +66,19 @@ class BookingRequestCreator
                 'admin_note' => null,
                 'status' => BookingStatus::NEW,
                 'locale' => $locale,
-                'landing_page' => $request?->fullUrl(),
-                'referrer' => $request?->headers->get('referer'),
+                'utm_source' => $attribution['utm_source'] ?? null,
+                'utm_medium' => $attribution['utm_medium'] ?? null,
+                'utm_campaign' => $attribution['utm_campaign'] ?? null,
+                'utm_content' => $attribution['utm_content'] ?? null,
+                'utm_term' => $attribution['utm_term'] ?? null,
+                'gclid' => $attribution['gclid'] ?? null,
+                'gbraid' => $attribution['gbraid'] ?? null,
+                'wbraid' => $attribution['wbraid'] ?? null,
+                'fbclid' => $attribution['fbclid'] ?? null,
+                'fbp' => $attribution['fbp'] ?? null,
+                'fbc' => $attribution['fbc'] ?? null,
+                'landing_page' => $attribution['landing_page'] ?? null,
+                'referrer' => $attribution['referrer'] ?? null,
             ]);
         });
     }

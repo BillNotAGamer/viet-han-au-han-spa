@@ -1,7 +1,0 @@
-﻿warning: in the working copy of 'resources/css/app.css', CRLF will be replaced by LF the next time Git touches it
-warning: in the working copy of 'resources/js/app.js', CRLF will be replaced by LF the next time Git touches it
-warning: in the working copy of 'resources/views/components/layouts/public.blade.php', CRLF will be replaced by LF the next time Git touches it
-warning: in the working copy of 'resources/views/components/public/language-switcher.blade.php', CRLF will be replaced by LF the next time Git touches it
-warning: in the working copy of 'resources/views/layouts/public.blade.php', CRLF will be replaced by LF the next time Git touches it
-warning: in the working copy of 'resources/views/public/home.blade.php', CRLF will be replaced by LF the next time Git touches it
-EXIT_CODE=0

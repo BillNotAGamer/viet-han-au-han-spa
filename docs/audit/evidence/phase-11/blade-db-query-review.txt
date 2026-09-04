@@ -1,1 +1,0 @@
-PASS: No direct DB/Eloquent query tokens found in Phase 11 public Booking Blade/shared booking CTA files.

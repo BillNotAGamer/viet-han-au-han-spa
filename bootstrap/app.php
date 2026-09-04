@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\CaptureMarketingAttribution;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -15,6 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'set.locale' => SetLocale::class,
+        ]);
+        $middleware->web(append: [
+            CaptureMarketingAttribution::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

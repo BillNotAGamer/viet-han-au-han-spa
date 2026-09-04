@@ -43,10 +43,14 @@ class BookingController extends Controller
     {
         $locale = app()->getLocale();
 
-        $this->bookingCreator->create($request->validatedBookingData(), $locale, $request);
+        $booking = $this->bookingCreator->create($request->validatedBookingData(), $locale, $request);
 
         return redirect()
             ->route($locale === 'en' ? 'en.booking.create' : 'vi.booking.create')
-            ->with('booking_status', __('booking.success'));
+            ->with('booking_status', __('booking.success'))
+            ->with('booking_conversion', [
+                'locale' => $locale,
+                'service_id' => $booking->service_id,
+            ]);
     }
 }
