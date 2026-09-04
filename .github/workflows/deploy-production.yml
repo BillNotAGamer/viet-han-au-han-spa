@@ -1,0 +1,145 @@
+name: Deploy Production
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+concurrency:
+  group: viethanauhanspa-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  verify-and-build:
+    name: Verify and Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          coverage: none
+          tools: composer:v2
+
+      - name: Validate Composer definition
+        run: composer validate --no-interaction
+
+      - name: Install PHP dependencies
+        run: |
+          composer install \
+            --no-interaction \
+            --prefer-dist \
+            --no-progress
+
+      - name: Verify Laravel boots
+        run: php artisan about
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Build production frontend
+        run: npm run build
+
+      - name: Verify Vite manifest
+        run: test -f public/build/manifest.json
+
+      - name: Package frontend build
+        run: tar -czf public-build.tar.gz public/build
+
+      - name: Upload frontend artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-public-build
+          path: public-build.tar.gz
+          retention-days: 1
+
+  deploy:
+    name: Deploy to Vietnix
+    needs: verify-and-build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download frontend artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: production-public-build
+
+      - name: Configure SSH
+        env:
+          PRIVATE_KEY: ${{ secrets.VIETNIX_SSH_PRIVATE_KEY }}
+          KNOWN_HOSTS: ${{ secrets.VIETNIX_KNOWN_HOSTS }}
+        run: |
+          mkdir -p ~/.ssh
+
+          printf '%s\n' "$PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Deploy Laravel source
+        env:
+          HOST: ${{ secrets.VIETNIX_HOST }}
+          USER: ${{ secrets.VIETNIX_USER }}
+          PORT: ${{ secrets.VIETNIX_PORT }}
+          APP_PATH: ${{ secrets.VIETNIX_APP_PATH }}
+        run: |
+          ssh \
+            -p "$PORT" \
+            "$USER@$HOST" \
+            "cd '$APP_PATH' && ./deploy.sh"
+
+      - name: Upload compiled frontend
+        env:
+          HOST: ${{ secrets.VIETNIX_HOST }}
+          USER: ${{ secrets.VIETNIX_USER }}
+          PORT: ${{ secrets.VIETNIX_PORT }}
+          APP_PATH: ${{ secrets.VIETNIX_APP_PATH }}
+        run: |
+          scp \
+            -P "$PORT" \
+            public-build.tar.gz \
+            "$USER@$HOST:$APP_PATH/public-build.tar.gz"
+
+          ssh \
+            -p "$PORT" \
+            "$USER@$HOST" \
+            "cd '$APP_PATH' \
+             && rm -rf public/build \
+             && tar -xzf public-build.tar.gz \
+             && rm -f public-build.tar.gz"
+
+      - name: Production health checks
+        run: |
+          curl \
+            --fail \
+            --silent \
+            --show-error \
+            --max-time 30 \
+            https://viethanauhanspa.com/ \
+            > /dev/null
+
+          curl \
+            --fail \
+            --silent \
+            --show-error \
+            --max-time 30 \
+            https://viethanauhanspa.com/admin/login \
+            > /dev/null
+
+          echo "Production health checks passed."
