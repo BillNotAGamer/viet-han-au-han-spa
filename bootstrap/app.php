@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\CaptureMarketingAttribution;
+use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -14,6 +15,20 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $trustedProxies = env('TRUSTED_PROXIES');
+        if ($trustedProxies) {
+            $middleware->trustProxies(
+                at: array_map('trim', explode(',', (string) $trustedProxies)),
+                headers: Request::HEADER_X_FORWARDED_FOR |
+                         Request::HEADER_X_FORWARDED_HOST |
+                         Request::HEADER_X_FORWARDED_PORT |
+                         Request::HEADER_X_FORWARDED_PROTO |
+                         Request::HEADER_X_FORWARDED_AWS_ELB,
+            );
+        }
+
+        $middleware->append(SecurityHeaders::class);
+
         $middleware->alias([
             'set.locale' => SetLocale::class,
         ]);

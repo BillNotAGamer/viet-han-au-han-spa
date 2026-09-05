@@ -265,6 +265,15 @@ Do **NOT** add arbitrary Composer or npm packages. Any new dependency must:
    - Structured data integrity: zero fabricated reviews, ratings, hours, or coordinates in JSON-LD; LocalBusiness/BeautySalon uses allow-listed public settings only; BlogPosting uses safe public fields.
    - Blade isolation: public Blade templates and components must perform zero direct database or Eloquent queries for SEO composition.
 
+18. **Production Hardening & Security Standards (Phase 14):**
+   - Main branch delivery: A push to `origin/main` deploys to production; all changes must pass automated gates before push.
+   - Reverse proxy & IP resolution: Never trust arbitrary client-forwarded IP headers; proxy trust is strictly gated by `TRUSTED_PROXIES` configuration.
+   - Security headers: Baseline HTTP security headers (`X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy`) apply globally via `SecurityHeaders` middleware; HSTS is production-only over HTTPS.
+   - Content Security Policy: Enforcing CSP is deferred pending dedicated tracking/admin/livewire nonce architecture.
+   - Secret hygiene: Never commit `.env`, runtime databases, private keys, or credentials into version control; `APP_DEBUG` must remain `false` in production.
+   - Administrative isolation: Admin panel at `/admin` is gated by `users.is_admin`, with public registration prohibited and login attempts throttled.
+   - Media boundary: Uploads are restricted to raster images (JPEG, PNG, WebP) with server-side byte verification and randomized storage paths.
+
 ### Phase 9 Homepage Invariants
 - **Exact-Locale Content**: Public Homepage content requires exact requested locale; Vietnamese content never leaks or falls back to `/en`.
 - **Publication & Scheduling**: Only `PUBLISHED` records are queried; future scheduled `published_at > now()` courses and posts must never leak publicly.
