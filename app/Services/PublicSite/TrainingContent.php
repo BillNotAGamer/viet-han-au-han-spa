@@ -74,6 +74,9 @@ class TrainingContent
             'hero_media' => $this->mediaResolver->resolve($course->heroMedia, $locale),
             'gallery' => $this->presentGallery($course->media, $locale),
             'localized_urls' => $this->localizedUrls($course),
+            'seo_title' => $translation->seo_title,
+            'seo_description' => $translation->seo_description,
+            'seo_alternates' => $this->seoAlternates($course),
         ];
     }
 
@@ -274,5 +277,19 @@ class TrainingContent
             'vi' => $vi ? route('vi.training.show', ['slug' => $vi->slug]) : route('vi.training.index'),
             'en' => $en ? route('en.training.show', ['slug' => $en->slug]) : route('en.training.index'),
         ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function seoAlternates(TrainingCourse $course): array
+    {
+        $vi = $course->translations->firstWhere('locale', 'vi');
+        $en = $course->translations->firstWhere('locale', 'en');
+
+        return array_filter([
+            'vi' => $vi && ! empty($vi->slug) ? route('vi.training.show', ['slug' => $vi->slug]) : null,
+            'en' => $en && ! empty($en->slug) ? route('en.training.show', ['slug' => $en->slug]) : null,
+        ]);
     }
 }

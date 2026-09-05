@@ -1,4 +1,4 @@
-<x-layouts.public>
+<x-layouts.public :seo="$seo ?? null">
     {{-- 1. HERO SECTION (Zen-Style Full-Width Cinematic Hero with Local Banner Image) --}}
     @php
         $defaultHeroUrl = Vite::asset('resources/images/homepage/viet-han-banner-hero.png');

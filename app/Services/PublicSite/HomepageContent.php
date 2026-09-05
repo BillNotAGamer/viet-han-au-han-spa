@@ -58,6 +58,8 @@ class HomepageContent
 
         return [
             'title' => $translation->title,
+            'seo_title' => $translation->seo_title,
+            'seo_description' => $translation->seo_description,
             'excerpt' => $this->deriveSafeExcerpt($translation->content, 240),
             'content_raw' => $translation->content,
         ];

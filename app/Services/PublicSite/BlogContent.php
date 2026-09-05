@@ -76,6 +76,9 @@ class BlogContent
             'hero_media' => $this->mediaResolver->resolve($post->heroMedia, $locale),
             'gallery' => $this->presentGallery($post->media, $locale),
             'localized_urls' => $this->localizedUrls($post),
+            'seo_title' => $translation->seo_title,
+            'seo_description' => $translation->seo_description,
+            'seo_alternates' => $this->seoAlternates($post),
         ];
     }
 
@@ -197,5 +200,19 @@ class BlogContent
             'vi' => $vi ? route('vi.blog.show', ['slug' => $vi->slug]) : route('vi.blog.index'),
             'en' => $en ? route('en.blog.show', ['slug' => $en->slug]) : route('en.blog.index'),
         ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function seoAlternates(Post $post): array
+    {
+        $vi = $post->translations->firstWhere('locale', 'vi');
+        $en = $post->translations->firstWhere('locale', 'en');
+
+        return array_filter([
+            'vi' => $vi && ! empty($vi->slug) ? route('vi.blog.show', ['slug' => $vi->slug]) : null,
+            'en' => $en && ! empty($en->slug) ? route('en.blog.show', ['slug' => $en->slug]) : null,
+        ]);
     }
 }

@@ -87,7 +87,24 @@ class ServicesContent
             'gallery' => $this->presentGallery($service->media, $locale),
             'prices' => $this->presentPrices($service->prices, $locale),
             'localized_urls' => $this->localizedUrls($service),
+            'seo_title' => $translation->seo_title,
+            'seo_description' => $translation->seo_description,
+            'seo_alternates' => $this->seoAlternates($service),
         ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function seoAlternates(Service $service): array
+    {
+        $vi = $service->translations->firstWhere('locale', 'vi');
+        $en = $service->translations->firstWhere('locale', 'en');
+
+        return array_filter([
+            'vi' => $vi && ! empty($vi->slug) ? route('vi.services.show', ['slug' => $vi->slug]) : null,
+            'en' => $en && ! empty($en->slug) ? route('en.services.show', ['slug' => $en->slug]) : null,
+        ]);
     }
 
     /**

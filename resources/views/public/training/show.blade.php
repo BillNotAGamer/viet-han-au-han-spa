@@ -1,4 +1,4 @@
-<x-layouts.public :title="$title" header-mode="solid" :contact-href="$contactHref">
+<x-layouts.public :title="$title" header-mode="solid" :contact-href="$contactHref" :seo="$seo ?? null">
     <article>
         <section class="relative bg-[#181312] pt-28 sm:pt-32 lg:pt-36 text-white">
             @if(!empty($course['hero_media']['url']))

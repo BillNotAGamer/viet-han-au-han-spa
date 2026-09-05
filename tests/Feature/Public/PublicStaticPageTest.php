@@ -207,8 +207,6 @@ class PublicStaticPageTest extends TestCase
         $page = $this->createPageWithTranslation('about', ContentStatus::PUBLISHED, 'vi', 'Rich Static Page');
         $page->translationFor('vi')->update([
             'content' => '<p>Visible page content.</p><script>alert("x")</script><strong>Styled page text</strong><img src=x onerror=alert(1)>',
-            'seo_title' => 'Static SEO Title Must Not Render',
-            'seo_description' => 'Static SEO Description Must Not Render',
         ]);
 
         $this->get('/gioi-thieu')
@@ -218,9 +216,7 @@ class PublicStaticPageTest extends TestCase
             ->assertDontSee('<script>alert', false)
             ->assertDontSee('alert("x")')
             ->assertDontSee('<strong>', false)
-            ->assertDontSee('onerror', false)
-            ->assertDontSee('Static SEO Title Must Not Render')
-            ->assertDontSee('Static SEO Description Must Not Render');
+            ->assertDontSee('onerror', false);
     }
 
     public function test_static_page_language_switch_uses_fixed_route_pairs_and_home_fallback_for_missing_translation(): void

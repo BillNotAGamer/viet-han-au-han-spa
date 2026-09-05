@@ -256,6 +256,15 @@ Do **NOT** add arbitrary Composer or npm packages. Any new dependency must:
    - String Truncation & Sanitization: All captured parameters are strictly stripped of control characters and truncated to schema-defined column limits prior to persistence.
    - Admin & Filament Isolation: All tracking scripts and attribution middleware are strictly excluded from `/admin` and `/livewire` endpoints.
 
+17. **Technical SEO Standards (Phase 13):**
+   - Exact-locale metadata: Vietnamese SEO content must never leak or fall back under English URLs.
+   - Deterministic title/description fallback: `seo_title` -> localized entity title -> brand tagline; `seo_description` -> localized excerpt -> omit tag.
+   - Canonical URL hygiene: absolute HTTPS production URLs stripping all campaign/tracking parameters (`utm_*`, click IDs) while preserving legitimate pagination (`page=N` where N > 1).
+   - Detail hreflang pairing: emit `vi`, `en`, and `x-default` (`vi`) only when exact translations exist; never emit fake alternate URLs for single-locale entities.
+   - Sitemap public eligibility: `sitemap.xml` includes only `PUBLISHED` canonical pages with `published_at <= now()` where applicable; zero draft, archived, private, or admin paths.
+   - Structured data integrity: zero fabricated reviews, ratings, hours, or coordinates in JSON-LD; LocalBusiness/BeautySalon uses allow-listed public settings only; BlogPosting uses safe public fields.
+   - Blade isolation: public Blade templates and components must perform zero direct database or Eloquent queries for SEO composition.
+
 ### Phase 9 Homepage Invariants
 - **Exact-Locale Content**: Public Homepage content requires exact requested locale; Vietnamese content never leaks or falls back to `/en`.
 - **Publication & Scheduling**: Only `PUBLISHED` records are queried; future scheduled `published_at > now()` courses and posts must never leak publicly.

@@ -48,10 +48,13 @@ class StaticPageContent
         return [
             'key' => $page->key,
             'title' => $translation->title,
+            'seo_title' => $translation->seo_title,
+            'seo_description' => $translation->seo_description,
             'content' => $this->plainTextParagraphs($translation->content),
             'lead_media' => $media[0] ?? null,
             'gallery' => array_slice($media, 1),
             'localized_urls' => $this->localizedUrls($page->key, $page),
+            'seo_alternates' => $this->seoAlternates($page->key, $page),
         ];
     }
 
@@ -218,5 +221,19 @@ class StaticPageContent
             'vi' => $page->translations->firstWhere('locale', 'vi') ? route($viRoute) : route('vi.home'),
             'en' => $page->translations->firstWhere('locale', 'en') ? route($enRoute) : route('en.home'),
         ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function seoAlternates(string $key, Page $page): array
+    {
+        $viRoute = $key === 'contact' ? 'vi.contact' : 'vi.about';
+        $enRoute = $key === 'contact' ? 'en.contact' : 'en.about';
+
+        return array_filter([
+            'vi' => $page->translations->firstWhere('locale', 'vi') ? route($viRoute) : null,
+            'en' => $page->translations->firstWhere('locale', 'en') ? route($enRoute) : null,
+        ]);
     }
 }

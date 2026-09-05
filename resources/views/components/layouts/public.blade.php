@@ -2,10 +2,12 @@
     'title' => null,
     'headerMode' => 'overlay',
     'contactHref' => null,
+    'seo' => null,
 ])
 
 @php
     $bookingHref = $contactHref ?? (app()->getLocale() === 'en' ? route('en.booking.create') : route('vi.booking.create'));
+    $seoMetadata = $seo ?? ($__data['seo'] ?? null);
 @endphp
 
 <!DOCTYPE html>
@@ -13,7 +15,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ isset($title) ? $title . ' — ' . __('common.brand_name') : __('common.brand_name') . ' — ' . __('common.tagline') }}</title>
+    <x-seo.head :seo="$seoMetadata" :title="$title" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <x-tracking.head />
 </head>

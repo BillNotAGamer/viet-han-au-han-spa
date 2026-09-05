@@ -6,9 +6,17 @@ use App\Http\Controllers\Public\BlogController;
 use App\Http\Controllers\Public\BookingController;
 use App\Http\Controllers\Public\HomeController;
 use App\Http\Controllers\Public\ServiceController;
+use App\Http\Controllers\Public\SitemapController;
 use App\Http\Controllers\Public\StaticPageController;
 use App\Http\Controllers\Public\TrainingController;
 use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Public Technical SEO Routes
+|--------------------------------------------------------------------------
+*/
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('public.sitemap');
 
 /*
 |--------------------------------------------------------------------------

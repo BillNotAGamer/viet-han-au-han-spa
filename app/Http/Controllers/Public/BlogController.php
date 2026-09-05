@@ -6,13 +6,15 @@ namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use App\Services\PublicSite\BlogContent;
+use App\Services\Seo\SeoManager;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class BlogController extends Controller
 {
     public function __construct(
-        protected BlogContent $blogContent
+        protected BlogContent $blogContent,
+        protected SeoManager $seoManager
     ) {}
 
     public function index(Request $request): View
@@ -24,11 +26,15 @@ class BlogController extends Controller
             'en' => route('en.blog.index'),
         ]);
 
+        $page = (int) $request->query('page', 1);
+        $seo = $this->seoManager->composeForListing('blog', $locale, $page);
+
         return view('public.blog.index', [
             'locale' => $locale,
             'title' => __('blog.meta.index_title'),
             'posts' => $this->blogContent->listingForLocale($locale),
             'contactHref' => $locale === 'en' ? route('en.booking.create') : route('vi.booking.create'),
+            'seo' => $seo,
         ]);
     }
 
@@ -41,11 +47,14 @@ class BlogController extends Controller
 
         $request->attributes->set('localized_urls', $post['localized_urls']);
 
+        $seo = $this->seoManager->composeForDetail('blog', $locale, $post);
+
         return view('public.blog.show', [
             'locale' => $locale,
             'title' => $post['title'],
             'post' => $post,
             'contactHref' => $locale === 'en' ? route('en.booking.create') : route('vi.booking.create'),
+            'seo' => $seo,
         ]);
     }
 }

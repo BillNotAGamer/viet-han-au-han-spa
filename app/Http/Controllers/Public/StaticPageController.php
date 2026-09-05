@@ -6,13 +6,15 @@ namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use App\Services\PublicSite\StaticPageContent;
+use App\Services\Seo\SeoManager;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class StaticPageController extends Controller
 {
     public function __construct(
-        protected StaticPageContent $staticPageContent
+        protected StaticPageContent $staticPageContent,
+        protected SeoManager $seoManager
     ) {}
 
     public function about(Request $request): View
@@ -34,12 +36,15 @@ class StaticPageController extends Controller
 
         $request->attributes->set('localized_urls', $page['localized_urls']);
 
+        $seo = $this->seoManager->composeForStaticPage($key, $locale, $page);
+
         return view($view, [
             'locale' => $locale,
             'title' => $page['title'],
             'page' => $page,
             'contact' => $key === 'contact' ? $this->staticPageContent->contactSettings() : null,
             'contactHref' => $locale === 'en' ? route('en.booking.create') : route('vi.booking.create'),
+            'seo' => $seo,
         ]);
     }
 }

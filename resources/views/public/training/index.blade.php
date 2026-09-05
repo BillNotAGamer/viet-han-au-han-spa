@@ -1,4 +1,4 @@
-<x-layouts.public :title="$title" header-mode="solid" :contact-href="$contactHref">
+<x-layouts.public :title="$title" header-mode="solid" :contact-href="$contactHref" :seo="$seo ?? null">
     <section class="bg-brand-ivory pt-32 sm:pt-36 lg:pt-40 pb-16 sm:pb-20 border-b border-brand-border">
         <x-public.container size="lg">
             <div class="max-w-3xl space-y-5">

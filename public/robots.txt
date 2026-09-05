@@ -1,2 +1,7 @@
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /livewire/
+
+Sitemap: https://viethanauhanspa.com/sitemap.xml

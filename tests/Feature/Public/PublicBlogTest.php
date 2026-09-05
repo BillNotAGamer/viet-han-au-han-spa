@@ -214,8 +214,6 @@ class PublicBlogTest extends TestCase
         );
         $post->translationFor('vi')->update([
             'content' => '<p>Visible body paragraph.</p><script>alert("x")</script><strong>Styled text</strong><img src=x onerror=alert(1)>',
-            'seo_title' => 'SEO Title Must Not Render',
-            'seo_description' => 'SEO Description Must Not Render',
         ]);
 
         $this->get('/blog/rich-content-safety-article')
@@ -225,9 +223,7 @@ class PublicBlogTest extends TestCase
             ->assertDontSee('<script>alert', false)
             ->assertDontSee('alert("x")')
             ->assertDontSee('<strong>', false)
-            ->assertDontSee('onerror', false)
-            ->assertDontSee('SEO Title Must Not Render')
-            ->assertDontSee('SEO Description Must Not Render');
+            ->assertDontSee('onerror', false);
     }
 
     public function test_existing_missing_and_gallery_blog_media_are_resolved_without_crashing(): void
