@@ -20,8 +20,10 @@
     --color-brand-border: #e8dfc8;
     --color-brand-border-subtle: #f0e8d9;
 
-    --font-sans: 'Instrument Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    --font-serif: 'Times New Roman', 'Noto Serif', Georgia, 'Apple Color Emoji', 'Segoe UI Emoji', serif;
+    --font-sans: "Cormorant Garamond", Sans-serif;
+    --font-serif: "Cormorant Garamond", Sans-serif;
+    --font-cormorant: "Cormorant Garamond", Sans-serif;
+    --font-montserrat: Montserrat, sans-serif;
 }
 
 @layer base {
@@ -37,25 +39,50 @@
         --color-text-secondary: #5a4d45;
         --color-text-muted: #8c7a6b;
         --color-border: #e8dfc8;
+        --font-main: "Cormorant Garamond", Sans-serif;
+        --font-header-footer: Montserrat, sans-serif;
     }
 
     body {
         background-color: var(--color-ivory);
         color: var(--color-text);
-        font-family: var(--font-sans);
+        font-family: "Cormorant Garamond", Sans-serif;
+        font-size: 19px;
+        font-weight: 500;
+        line-height: 1.66;
+        letter-spacing: 0.002em;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+    }
+
+    @media (max-width: 639px) {
+        body {
+            font-size: 18px;
+        }
     }
 
     html {
         scroll-padding-top: 96px;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
     }
 
-    /* Safe Editorial & Display Headings: Natural Word-Boundary Wrapping */
+    /* Headings: Cormorant Garamond, weight 600, elegant editorial tracking & line-height */
     h1, h2, h3, h4, h5, h6 {
+        font-family: "Cormorant Garamond", Sans-serif;
+        font-weight: 600;
         overflow-wrap: break-word;
         word-break: normal;
         text-wrap: balance;
+    }
+
+    b, strong {
+        font-weight: 600;
+    }
+
+    input, textarea, select, label, button {
+        font-family: "Cormorant Garamond", Sans-serif;
     }
 
     /* Accessibility: Visible focus rings */
@@ -71,6 +98,11 @@
     [x-cloak] {
         display: none !important;
     }
+}
+
+.public-header,
+.public-header * {
+    font-family: Montserrat, sans-serif !important;
 }
 
 .public-header {
@@ -215,9 +247,12 @@
     border-radius: 6px;
     padding: 12px 10px;
     color: rgba(255, 252, 246, 0.92);
-    font-size: 16px;
-    font-weight: 500;
+    font-family: Montserrat, sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    text-transform: uppercase;
     line-height: 1.2;
+    letter-spacing: 0.04em;
     text-decoration: none;
     transition:
         background-color 180ms ease,
@@ -243,7 +278,8 @@
     border-radius: 4px;
     background-color: #c5a880;
     color: #140f0e;
-    font-size: 14px;
+    font-family: Montserrat, sans-serif;
+    font-size: 16px;
     font-weight: 600;
     text-decoration: none;
     transition: background-color 180ms ease;
@@ -256,7 +292,7 @@
 .public-language-switcher {
     box-sizing: border-box;
     display: inline-flex;
-    min-height: 34px;
+    min-height: 36px;
     align-items: center;
     gap: 2px;
     padding: 3px;
@@ -264,10 +300,11 @@
     border-radius: 999px;
     background-color: #f4efea;
     color: #5a4d45;
-    font-size: 12px;
-    font-weight: 700;
+    font-family: Montserrat, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
     line-height: 1;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.02em;
     text-transform: uppercase;
     white-space: nowrap;
     transition:
@@ -293,13 +330,16 @@
 
 .public-language-switcher__item {
     display: inline-flex;
-    min-width: 30px;
-    height: 26px;
+    min-width: 34px;
+    height: 30px;
     align-items: center;
     justify-content: center;
     border-radius: 999px;
-    padding: 0 8px;
+    padding: 0 10px;
     color: inherit;
+    font-family: Montserrat, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
     text-decoration: none;
     transition:
         background-color 180ms ease,
@@ -364,13 +404,13 @@
     z-index: 10;
     box-sizing: border-box;
     width: 100%;
-    max-width: 1420px;
+    max-width: 1440px;
     margin: 0 auto;
-    padding: 128px 22px 56px;
+    padding: 112px 22px 48px;
 }
 
 .public-hero__content {
-    max-width: 600px;
+    max-width: 720px;
     text-align: left;
 }
 
@@ -378,32 +418,35 @@
     display: block;
     margin-bottom: 16px;
     color: rgba(197, 168, 128, 0.94);
-    font-size: 12px;
+    font-family: "Cormorant Garamond", Sans-serif;
+    font-size: 15px;
     font-weight: 600;
     line-height: 1.2;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
 }
 
 .public-hero__title {
-    max-width: 620px;
+    max-width: 720px;
     margin: 0;
     color: #ffffff;
-    font-family: var(--font-serif);
-    font-size: 32px;
-    font-weight: 700;
-    line-height: 1.12;
-    letter-spacing: 0;
+    font-family: "Cormorant Garamond", Sans-serif;
+    font-size: clamp(2.35rem, 6.5vw, 3.25rem);
+    font-weight: 600;
+    line-height: 1.10;
+    letter-spacing: -0.02em;
     text-wrap: balance;
 }
 
 .public-hero__copy {
-    max-width: 560px;
+    max-width: 620px;
     margin: 18px 0 0;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 15px;
-    font-weight: 300;
-    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.92);
+    font-family: "Cormorant Garamond", Sans-serif;
+    font-size: 19px;
+    font-weight: 500;
+    line-height: 1.66;
+    letter-spacing: 0.002em;
 }
 
 .public-hero__actions {
@@ -414,17 +457,18 @@
 
 .public-hero__cta {
     display: inline-flex;
-    height: 48px;
+    height: 52px;
     align-items: center;
     justify-content: center;
     border-radius: 4px;
-    padding: 0 28px;
+    padding: 0 32px;
     background-color: #c5a880;
     color: #140f0e;
-    font-size: 14px;
-    font-weight: 500;
+    font-family: "Cormorant Garamond", Sans-serif;
+    font-size: 18px;
+    font-weight: 600;
     line-height: 1;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.02em;
     text-decoration: none;
     transition:
         background-color 180ms ease,
@@ -451,11 +495,12 @@
     }
 
     .public-hero__title {
-        font-size: 38px;
+        font-size: clamp(2.85rem, 4.8vw, 3.5rem);
+        line-height: 1.08;
     }
 
     .public-hero__copy {
-        font-size: 16px;
+        font-size: 19px;
     }
 }
 
@@ -464,17 +509,17 @@
         box-sizing: border-box;
         display: grid;
         width: 100%;
-        max-width: 1420px;
-        height: 100px;
+        max-width: 1440px;
+        height: 98px;
         grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
         align-items: center;
         margin: 0 auto;
-        padding: 0 clamp(40px, 4vw, 56px);
+        padding: 0 clamp(32px, 3.5vw, 48px);
         transition: height 240ms ease;
     }
 
     .public-header--sticky .public-header__desktop {
-        height: 90px;
+        height: 94px;
     }
 
     .public-header__mobile,
@@ -486,7 +531,7 @@
         display: flex;
         min-width: 0;
         align-items: center;
-        gap: 32px;
+        gap: 46px;
     }
 
     .public-header__nav--left {
@@ -502,10 +547,12 @@
         align-items: center;
         gap: 4px;
         color: currentColor;
-        font-size: 15px;
-        font-weight: 500;
+        font-family: Montserrat, sans-serif;
+        font-size: 18px;
+        font-weight: 600;
+        text-transform: uppercase;
         line-height: 1;
-        letter-spacing: 0.01em;
+        letter-spacing: 0.04em;
         text-decoration: none;
         white-space: nowrap;
         text-shadow: 0 1px 12px rgba(0, 0, 0, 0.28);
@@ -532,7 +579,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 0 58px;
+        padding: 0 48px;
     }
 
     .public-header__logo {
@@ -553,11 +600,13 @@
     }
 
     .public-hero__content-wrap {
-        padding: 144px clamp(40px, 4vw, 56px) 76px;
+        padding: 120px clamp(36px, 3.5vw, 48px) 60px;
     }
 
     .public-hero__title {
-        font-size: 46px;
+        font-size: clamp(3.5rem, 5vw, 5.125rem);
+        line-height: 1.08;
+        letter-spacing: -0.02em;
     }
 
     .public-floating-booking {
@@ -604,8 +653,9 @@
 
     .public-floating-booking__text {
         color: currentColor;
-        font-size: 12px;
-        font-weight: 700;
+        font-family: "Cormorant Garamond", Sans-serif;
+        font-size: 16px;
+        font-weight: 600;
         line-height: 1;
         letter-spacing: 0.08em;
         text-transform: uppercase;
@@ -616,11 +666,13 @@
 
 @media (min-width: 1440px) {
     .public-header__nav {
-        gap: 38px;
+        gap: 48px;
     }
 
     .public-hero__title {
-        font-size: 48px;
+        font-size: clamp(3.5rem, 5vw, 5.125rem);
+        line-height: 1.08;
+        letter-spacing: -0.02em;
     }
 }
 
@@ -632,11 +684,193 @@
     }
 }
 
+/* ===================================================
+   REVERSIBLE SCROLL MOTION SYSTEM & EDITORIAL INTERACTIONS
+   =================================================== */
+
+/* Progressive Enhancement:
+   Without .motion-ready (JS disabled/failed), everything remains 100% visible immediately.
+*/
+html.motion-ready [data-reveal] {
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+        opacity 750ms cubic-bezier(0.22, 1, 0.36, 1),
+        transform 750ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+}
+
+/* Visible in Viewport */
+html.motion-ready [data-reveal].is-visible,
+html.motion-ready [data-reveal].is-revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Exited Above Viewport (scrolled down past element) */
+html.motion-ready [data-reveal].is-exited-above {
+    opacity: 0;
+    transform: translateY(-16px);
+}
+
+/* Exited Below Viewport (scrolled up past element or pending below) */
+html.motion-ready [data-reveal].is-exited-below {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+/* Reversible Image Reveal / Fade */
+html.motion-ready [data-reveal-image] {
+    overflow: hidden;
+}
+
+html.motion-ready [data-reveal-image] img {
+    opacity: 0;
+    transform: scale(1.03) translateY(12px);
+    transition:
+        opacity 800ms ease,
+        transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+}
+
+html.motion-ready [data-reveal-image].is-visible img,
+html.motion-ready [data-reveal-image].is-revealed img {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+}
+
+html.motion-ready [data-reveal-image].is-exited-above img {
+    opacity: 0;
+    transform: scale(1.02) translateY(-12px);
+}
+
+html.motion-ready [data-reveal-image].is-exited-below img {
+    opacity: 0;
+    transform: scale(1.03) translateY(12px);
+}
+
+/* Subtle Desktop Parallax Container */
+[data-parallax] {
+    transform: translateY(var(--parallax-offset, 0px));
+    will-change: transform;
+    transition: transform 120ms ease-out;
+}
+
+/* Editorial Card & Image Interactions */
+.editorial-card {
+    transition:
+        border-color 350ms ease,
+        box-shadow 350ms ease,
+        transform 350ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.editorial-card:hover {
+    transform: translateY(-3px);
+}
+
+.editorial-image-zoom img {
+    transition: transform 750ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.group:hover .editorial-image-zoom img,
+.editorial-card:hover .editorial-image-zoom img {
+    transform: scale(1.035);
+}
+
+/* Button & Link Micro-Interactions */
+.btn-editorial-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    padding: 0 32px;
+    height: 50px;
+    background-color: #c5a880;
+    color: #140f0e;
+    font-family: "Cormorant Garamond", Sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    transition:
+        background-color 220ms ease,
+        color 220ms ease,
+        box-shadow 220ms ease,
+        transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.btn-editorial-primary:hover {
+    background-color: #b3956b;
+    box-shadow: 0 8px 24px rgba(197, 168, 128, 0.32);
+    transform: translateY(-1px);
+}
+
+.btn-editorial-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(197, 168, 128, 0.6);
+    border-radius: 4px;
+    padding: 0 30px;
+    height: 50px;
+    background-color: transparent;
+    color: #c5a880;
+    font-family: "Cormorant Garamond", Sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    transition:
+        background-color 220ms ease,
+        border-color 220ms ease,
+        color 220ms ease,
+        transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.btn-editorial-outline:hover {
+    border-color: #c5a880;
+    background-color: rgba(197, 168, 128, 0.12);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+/* Footer: Montserrat only */
+.public-footer,
+.public-footer * {
+    font-family: Montserrat, sans-serif !important;
+}
+
+/* Strict Reduced Motion: Instant State, Zero Transforms */
 @media (prefers-reduced-motion: reduce) {
-    .public-header,
-    .public-header *,
-    .public-hero__cta,
-    .public-floating-booking__link {
-        transition-duration: 1ms !important;
+    *,
+    ::before,
+    ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    html.motion-ready [data-reveal],
+    html.motion-ready [data-reveal].is-visible,
+    html.motion-ready [data-reveal].is-revealed,
+    html.motion-ready [data-reveal].is-exited-above,
+    html.motion-ready [data-reveal].is-exited-below,
+    html.motion-ready [data-reveal-image] img,
+    html.motion-ready [data-reveal-image].is-visible img,
+    html.motion-ready [data-reveal-image].is-revealed img,
+    html.motion-ready [data-reveal-image].is-exited-above img,
+    html.motion-ready [data-reveal-image].is-exited-below img,
+    [data-parallax],
+    .editorial-card,
+    .editorial-card:hover,
+    .editorial-image-zoom img,
+    .group:hover .editorial-image-zoom img,
+    .btn-editorial-primary:hover,
+    .btn-editorial-outline:hover,
+    .public-floating-booking__link:hover {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
     }
 }

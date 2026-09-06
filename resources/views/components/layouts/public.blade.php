@@ -16,6 +16,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <x-seo.head :seo="$seoMetadata" :title="$title" />
+    {{ Vite::fonts() }}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <x-tracking.head />
 </head>

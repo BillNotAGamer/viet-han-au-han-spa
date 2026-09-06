@@ -8,23 +8,23 @@
 <x-layouts.public :title="$title" header-mode="solid" :contact-href="$bookingUrl" :seo="$seo ?? null">
     <article class="bg-[#FAF7F2] text-[#211B19]">
         {{-- 1. HERO SECTION --}}
-        <section class="relative pt-32 sm:pt-36 lg:pt-40 pb-16 sm:pb-24 border-b border-[#E8DFC8]/70 bg-gradient-to-b from-[#F5EFEB] to-[#FAF7F2]">
+        <section class="relative pt-28 sm:pt-32 lg:pt-36 pb-12 sm:pb-16 border-b border-[#E8DFC8]/70 bg-gradient-to-b from-[#F5EFEB] to-[#FAF7F2]">
             <x-public.container size="lg">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-                    <div class="lg:col-span-7 space-y-4">
-                        <span class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold tracking-widest uppercase text-[#9B7B4F]">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+                    <div class="lg:col-span-7 space-y-3.5" data-reveal>
+                        <span class="inline-flex items-center gap-2 text-[14px] sm:text-[15px] font-semibold tracking-[0.1em] uppercase text-[#9B7B4F]">
                             <span class="w-8 h-px bg-[#C5A880]/60"></span>
                             {{ $content['hero']['eyebrow'] }}
                         </span>
-                        <h1 class="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#5B1121] leading-tight break-words [text-wrap:balance]">
+                        <h1 class="text-3xl sm:text-5xl lg:text-[clamp(2.5rem,4vw,3.85rem)] font-semibold tracking-[-0.025em] text-[#5B1121] leading-[1.08] break-words [text-wrap:balance]">
                             {{ $content['hero']['title'] }}
                         </h1>
-                        <p class="text-base sm:text-lg text-[#554D4A] leading-relaxed max-w-xl pt-2">
+                        <p class="text-[18px] sm:text-[19px] font-medium text-[#554D4A] leading-[1.66] max-w-xl pt-1">
                             {{ $content['hero']['lead'] }}
                         </p>
                     </div>
 
-                    <div class="lg:col-span-5">
+                    <div class="lg:col-span-5" data-reveal-image>
                         <figure class="overflow-hidden rounded-2xl border border-[#E8DFC8] bg-white shadow-xl">
                             <img
                                 src="{{ $lobbyImg }}"
@@ -42,11 +42,11 @@
         </section>
 
         {{-- 2. CONTACT ACTION AREA: Verified Values Only --}}
-        <section class="py-16 sm:py-24 border-b border-[#E8DFC8]/60">
+        <section class="py-12 sm:py-16 border-b border-[#E8DFC8]/60">
             <x-public.container size="lg">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8" data-reveal-group>
                     {{-- Phone Card --}}
-                    <div class="rounded-2xl border border-[#E8DFC8] bg-white p-8 shadow-xs flex flex-col justify-between transition-all duration-200 hover:shadow-md hover:border-[#C5A880]/70">
+                    <div class="rounded-2xl border border-[#E8DFC8] bg-white p-6 sm:p-7 shadow-xs flex flex-col justify-between transition-all duration-200 hover:shadow-md hover:border-[#C5A880]/70" data-reveal>
                         <div class="space-y-4">
                             <div class="w-12 h-12 rounded-xl bg-[#5B1121]/5 text-[#5B1121] flex items-center justify-center">
                                 <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
@@ -54,26 +54,26 @@
                                 </svg>
                             </div>
                             <div>
-                                <span class="text-xs font-semibold tracking-wider uppercase text-[#9B7B4F]">
+                                <span class="text-[14px] font-semibold tracking-[0.08em] uppercase text-[#9B7B4F]">
                                     {{ $content['cards']['phone']['label'] }}
                                 </span>
                                 <div class="mt-2">
                                     <a
                                         href="{{ $content['cards']['phone']['href'] }}"
-                                        class="font-serif text-2xl font-bold text-[#5B1121] hover:text-[#C5A880] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B1121] rounded-sm"
+                                        class="text-2xl font-semibold text-[#5B1121] hover:text-[#C5A880] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B1121] rounded-sm"
                                     >
                                         {{ $content['cards']['phone']['value'] }}
                                     </a>
                                 </div>
                             </div>
                         </div>
-                        <p class="mt-6 text-xs sm:text-sm text-[#736965] border-t border-[#E8DFC8]/60 pt-4">
+                        <p class="mt-5 text-[15px] sm:text-[16px] text-[#736965] border-t border-[#E8DFC8]/60 pt-3.5">
                             {{ $content['cards']['phone']['subtext'] }}
                         </p>
                     </div>
 
                     {{-- Email Card --}}
-                    <div class="rounded-2xl border border-[#E8DFC8] bg-white p-8 shadow-xs flex flex-col justify-between transition-all duration-200 hover:shadow-md hover:border-[#C5A880]/70">
+                    <div class="rounded-2xl border border-[#E8DFC8] bg-white p-6 sm:p-7 shadow-xs flex flex-col justify-between transition-all duration-200 hover:shadow-md hover:border-[#C5A880]/70" data-reveal>
                         <div class="space-y-4">
                             <div class="w-12 h-12 rounded-xl bg-[#5B1121]/5 text-[#5B1121] flex items-center justify-center">
                                 <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
@@ -81,26 +81,26 @@
                                 </svg>
                             </div>
                             <div>
-                                <span class="text-xs font-semibold tracking-wider uppercase text-[#9B7B4F]">
+                                <span class="text-[14px] font-semibold tracking-[0.08em] uppercase text-[#9B7B4F]">
                                     {{ $content['cards']['email']['label'] }}
                                 </span>
                                 <div class="mt-2">
                                     <a
                                         href="{{ $content['cards']['email']['href'] }}"
-                                        class="font-serif text-lg sm:text-xl font-bold text-[#5B1121] hover:text-[#C5A880] transition break-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B1121] rounded-sm"
+                                        class="text-xl sm:text-2xl font-semibold text-[#5B1121] hover:text-[#C5A880] transition break-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B1121] rounded-sm"
                                     >
                                         {{ $content['cards']['email']['value'] }}
                                     </a>
                                 </div>
                             </div>
                         </div>
-                        <p class="mt-6 text-xs sm:text-sm text-[#736965] border-t border-[#E8DFC8]/60 pt-4">
+                        <p class="mt-5 text-[15px] sm:text-[16px] text-[#736965] border-t border-[#E8DFC8]/60 pt-3.5">
                             {{ $content['cards']['email']['subtext'] }}
                         </p>
                     </div>
 
                     {{-- Booking CTA Card --}}
-                    <div class="rounded-2xl border border-[#C5A880]/50 bg-gradient-to-br from-[#FAF7F2] to-[#F5EFEB] p-8 shadow-xs flex flex-col justify-between transition-all duration-200 hover:shadow-md hover:border-[#C5A880]">
+                    <div class="rounded-2xl border border-[#C5A880]/50 bg-gradient-to-br from-[#FAF7F2] to-[#F5EFEB] p-6 sm:p-7 shadow-xs flex flex-col justify-between transition-all duration-200 hover:shadow-md hover:border-[#C5A880]" data-reveal>
                         <div class="space-y-4">
                             <div class="w-12 h-12 rounded-xl bg-[#C5A880]/20 text-[#5B1121] flex items-center justify-center">
                                 <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
@@ -108,18 +108,18 @@
                                 </svg>
                             </div>
                             <div>
-                                <span class="text-xs font-semibold tracking-wider uppercase text-[#9B7B4F]">
+                                <span class="text-[14px] font-semibold tracking-[0.08em] uppercase text-[#9B7B4F]">
                                     {{ $content['cards']['booking']['label'] }}
                                 </span>
-                                <h3 class="mt-2 font-serif text-xl font-bold text-[#5B1121]">
+                                <h3 class="mt-2 text-xl sm:text-[22px] font-semibold text-[#5B1121]">
                                     {{ $content['cards']['booking']['title'] }}
                                 </h3>
                             </div>
                         </div>
-                        <div class="mt-6 pt-4 border-t border-[#E8DFC8]/60">
+                        <div class="mt-5 pt-3.5 border-t border-[#E8DFC8]/60">
                             <a
                                 href="{{ $bookingUrl }}"
-                                class="inline-flex w-full min-h-[44px] items-center justify-center rounded-lg bg-[#5B1121] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#430C18] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B1121] focus-visible:ring-offset-2"
+                                class="inline-flex w-full min-h-[46px] items-center justify-center rounded-lg bg-[#5B1121] px-5 py-2.5 text-[17px] sm:text-[18px] font-semibold text-white shadow-sm hover:bg-[#430C18] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B1121] focus-visible:ring-offset-2"
                             >
                                 {{ $content['cards']['booking']['cta'] }}
                             </a>
@@ -130,10 +130,10 @@
         </section>
 
         {{-- 3. ATMOSPHERE / VISUAL SECTION --}}
-        <section class="py-16 sm:py-24 border-b border-[#E8DFC8]/60 bg-[#F5EFEB]">
+        <section class="py-12 sm:py-16 border-b border-[#E8DFC8]/60 bg-[#F5EFEB]">
             <x-public.container size="lg">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-                    <div class="lg:col-span-6">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+                    <div class="lg:col-span-6" data-reveal-image>
                         <figure class="overflow-hidden rounded-2xl border border-[#E8DFC8] bg-white shadow-lg">
                             <img
                                 src="{{ $loungeImg }}"
@@ -146,14 +146,14 @@
                         </figure>
                     </div>
 
-                    <div class="lg:col-span-6 space-y-4">
-                        <span class="text-xs sm:text-sm font-semibold tracking-widest uppercase text-[#9B7B4F]">
+                    <div class="lg:col-span-6 space-y-3.5" data-reveal>
+                        <span class="text-[14px] sm:text-[15px] font-semibold tracking-[0.1em] uppercase text-[#9B7B4F]">
                             {{ $content['atmosphere']['badge'] }}
                         </span>
-                        <h2 class="font-serif text-2xl sm:text-4xl font-bold tracking-tight text-[#5B1121] leading-snug">
+                        <h2 class="text-2xl sm:text-3xl lg:text-[clamp(2.25rem,3.2vw,3.25rem)] font-semibold tracking-[-0.02em] text-[#5B1121] leading-[1.10]">
                             {{ $content['atmosphere']['title'] }}
                         </h2>
-                        <p class="text-base sm:text-lg text-[#554D4A] leading-relaxed">
+                        <p class="text-[18px] sm:text-[19px] font-medium text-[#554D4A] leading-[1.66]">
                             {{ $content['atmosphere']['description'] }}
                         </p>
                     </div>
@@ -162,23 +162,23 @@
         </section>
 
         {{-- 4. BOOKING CTA --}}
-        <section class="py-16 sm:py-24 bg-gradient-to-br from-[#3D0B16] via-[#2A0810] to-[#181312] text-white">
+        <section class="py-12 sm:py-16 bg-gradient-to-br from-[#3D0B16] via-[#2A0810] to-[#181312] text-white">
             <x-public.container size="lg">
-                <div class="rounded-2xl border border-[#C5A880]/30 bg-[#181312]/70 backdrop-blur-sm p-8 sm:p-14 text-center max-w-4xl mx-auto space-y-6 shadow-2xl">
-                    <span class="text-xs sm:text-sm font-semibold tracking-widest uppercase text-[#C5A880]">
+                <div class="rounded-2xl border border-[#C5A880]/30 bg-[#181312]/70 backdrop-blur-sm p-8 sm:p-12 text-center max-w-4xl mx-auto space-y-5 shadow-2xl" data-reveal>
+                    <span class="text-[14px] sm:text-[15px] font-semibold tracking-[0.1em] uppercase text-[#C5A880]">
                         {{ $content['cta']['badge'] }}
                     </span>
-                    <h2 class="font-serif text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight break-words [text-wrap:balance]">
+                    <h2 class="text-2xl sm:text-3xl lg:text-[clamp(2.25rem,3.2vw,3.25rem)] font-semibold tracking-[-0.02em] text-white leading-[1.10] break-words [text-wrap:balance]">
                         {{ $content['cta']['title'] }}
                     </h2>
-                    <p class="text-base sm:text-lg text-white/80 font-light leading-relaxed max-w-2xl mx-auto">
+                    <p class="text-[18px] sm:text-[19px] font-medium text-white/85 leading-[1.66] max-w-2xl mx-auto">
                         {{ $content['cta']['description'] }}
                     </p>
 
-                    <div class="pt-4 flex items-center justify-center">
+                    <div class="pt-3 flex items-center justify-center">
                         <a
                             href="{{ $bookingUrl }}"
-                            class="inline-flex min-h-[48px] items-center justify-center rounded-full bg-gradient-to-r from-[#C5A880] to-[#B3956B] px-8 py-3.5 text-sm sm:text-base font-bold text-[#181312] shadow-xl hover:scale-105 transition duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A880] focus-visible:ring-offset-2 focus-visible:ring-offset-[#181312]"
+                            class="inline-flex min-h-[48px] items-center justify-center rounded-full bg-gradient-to-r from-[#C5A880] to-[#B3956B] px-8 py-3.5 text-[17px] sm:text-[18px] font-semibold text-[#181312] shadow-xl hover:scale-105 transition duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A880] focus-visible:ring-offset-2 focus-visible:ring-offset-[#181312]"
                         >
                             {{ $content['cta']['button'] }}
                         </a>

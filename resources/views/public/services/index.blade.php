@@ -1,34 +1,38 @@
 <x-layouts.public :title="$title" header-mode="solid" :contact-href="$contactHref" :seo="$seo ?? null">
-    <section class="bg-brand-ivory pt-32 sm:pt-36 lg:pt-40 pb-16 sm:pb-20 border-b border-brand-border">
+    {{-- Hero Header --}}
+    <section class="bg-gradient-to-b from-[#F5EFEB] to-[#FAF7F2] pt-28 sm:pt-32 lg:pt-36 pb-12 sm:pb-14 border-b border-[#E8DFC8]/70">
         <x-public.container size="lg">
-            <div class="max-w-3xl space-y-5">
-                <span class="text-xs sm:text-sm font-semibold tracking-widest uppercase text-[#B3956B]">
+            <div class="max-w-3xl space-y-3.5" data-reveal>
+                <span class="inline-flex items-center gap-2 text-[14px] sm:text-[15px] font-semibold tracking-[0.1em] uppercase text-[#9B7B4F]">
+                    <span class="w-6 h-px bg-[#C5A880]/70"></span>
                     {{ __('services.index.eyebrow') }}
                 </span>
-                <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-normal text-[#5B1121] leading-tight break-words [text-wrap:balance]">
+                <h1 class="text-3xl sm:text-5xl lg:text-[clamp(2.5rem,4vw,3.85rem)] font-semibold tracking-[-0.025em] text-[#5B1121] leading-[1.08] break-words [text-wrap:balance]">
                     {{ __('services.index.title') }}
                 </h1>
-                <p class="text-base sm:text-lg text-brand-text-secondary leading-relaxed break-words max-w-2xl">
+                <p class="text-[18px] sm:text-[19px] font-medium text-[#554D4A] leading-[1.66] break-words max-w-2xl pt-1">
                     {{ __('services.index.intro') }}
                 </p>
             </div>
         </x-public.container>
     </section>
 
-    <section class="bg-[#FAF7F2] py-14 sm:py-20 lg:py-24">
+    {{-- Services Listing Grid --}}
+    <section class="bg-[#FAF7F2] py-12 sm:py-16 lg:py-20">
         <x-public.container>
             @if($services->isNotEmpty())
-                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-7 lg:gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 lg:gap-9" data-reveal-group>
                     @foreach($services as $service)
-                        <article class="group flex min-w-0 flex-col overflow-hidden rounded-sm border border-[#E8DFC8] bg-white shadow-xs transition duration-200 hover:border-[#C5A880] hover:shadow-md">
+                        <article class="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-[#E8DFC8] bg-white shadow-xs transition duration-300 hover:border-[#C5A880] hover:shadow-lg editorial-card" data-reveal>
                             <a href="{{ $service['url'] }}" class="block focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B1121] focus-visible:ring-offset-4 focus-visible:ring-offset-[#FAF7F2]">
                                 @if(!empty($service['media']['url']))
-                                    <div class="aspect-16/10 overflow-hidden bg-brand-warm">
+                                    <div class="aspect-16/10 overflow-hidden bg-brand-warm editorial-image-zoom">
                                         <img src="{{ $service['media']['url'] }}" alt="{{ $service['media']['alt'] }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy">
                                     </div>
                                 @else
-                                    <div class="aspect-16/10 bg-[#211B19] flex items-center justify-center px-8 text-center">
-                                        <span class="font-serif text-2xl font-bold text-[#C5A880] break-words">{{ $service['name'] }}</span>
+                                    <div class="aspect-16/10 bg-[#211B19] flex items-center justify-center px-8 text-center relative overflow-hidden">
+                                        <div class="absolute inset-0 bg-radial from-[#5B1121]/30 to-transparent"></div>
+                                        <span class="text-2xl font-semibold text-[#C5A880] break-words relative z-10">{{ $service['name'] }}</span>
                                     </div>
                                 @endif
                             </a>
@@ -36,34 +40,35 @@
                             <div class="flex flex-1 flex-col justify-between p-6 sm:p-7">
                                 <div class="space-y-3">
                                     @if(!empty($service['category_name']))
-                                        <p class="text-xs font-semibold uppercase tracking-widest text-[#B3956B]">
+                                        <p class="text-[14px] sm:text-[15px] font-semibold uppercase tracking-widest text-[#9B7B4F]">
                                             {{ $service['category_name'] }}
                                         </p>
                                     @endif
 
-                                    <h2 class="font-serif text-2xl font-bold leading-snug tracking-normal text-[#5B1121] break-words">
-                                        <a href="{{ $service['url'] }}" class="hover:text-[#B3956B] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B1121] focus-visible:ring-offset-4">
+                                    <h2 class="text-xl sm:text-[22px] lg:text-[24px] font-semibold leading-[1.2] tracking-tight text-[#5B1121] break-words">
+                                        <a href="{{ $service['url'] }}" class="hover:text-[#B3956B] transition duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B1121] focus-visible:ring-offset-4">
                                             {{ $service['name'] }}
                                         </a>
                                     </h2>
 
                                     @if(!empty($service['excerpt']))
-                                        <p class="text-sm sm:text-base leading-relaxed text-brand-text-secondary break-words">
+                                        <p class="text-[17px] leading-[1.65] text-[#554D4A] break-words">
                                             {{ $service['excerpt'] }}
                                         </p>
                                     @endif
                                 </div>
 
-                                <div class="mt-6 flex items-center justify-between gap-4 border-t border-brand-border pt-5">
+                                <div class="mt-6 flex items-center justify-between gap-4 border-t border-[#E8DFC8] pt-5">
                                     @if(!empty($service['price_summary']))
-                                        <p class="text-sm text-brand-text-muted">
+                                        <p class="text-[16px] text-[#736965]">
                                             {{ __('services.index.from_price') }}
                                             <span class="font-semibold text-[#5B1121]">{{ $service['price_summary']['price_display'] }}</span>
                                         </p>
                                     @endif
 
-                                    <a href="{{ $service['url'] }}" class="ml-auto inline-flex items-center text-xs font-semibold uppercase tracking-widest text-[#5B1121] hover:text-[#B3956B] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B1121] focus-visible:ring-offset-4">
-                                        {{ __('services.index.details') }}
+                                    <a href="{{ $service['url'] }}" class="ml-auto inline-flex items-center gap-1 text-[15px] font-semibold uppercase tracking-widest text-[#5B1121] hover:text-[#B3956B] transition duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B1121] focus-visible:ring-offset-4">
+                                        <span>{{ __('services.index.details') }}</span>
+                                        <span aria-hidden="true">&rarr;</span>
                                     </a>
                                 </div>
                             </div>
@@ -71,12 +76,17 @@
                     @endforeach
                 </div>
 
-                <div class="mt-12">
+                <div class="mt-12" data-reveal>
                     {{ $services->links() }}
                 </div>
             @else
-                <div class="mx-auto max-w-2xl border border-[#E8DFC8] bg-white px-8 py-12 text-center shadow-xs">
-                    <p class="font-serif text-2xl font-bold text-[#5B1121] break-words">
+                <div class="mx-auto max-w-2xl rounded-2xl border border-[#E8DFC8] bg-white px-8 py-14 text-center shadow-xs" data-reveal>
+                    <div class="w-14 h-14 mx-auto rounded-full bg-[#FAF7F2] border border-[#E8DFC8] flex items-center justify-center text-[#9B7B4F] mb-4">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                    </div>
+                    <p class="text-xl font-semibold text-[#5B1121] break-words">
                         {{ __('services.index.empty') }}
                     </p>
                 </div>
