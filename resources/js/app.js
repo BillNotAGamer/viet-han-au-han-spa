@@ -6,4 +6,5 @@ Alpine.start();
 
 import.meta.glob([
     '../images/**',
+    '!../images/images resource/**',
 ], { eager: true });

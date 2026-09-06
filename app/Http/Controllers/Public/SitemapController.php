@@ -33,31 +33,12 @@ class SitemapController extends Controller
         $items[] = ['loc' => $this->seoManager->canonicalUrl('/'), 'lastmod' => $homeLastmod];
         $items[] = ['loc' => $this->seoManager->canonicalUrl('/en'), 'lastmod' => $homeLastmod];
 
-        // 2. Fixed CMS pages (About, Contact) with exact-locale eligibility
-        $cmsPages = Page::query()
-            ->whereIn('key', ['about', 'contact'])
-            ->where('status', ContentStatus::PUBLISHED)
-            ->with('translations')
-            ->get();
-
-        foreach ($cmsPages as $page) {
-            $viTrans = $page->translations->firstWhere('locale', 'vi');
-            $enTrans = $page->translations->firstWhere('locale', 'en');
-            $lastmod = $page->updated_at?->toAtomString();
-
-            if ($viTrans !== null) {
-                $path = $page->key === 'contact' ? '/lien-he' : '/gioi-thieu';
-                $items[] = ['loc' => $this->seoManager->canonicalUrl($path), 'lastmod' => $lastmod];
-            }
-
-            if ($enTrans !== null) {
-                $path = $page->key === 'contact' ? '/en/contact' : '/en/about';
-                $items[] = ['loc' => $this->seoManager->canonicalUrl($path), 'lastmod' => $lastmod];
-            }
-        }
-
-        // 3. Static listing & landing routes
-        $staticListings = [
+        // 2. Static public routes (About, Contact, listings, booking) - code-owned, zero DB dependency
+        $staticRoutes = [
+            '/gioi-thieu',
+            '/en/about',
+            '/lien-he',
+            '/en/contact',
             '/dich-vu',
             '/en/services',
             '/dao-tao',
@@ -68,7 +49,7 @@ class SitemapController extends Controller
             '/en/booking',
         ];
 
-        foreach ($staticListings as $path) {
+        foreach ($staticRoutes as $path) {
             $items[] = ['loc' => $this->seoManager->canonicalUrl($path), 'lastmod' => null];
         }
 

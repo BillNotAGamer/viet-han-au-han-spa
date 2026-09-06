@@ -28,3 +28,4 @@ Thumbs.db
 
 *.sqlite
 database/database.sqlite
+/resources/images/images resource/

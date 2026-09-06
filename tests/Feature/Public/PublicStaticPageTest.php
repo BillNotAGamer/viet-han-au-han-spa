@@ -5,289 +5,225 @@ declare(strict_types=1);
 namespace Tests\Feature\Public;
 
 use App\Enums\ContentStatus;
-use App\Enums\SiteSettingType;
-use App\Models\Media;
-use App\Models\MediaTranslation;
 use App\Models\Page;
 use App\Models\PageTranslation;
-use App\Models\SiteSetting;
-use App\Services\Settings\SiteSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class PublicStaticPageTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_about_and_contact_routes_render_with_public_data_and_vi_prefix_is_not_canonical(): void
+    public function test_about_and_contact_routes_render_with_zero_page_records(): void
     {
-        $this->createPageWithTranslation('about', ContentStatus::PUBLISHED, 'vi', 'Gioi Thieu Viet Han');
-        $this->createPageWithTranslation('about', ContentStatus::PUBLISHED, 'en', 'About Viet Han');
-        $this->createPageWithTranslation('contact', ContentStatus::PUBLISHED, 'vi', 'Lien He Viet Han');
-        $this->createPageWithTranslation('contact', ContentStatus::PUBLISHED, 'en', 'Contact Viet Han');
+        $this->assertDatabaseCount('pages', 0);
+        $this->assertDatabaseCount('page_translations', 0);
 
-        $this->get('/gioi-thieu')->assertStatus(200)->assertSee('Gioi Thieu Viet Han');
-        $this->get('/en/about')->assertStatus(200)->assertSee('About Viet Han');
-        $this->get('/lien-he')->assertStatus(200)->assertSee('Lien He Viet Han');
-        $this->get('/en/contact')->assertStatus(200)->assertSee('Contact Viet Han');
+        // VI About
+        $this->get('/gioi-thieu')
+            ->assertStatus(200)
+            ->assertSee(__('about.hero.title', [], 'vi'))
+            ->assertSee(__('about.hero.eyebrow', [], 'vi'))
+            ->assertSee(__('about.story.title', [], 'vi'))
+            ->assertSee(__('about.team.title', [], 'vi'))
+            ->assertSee('about-hero-treatment-space');
 
+        // EN About
+        $this->get('/en/about')
+            ->assertStatus(200)
+            ->assertSee(__('about.hero.title', [], 'en'))
+            ->assertSee(__('about.hero.eyebrow', [], 'en'))
+            ->assertSee(__('about.story.title', [], 'en'))
+            ->assertSee(__('about.team.title', [], 'en'))
+            ->assertSee('about-hero-treatment-space');
+
+        // VI Contact
+        $this->get('/lien-he')
+            ->assertStatus(200)
+            ->assertSee(__('contact.hero.title', [], 'vi'))
+            ->assertSee('090 123 4567')
+            ->assertSee('tel:0901234567', false)
+            ->assertSee('mailto:info@viethanauhanspa.com', false)
+            ->assertSee('contact-reception-lobby');
+
+        // EN Contact
+        $this->get('/en/contact')
+            ->assertStatus(200)
+            ->assertSee(__('contact.hero.title', [], 'en'))
+            ->assertSee('090 123 4567')
+            ->assertSee('tel:0901234567', false)
+            ->assertSee('mailto:info@viethanauhanspa.com', false)
+            ->assertSee('contact-reception-lobby');
+
+        // Non-canonical /vi prefix routes return 404
         $this->get('/vi/gioi-thieu')->assertStatus(404);
         $this->get('/vi/lien-he')->assertStatus(404);
     }
 
-    public function test_static_pages_require_published_status_and_exact_key(): void
+    public function test_cms_database_records_cannot_override_static_about_and_contact_pages(): void
     {
-        $publishedAbout = $this->createPageWithTranslation('about', ContentStatus::PUBLISHED, 'vi', 'Published About');
-        $draftContact = $this->createPageWithTranslation('contact', ContentStatus::DRAFT, 'vi', 'Draft Contact');
+        // Malicious / different database CMS records
+        $maliciousAbout = Page::create([
+            'key' => 'about',
+            'status' => ContentStatus::PUBLISHED,
+        ]);
+        PageTranslation::create([
+            'page_id' => $maliciousAbout->id,
+            'locale' => 'vi',
+            'title' => 'Hacked About Title From CMS',
+            'content' => '<p>Malicious CMS content should never show.</p>',
+            'seo_title' => 'Hacked SEO Title',
+            'seo_description' => 'Hacked SEO Description',
+        ]);
 
-        $this->get('/gioi-thieu')->assertStatus(200)->assertSee('Published About');
-        $this->get('/lien-he')->assertStatus(404)->assertDontSee('Draft Contact');
+        $maliciousContact = Page::create([
+            'key' => 'contact',
+            'status' => ContentStatus::PUBLISHED,
+        ]);
+        PageTranslation::create([
+            'page_id' => $maliciousContact->id,
+            'locale' => 'vi',
+            'title' => 'Hacked Contact Title From CMS',
+            'content' => '<p>Malicious Contact content.</p>',
+            'seo_title' => 'Hacked Contact SEO',
+        ]);
 
-        $publishedAbout->update(['status' => ContentStatus::DRAFT]);
-        $this->get('/gioi-thieu')->assertStatus(404);
+        // Public About must render code-owned static copy, ignoring CMS records
+        $aboutResponse = $this->get('/gioi-thieu');
+        $aboutResponse->assertStatus(200);
+        $aboutResponse->assertDontSee('Hacked About Title From CMS');
+        $aboutResponse->assertDontSee('Malicious CMS content should never show.');
+        $aboutResponse->assertDontSee('Hacked SEO Title');
+        $aboutResponse->assertSee(__('about.hero.title', [], 'vi'));
 
-        $publishedAbout->update(['status' => ContentStatus::ARCHIVED]);
-        $this->get('/gioi-thieu')->assertStatus(404);
-
-        $draftContact->update(['status' => ContentStatus::PUBLISHED]);
-        $this->get('/lien-he')->assertStatus(200)->assertSee('Draft Contact');
-        $draftContact->delete();
-        $this->get('/lien-he')->assertStatus(404);
+        // Public Contact must render code-owned static copy, ignoring CMS records
+        $contactResponse = $this->get('/lien-he');
+        $contactResponse->assertStatus(200);
+        $contactResponse->assertDontSee('Hacked Contact Title From CMS');
+        $contactResponse->assertDontSee('Malicious Contact content.');
+        $contactResponse->assertDontSee('Hacked Contact SEO');
+        $contactResponse->assertSee(__('contact.hero.title', [], 'vi'));
     }
 
-    public function test_static_pages_require_exact_requested_locale_without_fallback(): void
+    public function test_static_pages_exact_locale_isolation_and_no_fallback_leakage(): void
     {
-        $this->createPageWithTranslation('about', ContentStatus::PUBLISHED, 'vi', 'VI Only About');
-        $this->createPageWithTranslation('contact', ContentStatus::PUBLISHED, 'vi', 'VI Only Contact');
+        $this->assertDatabaseCount('pages', 0);
 
+        // VI About contains VI copy and no EN copy
+        $viAbout = $this->get('/gioi-thieu');
+        $viAbout->assertStatus(200);
+        $viAbout->assertSee(__('about.hero.title', [], 'vi'));
+        $viAbout->assertDontSee(__('about.hero.title', [], 'en'));
+        $viAbout->assertDontSee('A Sanctuary of Balance');
+
+        // EN About contains EN copy and no VI copy
+        $enAbout = $this->get('/en/about');
+        $enAbout->assertStatus(200);
+        $enAbout->assertSee(__('about.hero.title', [], 'en'));
+        $enAbout->assertDontSee(__('about.hero.title', [], 'vi'));
+        $enAbout->assertDontSee('Nơi tìm lại sự cân bằng');
+
+        // VI Contact contains VI copy and no EN copy
+        $viContact = $this->get('/lien-he');
+        $viContact->assertStatus(200);
+        $viContact->assertSee(__('contact.hero.title', [], 'vi'));
+        $viContact->assertDontSee(__('contact.hero.title', [], 'en'));
+        $viContact->assertDontSee('We Are Here to Listen');
+
+        // EN Contact contains EN copy and no VI copy
+        $enContact = $this->get('/en/contact');
+        $enContact->assertStatus(200);
+        $enContact->assertSee(__('contact.hero.title', [], 'en'));
+        $enContact->assertDontSee(__('contact.hero.title', [], 'vi'));
+        $enContact->assertDontSee('Chúng tôi luôn sẵn sàng');
+    }
+
+    public function test_static_pages_seo_metadata_integrity_without_database_lookups(): void
+    {
+        $this->assertDatabaseCount('pages', 0);
+
+        // 1. VI About SEO
         $this->get('/gioi-thieu')
             ->assertStatus(200)
-            ->assertSee('VI Only About');
+            ->assertSee('<link rel="canonical" href="https://viethanauhanspa.com/gioi-thieu">', false)
+            ->assertSee('<link rel="alternate" hreflang="vi" href="https://viethanauhanspa.com/gioi-thieu">', false)
+            ->assertSee('<link rel="alternate" hreflang="en" href="https://viethanauhanspa.com/en/about">', false)
+            ->assertSee('<link rel="alternate" hreflang="x-default" href="https://viethanauhanspa.com/gioi-thieu">', false)
+            ->assertSee('<title>Giới thiệu — Việt Hàn Âu Hàn Spa</title>', false)
+            ->assertSee('<meta name="description" content="'.htmlspecialchars(__('about.meta.description', [], 'vi'), ENT_QUOTES, 'UTF-8').'">', false);
 
-        $this->get('/lien-he')
-            ->assertStatus(200)
-            ->assertSee('VI Only Contact');
-
+        // 2. EN About SEO
         $this->get('/en/about')
-            ->assertStatus(404)
-            ->assertDontSee('VI Only About');
+            ->assertStatus(200)
+            ->assertSee('<link rel="canonical" href="https://viethanauhanspa.com/en/about">', false)
+            ->assertSee('<link rel="alternate" hreflang="vi" href="https://viethanauhanspa.com/gioi-thieu">', false)
+            ->assertSee('<link rel="alternate" hreflang="en" href="https://viethanauhanspa.com/en/about">', false)
+            ->assertSee('<link rel="alternate" hreflang="x-default" href="https://viethanauhanspa.com/gioi-thieu">', false)
+            ->assertSee('<title>About — Việt Hàn Âu Hàn Spa</title>', false)
+            ->assertSee('<meta name="description" content="'.htmlspecialchars(__('about.meta.description', [], 'en'), ENT_QUOTES, 'UTF-8').'">', false);
 
+        // 3. VI Contact SEO
+        $this->get('/lien-he')
+            ->assertStatus(200)
+            ->assertSee('<link rel="canonical" href="https://viethanauhanspa.com/lien-he">', false)
+            ->assertSee('<link rel="alternate" hreflang="vi" href="https://viethanauhanspa.com/lien-he">', false)
+            ->assertSee('<link rel="alternate" hreflang="en" href="https://viethanauhanspa.com/en/contact">', false)
+            ->assertSee('<link rel="alternate" hreflang="x-default" href="https://viethanauhanspa.com/lien-he">', false)
+            ->assertSee('<title>Liên hệ — Việt Hàn Âu Hàn Spa</title>', false)
+            ->assertSee('<meta name="description" content="'.htmlspecialchars(__('contact.meta.description', [], 'vi'), ENT_QUOTES, 'UTF-8').'">', false);
+
+        // 4. EN Contact SEO
         $this->get('/en/contact')
-            ->assertStatus(404)
-            ->assertDontSee('VI Only Contact');
-    }
-
-    public function test_page_translation_slug_is_irrelevant_to_static_public_routes(): void
-    {
-        $about = $this->createPageWithTranslation('about', ContentStatus::PUBLISHED, 'vi', 'About With Null Slug', null);
-        $contact = $this->createPageWithTranslation('contact', ContentStatus::PUBLISHED, 'vi', 'Contact With Arbitrary Slug', 'editorial-contact-slug');
-
-        $this->get('/gioi-thieu')->assertStatus(200)->assertSee('About With Null Slug');
-        $this->get('/lien-he')->assertStatus(200)->assertSee('Contact With Arbitrary Slug');
-
-        $this->assertNull($about->translationFor('vi')?->slug);
-        $this->get('/editorial-contact-slug')->assertStatus(404);
-    }
-
-    public function test_contact_uses_explicit_public_site_setting_allow_list_without_dumping_private_or_unrelated_settings(): void
-    {
-        $this->createPageWithTranslation('contact', ContentStatus::PUBLISHED, 'vi', 'Contact Settings Page');
-        $this->createSetting('contact.phone', '0988 777 666', true);
-        $this->createSetting('contact.email', 'hello@example.test', true);
-        $this->createSetting('contact.address', 'Published Contact Address', true);
-        $this->createSetting('business.hours', '09:00 - 18:00', true);
-        $this->createSetting('social.facebook_url', 'https://facebook.example/viet-han', true);
-        $this->createSetting('internal.ops_phone', '0911 222 333', false);
-        $this->createSetting('marketing.banner', 'Unrelated Public Setting Must Not Dump', true);
-
-        $response = $this->get('/lien-he');
-
-        $response->assertStatus(200);
-        $response->assertSee('0988 777 666');
-        $response->assertSee('mailto:hello@example.test', false);
-        $response->assertSee('Published Contact Address');
-        $response->assertSee('09:00 - 18:00');
-        $response->assertSee('https://facebook.example/viet-han', false);
-        $response->assertDontSee('0911 222 333');
-        $response->assertDontSee('Unrelated Public Setting Must Not Dump');
-    }
-
-    public function test_contact_omits_unsafe_url_settings_and_invalid_active_links(): void
-    {
-        $this->createPageWithTranslation('contact', ContentStatus::PUBLISHED, 'vi', 'Unsafe Contact Page');
-        $this->createSetting('contact.phone', 'javascript:alert(1)', true);
-        $this->createSetting('contact.email', 'javascript:alert(1)', true);
-        $this->createSetting('social.facebook_url', 'javascript:alert(1)', true);
-        $this->createSetting('social.zalo_url', 'data:text/html,<b>x</b>', true);
-        $this->createSetting('social.youtube_url', 'file:///private/path', true);
-
-        $response = $this->get('/lien-he');
-
-        $response->assertStatus(200);
-        $response->assertDontSee('href="javascript:', false);
-        $response->assertDontSee('href="data:', false);
-        $response->assertDontSee('href="file:', false);
-        $response->assertDontSee('mailto:javascript:', false);
-        $response->assertDontSee('tel:javascript', false);
-        $response->assertDontSee('javascript:alert(1)');
-        $response->assertDontSee('data:text/html');
-        $response->assertDontSee('file:///private/path');
-    }
-
-    public function test_contact_page_with_missing_settings_renders_without_fake_contact_details(): void
-    {
-        $this->createPageWithTranslation('contact', ContentStatus::PUBLISHED, 'vi', 'Contact Without Settings');
-
-        $this->get('/lien-he')
             ->assertStatus(200)
-            ->assertSee(__('pages.contact.empty', [], 'vi'))
-            ->assertDontSee('090 123 4567')
-            ->assertDontSee('info@viethanauhanspa.com');
+            ->assertSee('<link rel="canonical" href="https://viethanauhanspa.com/en/contact">', false)
+            ->assertSee('<link rel="alternate" hreflang="vi" href="https://viethanauhanspa.com/lien-he">', false)
+            ->assertSee('<link rel="alternate" hreflang="en" href="https://viethanauhanspa.com/en/contact">', false)
+            ->assertSee('<link rel="alternate" hreflang="x-default" href="https://viethanauhanspa.com/lien-he">', false)
+            ->assertSee('<title>Contact — Việt Hàn Âu Hàn Spa</title>', false)
+            ->assertSee('<meta name="description" content="'.htmlspecialchars(__('contact.meta.description', [], 'en'), ENT_QUOTES, 'UTF-8').'">', false);
     }
 
-    public function test_page_media_resolves_exact_locale_alt_and_preserves_order_without_crashing_on_missing_files(): void
+    public function test_sitemap_includes_about_and_contact_routes_with_zero_page_records(): void
     {
-        Storage::fake('public');
-        Storage::disk('public')->put('media/page-lead.jpg', 'fake-image');
-        Storage::disk('public')->put('media/page-gallery-one.jpg', 'fake-image');
-        Storage::disk('public')->put('media/page-gallery-two.jpg', 'fake-image');
+        $this->assertDatabaseCount('pages', 0);
 
-        $lead = $this->createMedia('media/page-lead.jpg');
-        MediaTranslation::create([
-            'media_id' => $lead->id,
-            'locale' => 'vi',
-            'alt_text' => 'Exact VI Page Lead Alt',
-        ]);
-
-        $galleryOne = $this->createMedia('media/page-gallery-one.jpg');
-        MediaTranslation::create([
-            'media_id' => $galleryOne->id,
-            'locale' => 'vi',
-            'alt_text' => 'Exact VI Page Gallery One Alt',
-            'caption' => 'Page gallery one caption',
-        ]);
-
-        $galleryTwo = $this->createMedia('media/page-gallery-two.jpg');
-        MediaTranslation::create([
-            'media_id' => $galleryTwo->id,
-            'locale' => 'en',
-            'alt_text' => 'English Page Alt Must Not Leak',
-        ]);
-
-        $page = $this->createPageWithTranslation('about', ContentStatus::PUBLISHED, 'vi', 'About With Media');
-        $page->media()->attach($galleryTwo->id, ['sort_order' => 2, 'created_at' => now()]);
-        $page->media()->attach($lead->id, ['sort_order' => 0, 'created_at' => now()]);
-        $page->media()->attach($galleryOne->id, ['sort_order' => 1, 'created_at' => now()]);
-
-        $response = $this->get('/gioi-thieu');
-
+        $response = $this->get('/sitemap.xml');
         $response->assertStatus(200);
-        $response->assertSee('page-lead.jpg');
-        $response->assertSee('Exact VI Page Lead Alt');
-        $response->assertSeeInOrder(['page-gallery-one.jpg', 'page-gallery-two.jpg']);
-        $response->assertSee('Exact VI Page Gallery One Alt');
-        $response->assertSee('alt=""', false);
-        $response->assertDontSee('English Page Alt Must Not Leak');
+        $content = $response->getContent();
 
-        $missing = $this->createMedia('media/missing-page.jpg');
-        $missingPage = $this->createPageWithTranslation('contact', ContentStatus::PUBLISHED, 'vi', 'Contact With Missing Media');
-        $missingPage->media()->attach($missing->id, ['sort_order' => 0, 'created_at' => now()]);
-
-        $this->get('/lien-he')
-            ->assertStatus(200)
-            ->assertSee('Contact With Missing Media')
-            ->assertDontSee('missing-page.jpg');
+        $this->assertStringContainsString('<loc>https://viethanauhanspa.com/gioi-thieu</loc>', $content);
+        $this->assertStringContainsString('<loc>https://viethanauhanspa.com/en/about</loc>', $content);
+        $this->assertStringContainsString('<loc>https://viethanauhanspa.com/lien-he</loc>', $content);
+        $this->assertStringContainsString('<loc>https://viethanauhanspa.com/en/contact</loc>', $content);
     }
 
-    public function test_page_rich_content_is_rendered_as_safe_plain_text_without_raw_markup(): void
+    public function test_static_page_language_switch_uses_fixed_deterministic_route_pairs(): void
     {
-        $page = $this->createPageWithTranslation('about', ContentStatus::PUBLISHED, 'vi', 'Rich Static Page');
-        $page->translationFor('vi')->update([
-            'content' => '<p>Visible page content.</p><script>alert("x")</script><strong>Styled page text</strong><img src=x onerror=alert(1)>',
-        ]);
+        $this->assertDatabaseCount('pages', 0);
 
-        $this->get('/gioi-thieu')
-            ->assertStatus(200)
-            ->assertSee('Visible page content.')
-            ->assertSee('Styled page text')
-            ->assertDontSee('<script>alert', false)
-            ->assertDontSee('alert("x")')
-            ->assertDontSee('<strong>', false)
-            ->assertDontSee('onerror', false);
-    }
-
-    public function test_static_page_language_switch_uses_fixed_route_pairs_and_home_fallback_for_missing_translation(): void
-    {
-        $about = $this->createPageWithTranslation('about', ContentStatus::PUBLISHED, 'vi', 'Bilingual About VI');
-        PageTranslation::create([
-            'page_id' => $about->id,
-            'locale' => 'en',
-            'title' => 'Bilingual About EN',
-            'slug' => 'ignored-about-slug',
-        ]);
-
-        $contact = $this->createPageWithTranslation('contact', ContentStatus::PUBLISHED, 'vi', 'Bilingual Contact VI');
-        PageTranslation::create([
-            'page_id' => $contact->id,
-            'locale' => 'en',
-            'title' => 'Bilingual Contact EN',
-            'slug' => null,
-        ]);
-
+        // From VI About -> switch link points to EN About
         $this->get('/gioi-thieu')
             ->assertStatus(200)
             ->assertSee('href="'.route('en.about').'"', false);
 
+        // From EN About -> switch link points to VI About
         $this->get('/en/about')
             ->assertStatus(200)
             ->assertSee('href="'.route('vi.about').'"', false);
 
+        // From VI Contact -> switch link points to EN Contact
         $this->get('/lien-he')
             ->assertStatus(200)
             ->assertSee('href="'.route('en.contact').'"', false);
 
+        // From EN Contact -> switch link points to VI Contact
         $this->get('/en/contact')
             ->assertStatus(200)
             ->assertSee('href="'.route('vi.contact').'"', false);
-
-        $about->translations()->where('locale', 'en')->delete();
-        $about->translations()->where('locale', 'vi')->update(['title' => 'VI Only About Fallback']);
-
-        $this->get('/gioi-thieu')
-            ->assertStatus(200)
-            ->assertSee('href="'.route('en.home').'"', false);
     }
 
-    public function test_header_and_footer_navigation_use_phase_10d_routes_and_preserve_existing_public_routes(): void
-    {
-        $this->createPageWithTranslation('about', ContentStatus::PUBLISHED, 'vi', 'About Nav');
-        $this->createPageWithTranslation('contact', ContentStatus::PUBLISHED, 'vi', 'Contact Nav');
-        $this->createPageWithTranslation('about', ContentStatus::PUBLISHED, 'en', 'About Nav EN');
-        $this->createPageWithTranslation('contact', ContentStatus::PUBLISHED, 'en', 'Contact Nav EN');
-
-        $this->get('/gioi-thieu')
-            ->assertStatus(200)
-            ->assertSee('href="'.route('vi.about').'"', false)
-            ->assertSee('href="'.route('vi.contact').'"', false)
-            ->assertSee('href="'.route('vi.services.index').'"', false)
-            ->assertSee('href="'.route('vi.training.index').'"', false)
-            ->assertSee('href="'.route('vi.blog.index').'"', false)
-            ->assertSee('class="public-header__link"', false);
-
-        $this->get('/en/about')
-            ->assertStatus(200)
-            ->assertSee('href="'.route('en.about').'"', false)
-            ->assertSee('href="'.route('en.contact').'"', false)
-            ->assertSee('href="'.route('en.services.index').'"', false)
-            ->assertSee('href="'.route('en.training.index').'"', false)
-            ->assertSee('href="'.route('en.blog.index').'"', false)
-            ->assertSee('class="public-header__link"', false);
-    }
-
-    public function test_phase_11_keeps_static_contact_mutations_closed_while_booking_post_exists(): void
+    public function test_contact_page_has_no_post_mutation_route_and_uses_safe_links(): void
     {
         $publicStaticMutationRoutes = collect(Route::getRoutes())
             ->filter(function ($route) {
@@ -304,64 +240,14 @@ class PublicStaticPageTest extends TestCase
             ->reject(fn ($route) => str_starts_with($route->uri(), 'admin'))
             ->values();
 
+        // Only booking submission POST routes are allowed; Contact page is strictly read-only
         $this->assertSame(['dat-lich', 'en/booking'], $publicStaticMutationRoutes->pluck('uri')->sort()->values()->all());
-    }
 
-    protected function createPageWithTranslation(
-        string $key,
-        ContentStatus $status,
-        string $locale,
-        string $title,
-        ?string $slug = null,
-        ?string $content = null
-    ): Page {
-        $page = Page::updateOrCreate(
-            ['key' => $key],
-            ['status' => $status]
-        );
-
-        PageTranslation::updateOrCreate(
-            [
-                'page_id' => $page->id,
-                'locale' => $locale,
-            ],
-            [
-                'title' => $title,
-                'slug' => $slug,
-                'content' => $content ?? '<p>'.$title.' body content.</p>',
-            ]
-        );
-
-        return $page->fresh(['translations']);
-    }
-
-    protected function createSetting(string $key, string $value, bool $isPublic): SiteSetting
-    {
-        $setting = SiteSetting::create([
-            'key' => $key,
-            'value' => $value,
-            'type' => SiteSettingType::STRING,
-            'group' => str_contains($key, 'social.') ? 'social' : 'contact',
-            'is_public' => $isPublic,
-        ]);
-
-        app(SiteSettings::class)->clearCache($key);
-        Cache::forget(SiteSettings::PUBLIC_ALL_CACHE_KEY);
-
-        return $setting;
-    }
-
-    protected function createMedia(string $path): Media
-    {
-        return Media::create([
-            'disk' => 'public',
-            'path' => $path,
-            'file_name' => basename($path),
-            'mime_type' => 'image/jpeg',
-            'extension' => 'jpg',
-            'size_bytes' => 1024,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        // Contact page contains verified links and no form
+        $response = $this->get('/lien-he');
+        $response->assertStatus(200);
+        $response->assertSee('href="tel:0901234567"', false);
+        $response->assertSee('href="mailto:info@viethanauhanspa.com"', false);
+        $response->assertDontSee('<form', false);
     }
 }
