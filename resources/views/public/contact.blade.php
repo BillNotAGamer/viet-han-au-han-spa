@@ -119,6 +119,8 @@
                         <div class="mt-5 pt-3.5 border-t border-[#E8DFC8]/60">
                             <a
                                 href="{{ $bookingUrl }}"
+                                data-booking-modal-trigger
+                                @click.prevent="$dispatch('open-booking-modal', { trigger: $el })"
                                 class="inline-flex w-full min-h-[46px] items-center justify-center rounded-lg bg-[#5B1121] px-5 py-2.5 text-[17px] sm:text-[18px] font-semibold text-white shadow-sm hover:bg-[#430C18] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B1121] focus-visible:ring-offset-2"
                             >
                                 {{ $content['cards']['booking']['cta'] }}
@@ -178,6 +180,8 @@
                     <div class="pt-3 flex items-center justify-center">
                         <a
                             href="{{ $bookingUrl }}"
+                            data-booking-modal-trigger
+                            @click.prevent="$dispatch('open-booking-modal', { trigger: $el })"
                             class="inline-flex min-h-[48px] items-center justify-center rounded-full bg-gradient-to-r from-[#C5A880] to-[#B3956B] px-8 py-3.5 text-[17px] sm:text-[18px] font-semibold text-[#181312] shadow-xl hover:scale-105 transition duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A880] focus-visible:ring-offset-2 focus-visible:ring-offset-[#181312]"
                         >
                             {{ $content['cta']['button'] }}

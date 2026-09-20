@@ -230,6 +230,8 @@
                     <div class="pt-3 flex flex-wrap items-center justify-center gap-4">
                         <a
                             href="{{ $bookingUrl }}"
+                            data-booking-modal-trigger
+                            @click.prevent="$dispatch('open-booking-modal', { trigger: $el })"
                             class="inline-flex min-h-[48px] items-center justify-center rounded-full bg-gradient-to-r from-[#C5A880] to-[#B3956B] px-8 py-3.5 text-[17px] sm:text-[18px] font-semibold text-[#181312] shadow-xl hover:scale-105 transition duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A880] focus-visible:ring-offset-2 focus-visible:ring-offset-[#181312]"
                         >
                             {{ $content['cta']['button_booking'] }}

@@ -24,6 +24,7 @@
     --font-serif: "Cormorant Garamond", Sans-serif;
     --font-cormorant: "Cormorant Garamond", Sans-serif;
     --font-montserrat: Montserrat, sans-serif;
+
     /* Public Design System V2: semantic tokens (not yet applied to legacy pages). */
     --color-v2-brand: #5b1121;
     --color-v2-brand-strong: #310811;
@@ -40,6 +41,10 @@
     --color-v2-focus: #5b1121;
     --font-v2-display: "Cormorant Garamond", serif;
     --font-v2-ui: Montserrat, sans-serif;
+}
+
+[x-cloak] {
+    display: none !important;
 }
 
 @layer base {
@@ -856,6 +861,309 @@ html.motion-ready [data-reveal-image].is-exited-below img {
     font-family: Montserrat, sans-serif !important;
 }
 
+/* ==========================================================================
+   Floating Contact Dock (Left Viewport)
+   ========================================================================== */
+
+.contact-dock {
+    position: fixed;
+    top: auto;
+    bottom: max(20px, env(safe-area-inset-bottom, 20px));
+    left: max(12px, env(safe-area-inset-left, 12px));
+    z-index: 45;
+    pointer-events: none;
+    transform: none;
+}
+
+@media (min-width: 768px) {
+    .contact-dock {
+        bottom: clamp(28px, 4.5vh, 44px);
+        left: max(20px, env(safe-area-inset-left, 20px));
+    }
+}
+
+@media (max-height: 520px) {
+    .contact-dock {
+        bottom: max(12px, env(safe-area-inset-bottom, 12px));
+    }
+}
+
+.contact-dock__list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+@media (min-width: 768px) {
+    .contact-dock__list {
+        gap: 12px;
+    }
+}
+
+.contact-dock__item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    animation: contactDockFloat 3.8s ease-in-out infinite;
+}
+
+.contact-dock__item:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.contact-dock__item:nth-child(2) {
+    animation-delay: 0.55s;
+}
+
+.contact-dock__item:nth-child(3) {
+    animation-delay: 1.1s;
+}
+
+.contact-dock__item:nth-child(4) {
+    animation-delay: 1.65s;
+}
+
+@keyframes contactDockFloat {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(-4px) scale(1.02);
+    }
+}
+
+.contact-dock__button {
+    position: relative;
+    display: flex;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    outline: none;
+    pointer-events: auto;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 200ms ease;
+}
+
+@media (min-width: 768px) {
+    .contact-dock__button {
+        width: 54px;
+        height: 54px;
+    }
+}
+
+.contact-dock__button:focus-visible {
+    box-shadow: 0 0 0 3px rgba(197, 168, 128, 0.85), 0 0 0 6px rgba(43, 8, 12, 0.45);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .contact-dock__button:hover {
+        transform: scale(1.08);
+    }
+}
+
+.contact-dock__halo {
+    position: absolute;
+    inset: -5px;
+    z-index: 1;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0.72;
+    background: radial-gradient(
+        circle,
+        rgba(59, 130, 246, 0.24) 25%,
+        rgba(59, 130, 246, 0.14) 60%,
+        rgba(59, 130, 246, 0.04) 85%,
+        transparent 100%
+    );
+    box-shadow:
+        0 0 10px 2px rgba(59, 130, 246, 0.22),
+        0 0 18px 4px rgba(59, 130, 246, 0.12);
+    animation: contactDockHaloPulse 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    transition: opacity 220ms ease, filter 220ms ease;
+}
+
+@media (min-width: 768px) {
+    .contact-dock__halo {
+        inset: -7px;
+    }
+}
+
+/* Layer 1: Compact brighter blue aura close to the icon */
+.contact-dock__halo::before {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    border-radius: 50%;
+    pointer-events: none;
+    background: radial-gradient(
+        circle,
+        rgba(96, 165, 250, 0.42) 0%,
+        rgba(59, 130, 246, 0.38) 50%,
+        rgba(59, 130, 246, 0.15) 75%,
+        transparent 92%
+    );
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.35);
+}
+
+.contact-dock__item:nth-child(1) .contact-dock__halo {
+    animation-delay: 0s;
+}
+
+.contact-dock__item:nth-child(2) .contact-dock__halo {
+    animation-delay: 0.22s;
+}
+
+.contact-dock__item:nth-child(3) .contact-dock__halo {
+    animation-delay: 0.44s;
+}
+
+.contact-dock__item:nth-child(4) .contact-dock__halo {
+    animation-delay: 0.66s;
+}
+
+@keyframes contactDockHaloPulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.72;
+    }
+    50% {
+        transform: scale(1.08);
+        opacity: 1;
+    }
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .contact-dock__button:hover .contact-dock__halo {
+        filter: brightness(1.15) drop-shadow(0 0 6px rgba(59, 130, 246, 0.30));
+    }
+}
+
+.contact-dock__surface {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    box-shadow: 0 4px 14px rgba(20, 15, 14, 0.18), 0 1px 3px rgba(20, 15, 14, 0.12);
+    transition: box-shadow 200ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .contact-dock__button:hover .contact-dock__surface {
+        box-shadow: 0 6px 18px rgba(20, 15, 14, 0.24), 0 2px 5px rgba(20, 15, 14, 0.16);
+    }
+}
+
+.contact-dock__surface--facebook {
+    background-color: #1877f2;
+}
+
+.contact-dock__surface--messenger {
+    background: linear-gradient(135deg, #00c6ff 0%, #0078ff 30%, #a855f7 70%, #ec4899 100%);
+}
+
+.contact-dock__surface--zalo {
+    background-color: #0068ff;
+}
+
+.contact-dock__surface--phone {
+    background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+}
+
+.contact-dock__icon {
+    display: block;
+    object-fit: contain;
+    pointer-events: none;
+    user-select: none;
+}
+
+.contact-dock__icon--facebook,
+.contact-dock__icon--messenger {
+    width: 100%;
+    height: 100%;
+}
+
+.contact-dock__icon--zalo {
+    width: 25px;
+    height: auto;
+}
+
+@media (min-width: 768px) {
+    .contact-dock__icon--zalo {
+        width: 34px;
+    }
+}
+
+.contact-dock__icon--phone {
+    width: 18px;
+    height: auto;
+}
+
+@media (min-width: 768px) {
+    .contact-dock__icon--phone {
+        width: 25px;
+    }
+}
+
+.contact-dock__tooltip {
+    position: absolute;
+    top: 50%;
+    left: calc(100% + 12px);
+    z-index: 10;
+    display: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background-color: #2b080c;
+    color: #faf7f2;
+    border: 1px solid rgba(197, 168, 128, 0.35);
+    box-shadow: 0 4px 14px rgba(20, 15, 14, 0.26);
+    font-family: Montserrat, sans-serif !important;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-50%) translateX(-4px);
+    transition: opacity 180ms ease, transform 180ms ease, visibility 180ms ease;
+}
+
+.contact-dock__tooltip::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    transform: translateY(-50%);
+    border: 5px solid transparent;
+    border-right-color: #2b080c;
+}
+
+@media (min-width: 768px) and (hover: hover) and (pointer: fine) {
+    .contact-dock__tooltip {
+        display: block;
+    }
+
+    .contact-dock__button:hover .contact-dock__tooltip,
+    .contact-dock__button:focus-visible .contact-dock__tooltip {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(-50%) translateX(0);
+    }
+}
+
 /* Strict Reduced Motion: Instant State, Zero Transforms */
 @media (prefers-reduced-motion: reduce) {
     *,
@@ -884,12 +1192,24 @@ html.motion-ready [data-reveal-image].is-exited-below img {
     .group:hover .editorial-image-zoom img,
     .btn-editorial-primary:hover,
     .btn-editorial-outline:hover,
-    .public-floating-booking__link:hover {
+    .public-floating-booking__link:hover,
+    .contact-dock__item,
+    .contact-dock__button,
+    .contact-dock__button:hover {
         opacity: 1 !important;
         transform: none !important;
         transition: none !important;
+        animation: none !important;
+    }
+
+    .contact-dock__halo {
+        opacity: 0.72 !important;
+        transform: none !important;
+        transition: none !important;
+        animation: none !important;
     }
 }
+
 /* ==========================================================================
    Public Design System V2 — Korean Quiet Luxury Foundation
    Namespace-only in Phase 1: current public pages retain legacy presentation.

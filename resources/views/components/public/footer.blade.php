@@ -63,7 +63,7 @@
                     <li><a href="{{ $trainingUrl }}" class="hover:text-[#C5A880] transition duration-200">{{ __('navigation.training') }}</a></li>
                     <li><a href="{{ $blogUrl }}" class="hover:text-[#C5A880] transition duration-200">{{ __('navigation.blog') }}</a></li>
                     <li><a href="{{ $contactUrl }}" class="hover:text-[#C5A880] transition duration-200">{{ __('navigation.contact') }}</a></li>
-                    <li><a href="{{ $bookingUrl }}" class="text-[#C5A880] hover:text-white font-medium transition duration-200">{{ __('navigation.booking') }} &rarr;</a></li>
+                    <li><a href="{{ $bookingUrl }}" x-data="{}" data-booking-modal-trigger @click.prevent="$dispatch('open-booking-modal', { trigger: $el })" class="text-[#C5A880] hover:text-white font-medium transition duration-200">{{ __('navigation.booking') }} &rarr;</a></li>
                 </ul>
             </div>
 

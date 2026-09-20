@@ -36,13 +36,26 @@
     </main>
 
     <div class="public-floating-booking">
-        <a href="{{ $bookingHref }}" class="public-floating-booking__link" aria-label="{{ __('navigation.book_now') }}">
+        <a
+            href="{{ $bookingHref }}"
+            x-data="{}"
+            data-booking-modal-trigger
+            @click.prevent="$dispatch('open-booking-modal', { trigger: $el })"
+            class="public-floating-booking__link"
+            aria-label="{{ __('navigation.book_now') }}"
+        >
             <svg class="public-floating-booking__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z"/>
             </svg>
             <span class="public-floating-booking__text">{{ __('navigation.book_now') }}</span>
         </a>
     </div>
+
+    <!-- Floating Contact Dock -->
+    <x-public.contact-dock />
+
+    <!-- Global Booking Modal -->
+    <x-public.booking-modal />
 
     <!-- Global Public Footer -->
     <x-public.footer />

@@ -243,11 +243,12 @@ class PublicStaticPageTest extends TestCase
         // Only booking submission POST routes are allowed; Contact page is strictly read-only
         $this->assertSame(['dat-lich', 'en/booking'], $publicStaticMutationRoutes->pluck('uri')->sort()->values()->all());
 
-        // Contact page contains verified links and no form
+        // Contact page main content contains verified links and no form
         $response = $this->get('/lien-he');
         $response->assertStatus(200);
         $response->assertSee('href="tel:0901234567"', false);
         $response->assertSee('href="mailto:info@viethanauhanspa.com"', false);
-        $response->assertDontSee('<form', false);
+        $contactContent = explode('id="booking-modal"', (string) $response->getContent())[0];
+        $this->assertStringNotContainsString('<form', $contactContent);
     }
 }

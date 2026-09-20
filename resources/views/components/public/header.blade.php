@@ -141,7 +141,12 @@
                 @endforeach
             </ul>
 
-            <a href="{{ $bookingUrl }}" @click="mobileOpen = false" class="public-header__drawer-cta">
+            <a
+                href="{{ $bookingUrl }}"
+                data-booking-modal-trigger
+                @click.prevent="mobileOpen = false; $dispatch('open-booking-modal', { trigger: $el })"
+                class="public-header__drawer-cta"
+            >
                 {{ __('navigation.book_now') }}
             </a>
         </nav>

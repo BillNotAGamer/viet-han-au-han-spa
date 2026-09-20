@@ -187,7 +187,12 @@
                                 {{ __('training.detail.inquiry_copy') }}
                             </p>
                             <div class="pt-2">
-                                <a href="{{ $contactHref }}" class="btn-editorial-primary w-full text-center">
+                                <a
+                                    href="{{ $contactHref }}"
+                                    data-booking-modal-trigger
+                                    @click.prevent="$dispatch('open-booking-modal', { trigger: $el })"
+                                    class="btn-editorial-primary w-full text-center"
+                                >
                                     {{ __('training.detail.inquiry_cta') }}
                                 </a>
                             </div>

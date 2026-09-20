@@ -155,4 +155,71 @@ class PublicLayoutTest extends TestCase
         $response->assertSee('class="public-header__mobile-logo"', false);
         $response->assertSee('<span class="sr-only">Việt Hàn Âu Hàn Spa</span>', false);
     }
+
+    public function test_floating_contact_dock_renders_correct_targets_order_and_accessibility(): void
+    {
+        // 1. Vietnamese layout
+        $viResponse = $this->get('/');
+        $viResponse->assertStatus(200);
+
+        // Verify dock container exists
+        $viResponse->assertSee('class="contact-dock"', false);
+        $viResponse->assertSee('aria-label="Kênh liên hệ nhanh"', false);
+
+        // Verify Facebook target & attributes
+        $viResponse->assertSee('href="https://www.facebook.com/profile.php?id=61575606630966"', false);
+        $viResponse->assertSee('aria-label="Facebook Việt Hàn Âu Hàn Spa"', false);
+
+        // Verify Messenger target & attributes
+        $viResponse->assertSee('aria-label="Messenger Việt Hàn Âu Hàn Spa"', false);
+
+        // Verify Zalo target & attributes
+        $viResponse->assertSee('href="https://zalo.me/0902309026"', false);
+        $viResponse->assertSee('aria-label="Zalo Việt Hàn Âu Hàn Spa"', false);
+
+        // Verify Hotline tel target (no target="_blank")
+        $viResponse->assertSee('href="tel:0902309026"', false);
+        $viResponse->assertSee('aria-label="Gọi hotline Việt Hàn Âu Hàn Spa"', false);
+
+        // Verify target="_blank" and rel="noopener noreferrer" on external links
+        $content = (string) $viResponse->getContent();
+        $this->assertMatchesRegularExpression('/href="https:\/\/zalo\.me\/0902309026"\s+target="_blank"\s+rel="noopener noreferrer"/', $content);
+
+        // Verify strict vertical order: Facebook -> Messenger -> Zalo -> Hotline
+        $fbPos = strpos($content, 'aria-label="Facebook Việt Hàn Âu Hàn Spa"');
+        $msgPos = strpos($content, 'aria-label="Messenger Việt Hàn Âu Hàn Spa"');
+        $zaloPos = strpos($content, 'aria-label="Zalo Việt Hàn Âu Hàn Spa"');
+        $phonePos = strpos($content, 'aria-label="Gọi hotline Việt Hàn Âu Hàn Spa"');
+
+        $this->assertNotFalse($fbPos);
+        $this->assertNotFalse($msgPos);
+        $this->assertNotFalse($zaloPos);
+        $this->assertNotFalse($phonePos);
+        $this->assertTrue($fbPos < $msgPos, 'Facebook must precede Messenger');
+        $this->assertTrue($msgPos < $zaloPos, 'Messenger must precede Zalo');
+        $this->assertTrue($zaloPos < $phonePos, 'Zalo must precede Hotline');
+
+        // Verify Vietnamese tooltips
+        $viResponse->assertSee('role="tooltip" aria-hidden="true">Facebook</span>', false);
+        $viResponse->assertSee('role="tooltip" aria-hidden="true">Messenger</span>', false);
+        $viResponse->assertSee('role="tooltip" aria-hidden="true">Zalo</span>', false);
+        $viResponse->assertSee('role="tooltip" aria-hidden="true">Gọi ngay</span>', false);
+
+        // 2. English layout
+        $enResponse = $this->get('/en');
+        $enResponse->assertStatus(200);
+        $enResponse->assertSee('class="contact-dock"', false);
+        $enResponse->assertSee('aria-label="Call hotline Việt Hàn Âu Hàn Spa"', false);
+        $enResponse->assertSee('role="tooltip" aria-hidden="true">Call now</span>', false);
+    }
+
+    public function test_floating_contact_dock_is_excluded_from_admin_panel(): void
+    {
+        $response = $this->get('/admin/login');
+
+        // Dock must NEVER be rendered on admin authentication or Filament pages
+        $response->assertDontSee('contact-dock', false);
+        $response->assertDontSee('https://zalo.me/0902309026', false);
+        $response->assertDontSee('tel:0902309026', false);
+    }
 }
