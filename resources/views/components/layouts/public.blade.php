@@ -3,11 +3,13 @@
     'headerMode' => 'overlay',
     'contactHref' => null,
     'seo' => null,
+    'variant' => 'legacy',
 ])
 
 @php
     $bookingHref = $contactHref ?? (app()->getLocale() === 'en' ? route('en.booking.create') : route('vi.booking.create'));
     $seoMetadata = $seo ?? ($__data['seo'] ?? null);
+    $isV2 = $variant === 'v2';
 @endphp
 
 <!DOCTYPE html>
@@ -20,7 +22,10 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <x-tracking.head />
 </head>
-<body class="min-h-full flex flex-col bg-brand-ivory text-brand-text font-sans antialiased selection:bg-brand-gold-light selection:text-brand-primary">
+<body @class([
+    'min-h-full flex flex-col bg-brand-ivory text-brand-text font-sans antialiased selection:bg-brand-gold-light selection:text-brand-primary',
+    'v2-public-shell' => $isV2,
+])>
     <x-tracking.body />
     <!-- Accessible Skip Link (Targeting single primary #main-content) -->
     <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-5 focus:py-3 focus:bg-brand-primary focus:text-white focus:font-semibold focus:rounded-lg focus:shadow-xl focus:ring-2 focus:ring-brand-gold focus:outline-none transition">
@@ -28,14 +33,14 @@
     </a>
 
     <!-- Global Public Header -->
-    <x-public.header :mode="$headerMode" />
+    <x-public.header :mode="$headerMode" :variant="$variant" />
 
     <!-- Primary Main Landmark -->
     <main id="main-content" class="flex-1 focus:outline-none" tabindex="-1">
         {{ $slot }}
     </main>
 
-    <div class="public-floating-booking">
+    <div @class(['public-floating-booking', 'v2-floating-booking' => $isV2])>
         <a
             href="{{ $bookingHref }}"
             x-data="{}"
@@ -58,6 +63,6 @@
     <x-public.booking-modal />
 
     <!-- Global Public Footer -->
-    <x-public.footer />
+    <x-public.footer :variant="$variant" />
 </body>
 </html>

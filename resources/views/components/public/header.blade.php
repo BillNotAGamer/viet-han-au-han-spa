@@ -1,5 +1,6 @@
 @props([
     'mode' => 'overlay',
+    'variant' => 'legacy',
 ])
 
 @php
@@ -25,6 +26,7 @@
     $blogUrl = $isVi ? route('vi.blog.index') : route('en.blog.index');
     $contactUrl = $isVi ? route('vi.contact') : route('en.contact');
     $bookingUrl = $isVi ? route('vi.booking.create') : route('en.booking.create');
+    $isV2 = $variant === 'v2';
 
     $leftNavLinks = [
         ['key' => 'home', 'label' => __('navigation.home'), 'url' => $homeUrl],
@@ -42,7 +44,7 @@
 @endphp
 
 <header
-    class="public-header {{ $isSolid ? 'public-header--sticky' : 'public-header--overlay' }}"
+    class="public-header {{ $isSolid ? 'public-header--sticky' : 'public-header--overlay' }}{{ $isV2 ? ' v2-header' : '' }}"
     x-data="{
         mobileOpen: false,
         isSolid: @js($isSolid),
@@ -64,6 +66,31 @@
     :class="isSticky ? 'public-header--sticky' : 'public-header--overlay'"
     @keydown.escape.window="mobileOpen = false"
 >
+    @if($isV2)
+        <div class="v2-header__desktop">
+            <nav aria-label="{{ __('navigation.main_navigation') }}" class="v2-header__nav v2-header__nav--left">
+                @foreach($leftNavLinks as $link)
+                    <a href="{{ $link['url'] }}" class="{{ $isActive($link['key']) ? 'v2-header__link v2-header__link--active' : 'v2-header__link' }}" @if($isActive($link['key'])) aria-current="page" @endif>
+                        {{ $link['label'] }}
+                    </a>
+                @endforeach
+            </nav>
+
+            <a href="{{ $homeUrl }}" aria-label="{{ $brandName }}" class="v2-header__brand-link">
+                <x-public.v2.logo variant="white" decorative class="v2-header__logo v2-header__logo--white" />
+                <x-public.v2.logo variant="compact" decorative class="v2-header__logo v2-header__logo--compact" />
+                <span class="sr-only">{{ $brandName }}</span>
+            </a>
+
+            <nav aria-label="{{ __('navigation.main_navigation') }}" class="v2-header__nav v2-header__nav--right">
+                @foreach($rightNavLinks as $link)
+                    <a href="{{ $link['url'] }}" class="{{ $isActive($link['key']) ? 'v2-header__link v2-header__link--active' : 'v2-header__link' }}" @if($isActive($link['key'])) aria-current="page" @endif>
+                        {{ $link['label'] }}
+                    </a>
+                @endforeach
+            </nav>
+        </div>
+    @else
     <div class="public-header__desktop">
         <nav aria-label="{{ __('navigation.main_navigation') }}" class="public-header__nav public-header__nav--left">
             @foreach($leftNavLinks as $link)
@@ -90,15 +117,22 @@
             <x-public.language-switcher />
         </div>
     </div>
+    @endif
 
     <div class="public-header__mobile">
         <a href="{{ $homeUrl }}" aria-label="{{ $brandName }}" class="public-header__mobile-brand">
-            <img src="{{ $logoUrl }}" alt="" class="public-header__mobile-logo" aria-hidden="true">
+            @if($isV2)
+                <x-public.v2.logo variant="compact" decorative class="public-header__mobile-logo v2-header__mobile-logo" />
+            @else
+                <img src="{{ $logoUrl }}" alt="" class="public-header__mobile-logo" aria-hidden="true">
+            @endif
             <span class="sr-only">{{ $brandName }}</span>
         </a>
 
         <div class="public-header__mobile-actions">
-            <x-public.language-switcher />
+            @unless($isV2)
+                <x-public.language-switcher />
+            @endunless
 
             <button
                 type="button"

@@ -145,15 +145,82 @@ class PublicLayoutTest extends TestCase
         $response = $this->get('/');
         $response->assertStatus(200);
 
-        // Verify section heading uses safe word-boundary wrapping and no break-all
-        $response->assertSee('break-words', false);
+        // V2 semantic heading roles carry word-safe wrapping in the design-system CSS.
+        $response->assertSee('v2-type-display-xl', false);
         $response->assertDontSee('break-all', false);
 
-        // Verify logo-only header branding remains accessible after the Phase 9.5 header rebuild
+        // Verify the V2 logo-only header branding remains accessible.
         $response->assertSee('aria-label="Việt Hàn Âu Hàn Spa"', false);
-        $response->assertSee('class="public-header__logo"', false);
-        $response->assertSee('class="public-header__mobile-logo"', false);
+        $response->assertSee('v2-header__logo--white', false);
+        $response->assertSee('v2-header__mobile-logo', false);
         $response->assertSee('<span class="sr-only">Việt Hàn Âu Hàn Spa</span>', false);
+    }
+
+    public function test_v2_shell_is_limited_to_phase_two_prototype_routes(): void
+    {
+        $this->get('/')
+            ->assertStatus(200)
+            ->assertSee('v2-public-shell', false)
+            ->assertSee('v2-home-hero', false);
+
+        $this->get('/en')
+            ->assertStatus(200)
+            ->assertSee('v2-public-shell', false)
+            ->assertSee('v2-home-hero', false)
+            ->assertSee('href="'.route('en.booking.create').'"', false);
+
+        $this->get('/gioi-thieu')
+            ->assertStatus(200)
+            ->assertDontSee('v2-public-shell', false);
+
+        $this->get('/lien-he')
+            ->assertStatus(200)
+            ->assertDontSee('v2-public-shell', false);
+
+        $this->get('/dat-lich')
+            ->assertStatus(200)
+            ->assertDontSee('v2-public-shell', false);
+    }
+
+    public function test_v2_header_centers_logo_and_moves_language_switching_to_footer(): void
+    {
+        foreach ([
+            ['path' => '/', 'target' => url('/en'), 'active_label' => 'Tiếng Việt'],
+            ['path' => '/en', 'target' => url('/'), 'active_label' => 'English'],
+        ] as $case) {
+            $content = (string) $this->get($case['path'])->assertStatus(200)->getContent();
+
+            preg_match('/<header\b[^>]*>.*<\/header>/s', $content, $fullHeaderMatch);
+            $fullHeader = $fullHeaderMatch[0] ?? '';
+            preg_match('/<div class="v2-header__desktop">(.*?)<div class="public-header__mobile">/s', $content, $headerMatch);
+            $desktopHeader = $headerMatch[1] ?? '';
+            preg_match('/<footer class="v2-footer">.*<\/footer>/s', $content, $footerMatch);
+            $footer = $footerMatch[0] ?? '';
+
+            $this->assertNotSame('', $desktopHeader);
+            $this->assertNotSame('', $fullHeader);
+            $this->assertStringContainsString('v2-header__nav--left', $desktopHeader);
+            $this->assertStringContainsString('v2-header__brand-link', $desktopHeader);
+            $this->assertStringContainsString('v2-header__nav--right', $desktopHeader);
+            $this->assertTrue(strpos($desktopHeader, 'v2-header__nav--left') < strpos($desktopHeader, 'v2-header__brand-link'));
+            $this->assertTrue(strpos($desktopHeader, 'v2-header__brand-link') < strpos($desktopHeader, 'v2-header__nav--right'));
+            $this->assertStringNotContainsString('data-booking-modal-trigger', $desktopHeader);
+            $this->assertStringNotContainsString('public-language-switcher', $desktopHeader);
+            $this->assertStringNotContainsString('public-language-switcher', $fullHeader);
+            $this->assertStringNotContainsString('v2-language-switcher', $fullHeader);
+
+            $this->assertNotSame('', $footer);
+            $this->assertStringContainsString('v2-language-switcher', $footer);
+            $this->assertStringContainsString('href="'.$case['target'].'"', $footer);
+            $this->assertMatchesRegularExpression(
+                '/<a(?=[^>]*aria-current="page")(?=[^>]*aria-label="'.preg_quote($case['active_label'], '/').'")[^>]*>/',
+                $footer
+            );
+        }
+
+        $legacyContent = (string) $this->get('/gioi-thieu')->assertStatus(200)->getContent();
+        $this->assertStringContainsString('public-language-switcher', $legacyContent);
+        $this->assertStringNotContainsString('v2-language-switcher', $legacyContent);
     }
 
     public function test_floating_contact_dock_renders_correct_targets_order_and_accessibility(): void

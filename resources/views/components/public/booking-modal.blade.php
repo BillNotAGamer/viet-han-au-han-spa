@@ -48,7 +48,7 @@
     @keydown.escape.window="if (isOpen) close()"
     x-cloak
     x-show="isOpen"
-    class="fixed inset-0 z-[90] flex items-center justify-center p-3 sm:p-6 overflow-y-auto"
+    class="v2-booking-modal fixed inset-0 z-[90] flex items-center justify-center p-3 sm:p-6 overflow-y-auto"
     aria-labelledby="booking-modal-title"
     role="dialog"
     aria-modal="true"
@@ -63,7 +63,7 @@
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
         @click="close()"
-        class="fixed inset-0 bg-[#140F0E]/80 backdrop-blur-xs transition-opacity"
+        class="v2-booking-modal__backdrop fixed inset-0 bg-[#140F0E]/80 backdrop-blur-xs transition-opacity"
         aria-hidden="true"
     ></div>
 
@@ -77,14 +77,14 @@
         x-transition:leave-start="opacity-100 scale-100 translate-y-0"
         x-transition:leave-end="opacity-0 scale-95 translate-y-4"
         @click.stop
-        class="relative w-full max-w-[840px] max-h-[calc(100vh-24px)] max-h-[calc(100dvh-24px)] sm:max-h-[calc(100vh-48px)] sm:max-h-[calc(100dvh-48px)] my-auto bg-[#FFFCF8] rounded-2xl sm:rounded-3xl border border-[#E8DFC8] shadow-2xl overflow-hidden flex flex-col z-10"
+        class="v2-booking-modal__dialog relative w-full max-w-[840px] max-h-[calc(100vh-24px)] max-h-[calc(100dvh-24px)] sm:max-h-[calc(100vh-48px)] sm:max-h-[calc(100dvh-48px)] my-auto bg-[#FFFCF8] rounded-2xl sm:rounded-3xl border border-[#E8DFC8] shadow-2xl overflow-hidden flex flex-col z-10"
     >
         {{-- Close Button (Top Right) --}}
         <button
             type="button"
             x-ref="closeButton"
             @click="close()"
-            class="absolute top-3.5 right-3.5 sm:top-5 sm:right-5 z-20 flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/90 sm:bg-white/80 hover:bg-white text-[#5B1121] border border-[#E8DFC8]/80 shadow-sm transition duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B1121] focus-visible:ring-offset-2"
+            class="v2-booking-modal__close absolute top-3.5 right-3.5 sm:top-5 sm:right-5 z-20 flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/90 sm:bg-white/80 hover:bg-white text-[#5B1121] border border-[#E8DFC8]/80 shadow-sm transition duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B1121] focus-visible:ring-offset-2"
             aria-label="{{ $closeLabel }}"
         >
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -95,7 +95,7 @@
         {{-- Scrollable Container --}}
         <div class="overflow-y-auto flex-1 overscroll-contain">
             {{-- Spa Visual Header --}}
-            <div class="relative h-40 sm:h-32 w-full overflow-hidden bg-[#181312]">
+            <div class="v2-booking-modal__media relative h-40 sm:h-32 w-full overflow-hidden bg-[#181312]">
                 <img
                     src="{{ $modalImg }}"
                     alt="Việt Hàn Âu Hàn Spa — Không Gian Tiếp Nhận Lịch Hẹn"
@@ -115,7 +115,7 @@
             </div>
 
             {{-- Intro Copy & Form Area --}}
-            <div class="px-5 py-5 sm:px-8 sm:py-5 space-y-3">
+            <div class="v2-booking-modal__content px-5 py-5 sm:px-8 sm:py-5 space-y-3">
                 <p class="text-[16px] sm:text-[16px] text-[#554D4A] leading-[1.5] max-w-3xl">
                     {{ __('booking.intro') }}
                 </p>

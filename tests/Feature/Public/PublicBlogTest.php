@@ -358,25 +358,26 @@ class PublicBlogTest extends TestCase
             ->assertSee('href="'.route('en.blog.index').'"', false);
     }
 
-    public function test_header_blog_navigation_targets_real_listing_routes_without_visual_class_changes(): void
+    public function test_header_blog_navigation_targets_real_listing_routes_across_v2_and_legacy_shells(): void
     {
         $this->get('/')
             ->assertStatus(200)
             ->assertSee('href="'.route('vi.blog.index').'"', false)
             ->assertSee('href="'.route('vi.services.index').'"', false)
             ->assertSee('href="'.route('vi.training.index').'"', false)
-            ->assertSee('class="public-header__link"', false);
+            ->assertSee('v2-header__link', false);
 
         $this->get('/en')
             ->assertStatus(200)
             ->assertSee('href="'.route('en.blog.index').'"', false)
             ->assertSee('href="'.route('en.services.index').'"', false)
             ->assertSee('href="'.route('en.training.index').'"', false)
-            ->assertSee('class="public-header__link"', false);
+            ->assertSee('v2-header__link', false);
 
         $this->get('/blog')
             ->assertStatus(200)
             ->assertSee('public-header--sticky', false)
+            ->assertDontSee('v2-public-shell', false)
             ->assertSee('href="'.route('vi.blog.index').'"', false);
     }
 
