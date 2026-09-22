@@ -8,6 +8,7 @@
 
 @php
     $isModal = $variant === 'modal';
+    $isV2Page = $variant === 'v2-page';
     $prefix = $idPrefix ? rtrim($idPrefix, '_') . '_' : '';
     $nameId = $prefix . 'customer_name';
     $phoneId = $prefix . 'phone';
@@ -17,34 +18,59 @@
     $timeId = $prefix . 'preferred_time';
     $notesId = $prefix . 'notes';
     $consentId = $prefix . 'consent';
-    $formClass = $isModal
-        ? 'space-y-3'
-        : 'rounded-2xl border border-[#E8DFC8] bg-white p-6 sm:p-10 shadow-lg space-y-6';
-    $gridClass = $isModal
-        ? 'grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-x-5 sm:gap-y-3'
-        : 'grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6';
-    $wideFieldClass = $isModal ? '' : 'sm:col-span-2';
-    $controlClass = $isModal
-        ? 'mt-2 sm:mt-1.5 block w-full h-12 sm:h-11 rounded-xl border border-[#D8CBB7] bg-[#FFFCF8] px-4 sm:px-3.5 py-2 text-brand-text shadow-xs transition duration-200 focus:border-[#5B1121] focus:ring-1 focus:ring-[#5B1121] text-[16px]'
-        : 'mt-2 block w-full rounded-xl border border-[#D8CBB7] bg-[#FFFCF8] px-4 py-3 sm:py-3.5 text-brand-text shadow-xs transition duration-200 focus:border-[#5B1121] focus:ring-1 focus:ring-[#5B1121] text-[16px] sm:text-[17px]';
-    $textareaClass = $isModal
-        ? 'mt-2 sm:mt-1.5 block w-full min-h-[84px] sm:h-[76px] sm:min-h-[76px] rounded-xl border border-[#D8CBB7] bg-[#FFFCF8] px-4 sm:px-3.5 py-2.5 sm:py-2 text-brand-text shadow-xs transition duration-200 focus:border-[#5B1121] focus:ring-1 focus:ring-[#5B1121] text-[16px] resize-y'
-        : $controlClass;
-    $consentWrapClass = $isModal ? 'pt-0.5' : 'pt-1 sm:pt-2';
-    $consentLabelClass = $isModal
-        ? 'flex items-start sm:items-center gap-2.5 text-[14px] leading-snug text-[#554D4A] cursor-pointer'
-        : 'flex items-start gap-3 text-[14px] sm:text-[15px] leading-relaxed text-[#554D4A] cursor-pointer';
-    $checkboxClass = $isModal
-        ? 'mt-0.5 sm:mt-0 rounded border-[#D8CBB7] text-[#5B1121] focus:ring-[#5B1121]'
-        : 'mt-1 rounded border-[#D8CBB7] text-[#5B1121] focus:ring-[#5B1121]';
-    $submitWrapClass = $isModal ? 'pt-0.5' : 'pt-2 sm:pt-4';
-    $submitButtonClass = $isModal
-        ? 'btn-editorial-primary w-full sm:w-auto h-12 px-8 py-0 text-center'
-        : 'btn-editorial-primary w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 text-center';
+    $formClass = match (true) {
+        $isModal => 'space-y-3',
+        $isV2Page => 'v2-booking-form',
+        default => 'rounded-2xl border border-[#E8DFC8] bg-white p-6 sm:p-10 shadow-lg space-y-6',
+    };
+    $gridClass = match (true) {
+        $isModal => 'grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-x-5 sm:gap-y-3',
+        $isV2Page => 'v2-booking-form__grid',
+        default => 'grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6',
+    };
+    $wideFieldClass = $isModal || $isV2Page ? '' : 'sm:col-span-2';
+    $controlClass = match (true) {
+        $isModal => 'mt-2 sm:mt-1.5 block w-full h-12 sm:h-11 rounded-xl border border-[#D8CBB7] bg-[#FFFCF8] px-4 sm:px-3.5 py-2 text-brand-text shadow-xs transition duration-200 focus:border-[#5B1121] focus:ring-1 focus:ring-[#5B1121] text-[16px]',
+        $isV2Page => 'v2-booking-form__control',
+        default => 'mt-2 block w-full rounded-xl border border-[#D8CBB7] bg-[#FFFCF8] px-4 py-3 sm:py-3.5 text-brand-text shadow-xs transition duration-200 focus:border-[#5B1121] focus:ring-1 focus:ring-[#5B1121] text-[16px] sm:text-[17px]',
+    };
+    $textareaClass = match (true) {
+        $isModal => 'mt-2 sm:mt-1.5 block w-full min-h-[84px] sm:h-[76px] sm:min-h-[76px] rounded-xl border border-[#D8CBB7] bg-[#FFFCF8] px-4 sm:px-3.5 py-2.5 sm:py-2 text-brand-text shadow-xs transition duration-200 focus:border-[#5B1121] focus:ring-1 focus:ring-[#5B1121] text-[16px] resize-y',
+        $isV2Page => 'v2-booking-form__control v2-booking-form__textarea',
+        default => $controlClass,
+    };
+    $consentWrapClass = match (true) {
+        $isModal => 'pt-0.5',
+        $isV2Page => 'v2-booking-form__consent',
+        default => 'pt-1 sm:pt-2',
+    };
+    $consentLabelClass = match (true) {
+        $isModal => 'flex items-start sm:items-center gap-2.5 text-[14px] leading-snug text-[#554D4A] cursor-pointer',
+        $isV2Page => 'v2-booking-form__consent-label',
+        default => 'flex items-start gap-3 text-[14px] sm:text-[15px] leading-relaxed text-[#554D4A] cursor-pointer',
+    };
+    $checkboxClass = match (true) {
+        $isModal => 'mt-0.5 sm:mt-0 rounded border-[#D8CBB7] text-[#5B1121] focus:ring-[#5B1121]',
+        $isV2Page => 'v2-booking-form__checkbox',
+        default => 'mt-1 rounded border-[#D8CBB7] text-[#5B1121] focus:ring-[#5B1121]',
+    };
+    $submitWrapClass = match (true) {
+        $isModal => 'pt-0.5',
+        $isV2Page => 'v2-booking-form__submit',
+        default => 'pt-2 sm:pt-4',
+    };
+    $submitButtonClass = match (true) {
+        $isModal => 'btn-editorial-primary w-full sm:w-auto h-12 px-8 py-0 text-center',
+        $isV2Page => 'v2-button v2-button--primary',
+        default => 'btn-editorial-primary w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 text-center',
+    };
 @endphp
 
 @if(session('booking_status'))
-    <div class="mb-6 rounded-2xl border border-[#C5A880]/60 bg-[#FAF2EB] px-6 py-5 text-sm font-semibold text-[#5B1121] shadow-xs flex items-center gap-3" role="status">
+    <div @class([
+        'v2-booking-form__status' => $isV2Page,
+        'mb-6 rounded-2xl border border-[#C5A880]/60 bg-[#FAF2EB] px-6 py-5 text-sm font-semibold text-[#5B1121] shadow-xs flex items-center gap-3' => ! $isV2Page,
+    ]) role="status">
         <span class="w-2.5 h-2.5 rounded-full bg-[#9B7B4F]"></span>
         <span>{{ session('booking_status') }}</span>
     </div>

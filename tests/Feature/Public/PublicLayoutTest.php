@@ -156,30 +156,30 @@ class PublicLayoutTest extends TestCase
         $response->assertSee('<span class="sr-only">Việt Hàn Âu Hàn Spa</span>', false);
     }
 
-    public function test_v2_shell_is_limited_to_phase_two_prototype_routes(): void
+    public function test_all_normal_public_pages_use_the_v2_shell(): void
     {
-        $this->get('/')
-            ->assertStatus(200)
-            ->assertSee('v2-public-shell', false)
-            ->assertSee('v2-home-hero', false);
-
-        $this->get('/en')
-            ->assertStatus(200)
-            ->assertSee('v2-public-shell', false)
-            ->assertSee('v2-home-hero', false)
-            ->assertSee('href="'.route('en.booking.create').'"', false);
-
-        $this->get('/gioi-thieu')
-            ->assertStatus(200)
-            ->assertDontSee('v2-public-shell', false);
-
-        $this->get('/lien-he')
-            ->assertStatus(200)
-            ->assertDontSee('v2-public-shell', false);
-
-        $this->get('/dat-lich')
-            ->assertStatus(200)
-            ->assertDontSee('v2-public-shell', false);
+        foreach ([
+            '/',
+            '/en',
+            '/gioi-thieu',
+            '/en/about',
+            '/lien-he',
+            '/en/contact',
+            '/dich-vu',
+            '/en/services',
+            '/dao-tao',
+            '/en/training',
+            '/blog',
+            '/en/blog',
+            '/dat-lich',
+            '/en/booking',
+        ] as $path) {
+            $this->get($path)
+                ->assertStatus(200)
+                ->assertSee('v2-public-shell', false)
+                ->assertSee('v2-header__nav--left', false)
+                ->assertSee('v2-language-switcher', false);
+        }
     }
 
     public function test_v2_header_centers_logo_and_moves_language_switching_to_footer(): void
@@ -218,9 +218,9 @@ class PublicLayoutTest extends TestCase
             );
         }
 
-        $legacyContent = (string) $this->get('/gioi-thieu')->assertStatus(200)->getContent();
-        $this->assertStringContainsString('public-language-switcher', $legacyContent);
-        $this->assertStringNotContainsString('v2-language-switcher', $legacyContent);
+        $aboutContent = (string) $this->get('/gioi-thieu')->assertStatus(200)->getContent();
+        $this->assertStringNotContainsString('public-language-switcher', $aboutContent);
+        $this->assertStringContainsString('v2-language-switcher', $aboutContent);
     }
 
     public function test_floating_contact_dock_renders_correct_targets_order_and_accessibility(): void

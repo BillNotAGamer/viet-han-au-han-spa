@@ -251,4 +251,29 @@ class PublicStaticPageTest extends TestCase
         $contactContent = explode('id="booking-modal"', (string) $response->getContent())[0];
         $this->assertStringNotContainsString('<form', $contactContent);
     }
+
+    public function test_static_about_and_contact_pages_use_v2_without_cms_dependencies(): void
+    {
+        $this->assertDatabaseCount('pages', 0);
+
+        foreach (['/gioi-thieu', '/en/about'] as $path) {
+            $this->get($path)
+                ->assertStatus(200)
+                ->assertSee('v2-public-shell', false)
+                ->assertSee('v2-about-hero', false)
+                ->assertSee('v2-header__nav--left', false)
+                ->assertSee('v2-language-switcher', false);
+        }
+
+        foreach (['/lien-he', '/en/contact'] as $path) {
+            $this->get($path)
+                ->assertStatus(200)
+                ->assertSee('v2-public-shell', false)
+                ->assertSee('v2-contact-methods', false)
+                ->assertSee('v2-header__nav--right', false)
+                ->assertSee('v2-language-switcher', false);
+        }
+
+        $this->assertDatabaseCount('pages', 0);
+    }
 }

@@ -6,7 +6,14 @@
     $currentLocale = app()->getLocale();
     $targetLocale = $currentLocale === 'vi' ? 'en' : 'vi';
     $switchUrl = \App\Support\Localization::switchLocaleUrl($targetLocale);
-    $currentUrl = request()->fullUrl();
+    $currentUrl = request()->url();
+    $page = max(1, (int) request()->query('page', 1));
+
+    if ($page > 1) {
+        $pageQuery = '?'.http_build_query(['page' => $page]);
+        $currentUrl .= $pageQuery;
+        $switchUrl .= $pageQuery;
+    }
 @endphp
 
 @if($variant === 'footer')

@@ -138,7 +138,7 @@ class BookingModalAndNotificationTest extends TestCase
         $pageResponse->assertSee('name="notes"', false);
         $pageResponse->assertSee('name="consent"', false);
         $pageHtml = explode('id="booking-modal"', (string) $pageResponse->getContent())[0];
-        $this->assertStringContainsString('sm:p-10 shadow-lg space-y-6', $pageHtml);
+        $this->assertStringContainsString('class="v2-booking-form"', $pageHtml);
         $this->assertStringContainsString('rows="4"', $pageHtml);
         $this->assertStringNotContainsString('class="space-y-3"', $pageHtml);
 

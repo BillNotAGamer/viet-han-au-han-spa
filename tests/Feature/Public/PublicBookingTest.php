@@ -263,6 +263,26 @@ class PublicBookingTest extends TestCase
             ->assertSee('href="'.route('en.blog.index').'"', false);
     }
 
+    public function test_full_booking_pages_use_v2_and_the_shared_authoritative_form(): void
+    {
+        foreach ([
+            ['/dat-lich', route('vi.booking.store')],
+            ['/en/booking', route('en.booking.store')],
+        ] as [$path, $action]) {
+            $this->get($path)
+                ->assertStatus(200)
+                ->assertSee('v2-public-shell', false)
+                ->assertSee('v2-booking-page', false)
+                ->assertSee('class="v2-booking-form"', false)
+                ->assertSee('action="'.$action.'"', false)
+                ->assertSee('name="customer_name"', false)
+                ->assertSee('name="service_id"', false)
+                ->assertSee('name="preferred_date"', false)
+                ->assertSee('name="preferred_time"', false)
+                ->assertSee('name="consent"', false);
+        }
+    }
+
     /**
      * @param  array<string, mixed>  $overrides
      * @return array<string, mixed>

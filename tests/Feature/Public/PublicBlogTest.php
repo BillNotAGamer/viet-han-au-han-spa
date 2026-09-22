@@ -358,7 +358,7 @@ class PublicBlogTest extends TestCase
             ->assertSee('href="'.route('en.blog.index').'"', false);
     }
 
-    public function test_header_blog_navigation_targets_real_listing_routes_across_v2_and_legacy_shells(): void
+    public function test_header_blog_navigation_targets_real_listing_routes_across_v2_pages(): void
     {
         $this->get('/')
             ->assertStatus(200)
@@ -377,7 +377,7 @@ class PublicBlogTest extends TestCase
         $this->get('/blog')
             ->assertStatus(200)
             ->assertSee('public-header--sticky', false)
-            ->assertDontSee('v2-public-shell', false)
+            ->assertSee('v2-public-shell', false)
             ->assertSee('href="'.route('vi.blog.index').'"', false);
     }
 
@@ -390,6 +390,37 @@ class PublicBlogTest extends TestCase
             ->values();
 
         $this->assertCount(0, $publicBlogMutationRoutes);
+    }
+
+    public function test_blog_listing_and_reading_canvas_use_v2_in_both_locales(): void
+    {
+        $post = $this->createPostWithTranslation(
+            ContentStatus::PUBLISHED,
+            'vi',
+            'Nhật ký V2',
+            'nhat-ky-v2'
+        );
+        PostTranslation::create([
+            'post_id' => $post->id,
+            'locale' => 'en',
+            'title' => 'V2 Journal Entry',
+            'slug' => 'v2-journal-entry',
+            'excerpt' => 'Exact English journal summary.',
+            'content' => '<p>Exact English journal body.</p>',
+        ]);
+
+        $this->get('/blog')
+            ->assertStatus(200)
+            ->assertSee('v2-public-shell', false)
+            ->assertSee('v2-journal-feature', false)
+            ->assertSee('Nhật ký V2');
+
+        $this->get('/en/blog/v2-journal-entry')
+            ->assertStatus(200)
+            ->assertSee('v2-public-shell', false)
+            ->assertSee('v2-article-body', false)
+            ->assertSee('Exact English journal body.')
+            ->assertDontSee('Nhật ký V2');
     }
 
     /**

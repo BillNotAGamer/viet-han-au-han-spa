@@ -354,7 +354,7 @@ class PublicServicesTest extends TestCase
             ->assertSee('href="'.route('vi.services.show', ['slug' => 'massage-tri-lieu']).'"', false);
     }
 
-    public function test_header_services_navigation_targets_real_listing_routes_across_v2_and_legacy_shells(): void
+    public function test_header_services_navigation_targets_real_listing_routes_across_v2_pages(): void
     {
         $this->get('/')
             ->assertStatus(200)
@@ -369,11 +369,11 @@ class PublicServicesTest extends TestCase
         $this->get('/dich-vu')
             ->assertStatus(200)
             ->assertSee('public-header--sticky', false)
-            ->assertDontSee('v2-public-shell', false)
+            ->assertSee('v2-public-shell', false)
             ->assertSee('href="'.route('vi.services.index').'"', false);
     }
 
-    public function test_service_detail_uses_v2_experience_without_migrating_listing(): void
+    public function test_service_listing_and_detail_use_the_same_v2_experience(): void
     {
         $service = $this->createServiceWithTranslation(
             ContentStatus::PUBLISHED,
@@ -408,7 +408,8 @@ class PublicServicesTest extends TestCase
 
         $this->get('/dich-vu')
             ->assertStatus(200)
-            ->assertDontSee('v2-public-shell', false);
+            ->assertSee('v2-public-shell', false)
+            ->assertSee('v2-treatment-menu', false);
     }
 
     /**
