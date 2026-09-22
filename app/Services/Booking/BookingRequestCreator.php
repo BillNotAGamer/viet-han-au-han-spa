@@ -19,7 +19,8 @@ class BookingRequestCreator
 
     public function __construct(
         protected BookingServiceCatalog $serviceCatalog,
-        protected MarketingAttribution $marketingAttribution
+        protected MarketingAttribution $marketingAttribution,
+        protected BookingNotificationService $notificationService
     ) {}
 
     /**
@@ -33,7 +34,7 @@ class BookingRequestCreator
 
         $attribution = $this->marketingAttribution->getAttributionData($request);
 
-        return DB::transaction(function () use ($data, $locale, $attribution): Booking {
+        $booking = DB::transaction(function () use ($data, $locale, $attribution): Booking {
             $service = Service::query()
                 ->with([
                     'translations' => fn ($query) => $query->where('locale', $locale),
@@ -81,6 +82,10 @@ class BookingRequestCreator
                 'referrer' => $attribution['referrer'] ?? null,
             ]);
         });
+
+        $this->notificationService->notifySubmitted($booking);
+
+        return $booking;
     }
 
     protected function makeReference(): string

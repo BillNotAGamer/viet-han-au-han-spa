@@ -1,192 +1,157 @@
-<x-layouts.public :title="$title" header-mode="solid" :contact-href="$contactHref" :seo="$seo ?? null">
-    <article>
-        {{-- Cinematic Hero Banner --}}
-        <section class="relative bg-[#181312] pt-28 sm:pt-32 lg:pt-36 text-white overflow-hidden">
-            @if(!empty($service['hero_media']['url']))
-                <div class="absolute inset-0" data-reveal-image>
-                    <img src="{{ $service['hero_media']['url'] }}" alt="{{ $service['hero_media']['alt'] }}" class="h-full w-full object-cover" loading="eager" fetchpriority="high">
-                    <div class="absolute inset-0 bg-[#181312]/62"></div>
-                    <div class="absolute inset-0 bg-gradient-to-r from-[#181312]/92 via-[#181312]/70 to-[#181312]/30"></div>
+@php
+    $serviceFallbackImage = Vite::asset('resources/images/pages/services/services-signature-therapy.webp');
+    $heroImage = !empty($service['hero_media']['url']) ? $service['hero_media']['url'] : $serviceFallbackImage;
+    $heroAlt = $service['hero_media']['alt'] ?? '';
+@endphp
+
+<x-layouts.public variant="v2" :title="$title" header-mode="overlay" :contact-href="$contactHref" :seo="$seo ?? null">
+    <article class="v2-service-detail">
+        <header class="v2-service-hero" aria-labelledby="service-title">
+            <img src="{{ $heroImage }}" alt="{{ $heroAlt }}" class="v2-service-hero__image" loading="eager" fetchpriority="high">
+            <div class="v2-service-hero__veil" aria-hidden="true"></div>
+            <div class="v2-container v2-service-hero__inner">
+                <div class="v2-service-hero__copy" data-reveal>
+                    @if(!empty($service['category_name']))
+                        <x-public.v2.eyebrow inverse>{{ $service['category_name'] }}</x-public.v2.eyebrow>
+                    @endif
+                    <x-public.v2.display-heading level="1" size="xl" id="service-title">{{ $service['name'] }}</x-public.v2.display-heading>
+                    @if(!empty($service['excerpt']))
+                        <p>{{ $service['excerpt'] }}</p>
+                    @endif
+                    <a href="{{ $contactHref }}" x-data="{}" data-booking-modal-trigger @click.prevent="$dispatch('open-booking-modal', { trigger: $el })" class="v2-button v2-button--primary">
+                        {{ __('services.detail.inquiry_cta') }}
+                    </a>
                 </div>
+            </div>
+        </header>
+
+        @if(!empty($service['prices']))
+            <section class="v2-service-essentials" aria-labelledby="service-prices-title">
+                <div class="v2-container">
+                    <h2 id="service-prices-title" class="v2-service-essentials__title">{{ __('services.detail.prices') }}</h2>
+                    <div class="v2-service-price-list">
+                        @foreach($service['prices'] as $price)
+                            <div class="v2-service-price">
+                                <div>
+                                    @if(!empty($price['label']))<h3>{{ $price['label'] }}</h3>@endif
+                                    <p>{{ __('services.detail.duration', ['minutes' => $price['duration_minutes']]) }}</p>
+                                </div>
+                                <strong>{{ $price['price_display'] }}</strong>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </section>
+        @endif
+
+        <div class="v2-service-content v2-surface--paper">
+            @if(!empty($service['content']))
+                <section class="v2-section v2-service-overview" aria-labelledby="service-overview-title">
+                    <div class="v2-container v2-service-reading-grid">
+                        <x-public.v2.eyebrow>{{ __('services.detail.overview') }}</x-public.v2.eyebrow>
+                        <div>
+                            <x-public.v2.display-heading id="service-overview-title" size="heading-lg">{{ $service['name'] }}</x-public.v2.display-heading>
+                            <div class="v2-service-prose">
+                                @foreach($service['content'] as $paragraph)
+                                    <p>{{ $paragraph }}</p>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </section>
             @endif
 
-            <x-public.container size="lg">
-                <div class="relative z-10 flex min-h-[440px] sm:min-h-[480px] max-w-3xl flex-col justify-end pb-12 sm:pb-16 lg:pb-18" data-reveal>
-                    @if(!empty($service['category_name']))
-                        <p class="mb-3.5 inline-flex items-center gap-2 text-[14px] sm:text-[15px] font-semibold uppercase tracking-[0.1em] text-[#C5A880]">
-                            <span class="w-6 h-px bg-[#C5A880]/70"></span>
-                            {{ $service['category_name'] }}
-                        </p>
-                    @endif
-
-                    <h1 class="text-3xl sm:text-5xl lg:text-[clamp(2.5rem,4vw,3.85rem)] font-semibold leading-[1.08] tracking-[-0.025em] break-words [text-wrap:balance]">
-                        {{ $service['name'] }}
-                    </h1>
-
-                    @if(!empty($service['excerpt']))
-                        <p class="mt-4 max-w-2xl text-[18px] sm:text-[19px] font-medium leading-[1.66] text-white/90 break-words">
-                            {{ $service['excerpt'] }}
-                        </p>
-                    @endif
-                </div>
-            </x-public.container>
-        </section>
-
-        {{-- Main Editorial Details Section --}}
-        <section class="bg-[#FAF7F2] py-12 sm:py-16 lg:py-20">
-            <x-public.container size="lg">
-                <div class="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-16">
-                    <div class="min-w-0 space-y-10 sm:space-y-12">
-                        {{-- Overview --}}
-                        @if(!empty($service['content']))
-                            <section class="space-y-4" data-reveal>
-                                <h2 class="text-2xl sm:text-3xl lg:text-[clamp(2.25rem,3.2vw,3.25rem)] font-semibold text-[#5B1121] tracking-[-0.02em] leading-[1.10]">
-                                    {{ __('services.detail.overview') }}
-                                </h2>
-                                <div class="space-y-4 text-[18px] sm:text-[19px] font-medium leading-[1.66] text-[#554D4A]">
-                                    @foreach($service['content'] as $paragraph)
-                                        <p class="break-words">{{ $paragraph }}</p>
-                                    @endforeach
-                                </div>
-                            </section>
-                        @endif
-
-                        {{-- Benefits --}}
-                        @if(!empty($service['benefits']))
-                            <section class="space-y-5" data-reveal>
-                                <h2 class="text-2xl sm:text-3xl lg:text-[clamp(2.25rem,3.2vw,3.25rem)] font-semibold text-[#5B1121] tracking-[-0.02em] leading-[1.10]">
-                                    {{ __('services.detail.benefits') }}
-                                </h2>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5" data-reveal-group>
-                                    @foreach($service['benefits'] as $benefit)
-                                        <div class="rounded-2xl border border-[#E8DFC8] bg-white p-6 sm:p-7 shadow-xs transition duration-300 hover:border-[#C5A880] hover:shadow-md" data-reveal>
-                                            @if($benefit['title'] !== '')
-                                                <h3 class="text-xl sm:text-[22px] font-semibold text-[#5B1121] break-words">{{ $benefit['title'] }}</h3>
-                                            @endif
-                                            @if($benefit['description'] !== '')
-                                                <p class="mt-2 text-[17px] leading-[1.65] text-[#554D4A] break-words">{{ $benefit['description'] }}</p>
-                                            @endif
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </section>
-                        @endif
-
-                        {{-- Process Steps --}}
-                        @if(!empty($service['process_steps']))
-                            <section class="space-y-5" data-reveal>
-                                <h2 class="text-2xl sm:text-3xl lg:text-[clamp(2.25rem,3.2vw,3.25rem)] font-semibold text-[#5B1121] tracking-[-0.02em] leading-[1.10]">
-                                    {{ __('services.detail.process') }}
-                                </h2>
-                                <div class="space-y-4" data-reveal-group>
-                                    @foreach($service['process_steps'] as $step)
-                                        <div class="grid grid-cols-[48px_minmax(0,1fr)] gap-5 rounded-2xl border border-[#E8DFC8] bg-white p-6 shadow-xs transition duration-200 hover:border-[#C5A880]" data-reveal>
-                                            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-[#5B1121] text-base font-semibold text-[#C5A880] shadow-sm">
-                                                {{ $loop->iteration }}
-                                            </div>
-                                            <div class="min-w-0 pt-0.5">
-                                                @if($step['title'] !== '')
-                                                    <h3 class="text-xl sm:text-[22px] font-semibold text-[#5B1121] break-words">{{ $step['title'] }}</h3>
-                                                @endif
-                                                @if($step['description'] !== '')
-                                                    <p class="mt-2 text-[17px] leading-[1.65] text-[#554D4A] break-words">{{ $step['description'] }}</p>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </section>
-                        @endif
-
-                        {{-- Gallery Showcase --}}
-                        @if(!empty($service['gallery']))
-                            <section class="space-y-5" data-reveal>
-                                <h2 class="text-2xl sm:text-3xl lg:text-[clamp(2.25rem,3.2vw,3.25rem)] font-semibold text-[#5B1121] tracking-[-0.02em] leading-[1.10]">
-                                    {{ __('services.detail.gallery') }}
-                                </h2>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5" data-reveal-group>
-                                    @foreach($service['gallery'] as $image)
-                                        <figure class="overflow-hidden rounded-2xl border border-[#E8DFC8] bg-white shadow-xs group editorial-card" data-reveal>
-                                            <div class="aspect-4/3 overflow-hidden editorial-image-zoom">
-                                                <img src="{{ $image['url'] }}" alt="{{ $image['alt'] }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy">
-                                            </div>
-                                            @if(!empty($image['caption']))
-                                                <figcaption class="px-5 py-3 text-[15px] sm:text-[16px] text-[#736965] border-t border-[#E8DFC8]">{{ $image['caption'] }}</figcaption>
-                                            @endif
-                                        </figure>
-                                    @endforeach
-                                </div>
-                            </section>
-                        @endif
-
-                        {{-- FAQs Accordion --}}
-                        @if(!empty($service['faqs']))
-                            <section class="space-y-5" data-reveal>
-                                <h2 class="text-2xl sm:text-3xl lg:text-[clamp(2.25rem,3.2vw,3.25rem)] font-semibold text-[#5B1121] tracking-[-0.02em] leading-[1.10]">
-                                    {{ __('services.detail.faqs') }}
-                                </h2>
-                                <div class="space-y-3" data-reveal-group>
-                                    @foreach($service['faqs'] as $faq)
-                                        <details class="rounded-2xl border border-[#E8DFC8] bg-white p-6 shadow-xs transition duration-200 group" data-reveal>
-                                            <summary class="cursor-pointer text-lg sm:text-xl font-semibold text-[#5B1121] break-words flex items-center justify-between list-none">
-                                                <span>{{ $faq['question'] }}</span>
-                                                <span class="ml-4 text-sm text-[#C5A880] transition group-open:rotate-180">&darr;</span>
-                                            </summary>
-                                            @if($faq['answer'] !== '')
-                                                <p class="mt-4 text-[17px] leading-[1.65] text-[#554D4A] break-words pt-2 border-t border-[#E8DFC8]/60">{{ $faq['answer'] }}</p>
-                                            @endif
-                                        </details>
-                                    @endforeach
-                                </div>
-                            </section>
-                        @endif
-                    </div>
-
-                    {{-- Sticky Sidebar --}}
-                    <aside class="lg:sticky lg:top-28 self-start space-y-6" data-reveal>
-                        @if(!empty($service['prices']))
-                            <section class="rounded-2xl border border-[#E8DFC8] bg-white p-6 sm:p-7 shadow-sm">
-                                <h2 class="text-2xl font-semibold text-[#5B1121] tracking-tight">
-                                    {{ __('services.detail.prices') }}
-                                </h2>
-
-                                <div class="mt-5 divide-y divide-[#E8DFC8]">
-                                    @foreach($service['prices'] as $price)
-                                        <div class="py-3.5 first:pt-0 last:pb-0">
-                                            <div class="flex items-start justify-between gap-4">
-                                                <div class="min-w-0">
-                                                    @if(!empty($price['label']))
-                                                        <p class="font-semibold text-brand-text break-words">{{ $price['label'] }}</p>
-                                                    @endif
-                                                    <p class="text-[14px] sm:text-[15px] text-[#736965] mt-0.5">
-                                                        {{ __('services.detail.duration', ['minutes' => $price['duration_minutes']]) }}
-                                                    </p>
-                                                </div>
-                                                <p class="shrink-0 font-semibold text-[#5B1121] text-[17px]">{{ $price['price_display'] }}</p>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </section>
-                        @endif
-
-                        <section class="rounded-2xl border border-[#C5A880]/40 bg-[#211B19] p-6 sm:p-7 text-white shadow-xl space-y-3.5">
-                            <span class="inline-block text-xs font-semibold uppercase tracking-widest text-[#C5A880]">Việt Hàn Âu Hàn Spa</span>
-                            <h2 class="text-2xl font-semibold tracking-tight text-white break-words">
-                                {{ __('services.detail.inquiry_title') }}
-                            </h2>
-                            <p class="text-[16px] leading-[1.6] text-white/85 break-words">
-                                {{ __('services.detail.inquiry_copy') }}
-                            </p>
-                            <div class="pt-2">
-                                <a href="{{ $contactHref }}" class="btn-editorial-primary w-full text-center">
-                                    {{ __('services.detail.inquiry_cta') }}
-                                </a>
+            @if(!empty($service['benefits']))
+                <section class="v2-section v2-surface--ivory" aria-labelledby="service-benefits-title">
+                    <div class="v2-container">
+                        <header class="v2-section-heading v2-section-heading--compact">
+                            <div>
+                                <x-public.v2.eyebrow>{{ __('services.detail.benefits') }}</x-public.v2.eyebrow>
+                                <x-public.v2.display-heading id="service-benefits-title" size="heading-lg">{{ __('services.detail.benefits') }}</x-public.v2.display-heading>
                             </div>
-                        </section>
-                    </aside>
-                </div>
-            </x-public.container>
+                        </header>
+                        <div class="v2-service-benefits" data-reveal-group>
+                            @foreach($service['benefits'] as $benefit)
+                                <article data-reveal>
+                                    <span>{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                                    @if($benefit['title'] !== '')<h3>{{ $benefit['title'] }}</h3>@endif
+                                    @if($benefit['description'] !== '')<p>{{ $benefit['description'] }}</p>@endif
+                                </article>
+                            @endforeach
+                        </div>
+                    </div>
+                </section>
+            @endif
+
+            @if(!empty($service['process_steps']))
+                <section class="v2-section v2-service-process" aria-labelledby="service-process-title">
+                    <div class="v2-container v2-service-reading-grid">
+                        <div>
+                            <x-public.v2.eyebrow>{{ __('services.detail.process') }}</x-public.v2.eyebrow>
+                            <x-public.v2.display-heading id="service-process-title" size="heading-lg">{{ __('services.detail.process') }}</x-public.v2.display-heading>
+                        </div>
+                        <ol class="v2-service-process__list" data-reveal-group>
+                            @foreach($service['process_steps'] as $step)
+                                <li data-reveal>
+                                    <span>{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                                    <div>
+                                        @if($step['title'] !== '')<h3>{{ $step['title'] }}</h3>@endif
+                                        @if($step['description'] !== '')<p>{{ $step['description'] }}</p>@endif
+                                    </div>
+                                </li>
+                            @endforeach
+                        </ol>
+                    </div>
+                </section>
+            @endif
+
+            @if(!empty($service['gallery']))
+                <section class="v2-section v2-surface--ivory" aria-labelledby="service-gallery-title">
+                    <div class="v2-container">
+                        <header class="v2-section-heading v2-section-heading--compact">
+                            <div>
+                                <x-public.v2.eyebrow>{{ __('services.detail.gallery') }}</x-public.v2.eyebrow>
+                                <x-public.v2.display-heading id="service-gallery-title" size="heading-lg">{{ __('services.detail.gallery') }}</x-public.v2.display-heading>
+                            </div>
+                        </header>
+                        <div class="v2-service-gallery" data-reveal-group>
+                            @foreach($service['gallery'] as $image)
+                                <x-public.v2.media-frame :src="$image['url']" :alt="$image['alt']" role="gallery" :caption="$image['caption'] ?? null" data-reveal />
+                            @endforeach
+                        </div>
+                    </div>
+                </section>
+            @endif
+
+            @if(!empty($service['faqs']))
+                <section class="v2-section v2-service-faq" aria-labelledby="service-faq-title">
+                    <div class="v2-container v2-service-reading-grid">
+                        <div>
+                            <x-public.v2.eyebrow>{{ __('services.detail.faqs') }}</x-public.v2.eyebrow>
+                            <x-public.v2.display-heading id="service-faq-title" size="heading-lg">{{ __('services.detail.faqs') }}</x-public.v2.display-heading>
+                        </div>
+                        <div class="v2-service-faq__list">
+                            @foreach($service['faqs'] as $faq)
+                                <details>
+                                    <summary><span>{{ $faq['question'] }}</span><span aria-hidden="true">+</span></summary>
+                                    @if($faq['answer'] !== '')<p>{{ $faq['answer'] }}</p>@endif
+                                </details>
+                            @endforeach
+                        </div>
+                    </div>
+                </section>
+            @endif
+        </div>
+
+        <section class="v2-service-cta v2-surface--deep" aria-labelledby="service-cta-title">
+            <div class="v2-container v2-service-cta__inner" data-reveal>
+                <x-public.v2.eyebrow inverse>{{ __('common.brand_name') }}</x-public.v2.eyebrow>
+                <x-public.v2.display-heading id="service-cta-title" size="heading-lg">{{ __('services.detail.inquiry_title') }}</x-public.v2.display-heading>
+                <p>{{ __('services.detail.inquiry_copy') }}</p>
+                <a href="{{ $contactHref }}" x-data="{}" data-booking-modal-trigger @click.prevent="$dispatch('open-booking-modal', { trigger: $el })" class="v2-button v2-button--inverse">
+                    {{ __('services.detail.inquiry_cta') }}
+                </a>
+            </div>
         </section>
     </article>
 </x-layouts.public>

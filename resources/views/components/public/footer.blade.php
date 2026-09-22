@@ -1,5 +1,9 @@
 @inject('siteSettings', 'App\Services\Settings\SiteSettings')
 
+@props([
+    'variant' => 'legacy',
+])
+
 @php
     $isVi = app()->getLocale() === 'vi';
     $homeUrl = $isVi ? route('vi.home') : route('en.home');
@@ -16,8 +20,51 @@
     $phoneHref = $phoneDigits && preg_match('/^\+?[0-9]{6,15}$/', $phoneDigits) ? 'tel:'.$phoneDigits : null;
     $emailHref = filter_var($email, FILTER_VALIDATE_EMAIL) ? 'mailto:'.$email : null;
     $logoUrl = Vite::asset('resources/images/general/viet-han-logo.png');
+    $isV2 = $variant === 'v2';
 @endphp
 
+@if($isV2)
+<footer class="v2-footer">
+    <div class="v2-container v2-footer__main">
+        <div class="v2-footer__brand">
+            <a href="{{ $homeUrl }}" aria-label="{{ __('common.brand_name') }}" class="v2-footer__logo-link">
+                <x-public.v2.logo variant="white" decorative />
+                <span class="sr-only">{{ __('common.brand_name') }}</span>
+            </a>
+            <p class="v2-footer__tagline">{{ __('common.tagline') }}</p>
+        </div>
+
+        <nav aria-label="{{ $isVi ? 'Điều hướng cuối trang' : 'Footer navigation' }}" class="v2-footer__nav">
+            <a href="{{ $aboutUrl }}">{{ __('navigation.about') }}</a>
+            <a href="{{ $servicesUrl }}">{{ __('navigation.services') }}</a>
+            <a href="{{ $trainingUrl }}">{{ __('navigation.training') }}</a>
+            <a href="{{ $blogUrl }}">{{ __('navigation.blog') }}</a>
+            <a href="{{ $contactUrl }}">{{ __('navigation.contact') }}</a>
+            <a href="{{ $bookingUrl }}" x-data="{}" data-booking-modal-trigger @click.prevent="$dispatch('open-booking-modal', { trigger: $el })" class="v2-footer__booking">{{ __('navigation.booking') }} &rarr;</a>
+        </nav>
+
+        <div class="v2-footer__contact">
+            @if($address)
+                <p>{{ $address }}</p>
+            @endif
+            @if($phone && $phoneHref)
+                <a href="{{ $phoneHref }}">{{ $phone }}</a>
+            @endif
+            @if($email && $emailHref)
+                <a href="{{ $emailHref }}">{{ $email }}</a>
+            @endif
+        </div>
+    </div>
+
+    <div class="v2-container v2-footer__legal">
+        <p>&copy; {{ date('Y') }} {{ __('common.brand_name') }}. {{ __('common.all_rights_reserved') }}.</p>
+        <div class="v2-footer__utilities">
+            <p>Beauty &amp; Wellness Sanctuary</p>
+            <x-public.language-switcher variant="footer" />
+        </div>
+    </div>
+</footer>
+@else
 <footer class="public-footer w-full bg-[#140F0E] border-t border-[#C5A880]/20 text-white/70 mt-auto">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12" data-reveal-group>
@@ -63,7 +110,7 @@
                     <li><a href="{{ $trainingUrl }}" class="hover:text-[#C5A880] transition duration-200">{{ __('navigation.training') }}</a></li>
                     <li><a href="{{ $blogUrl }}" class="hover:text-[#C5A880] transition duration-200">{{ __('navigation.blog') }}</a></li>
                     <li><a href="{{ $contactUrl }}" class="hover:text-[#C5A880] transition duration-200">{{ __('navigation.contact') }}</a></li>
-                    <li><a href="{{ $bookingUrl }}" class="text-[#C5A880] hover:text-white font-medium transition duration-200">{{ __('navigation.booking') }} &rarr;</a></li>
+                    <li><a href="{{ $bookingUrl }}" x-data="{}" data-booking-modal-trigger @click.prevent="$dispatch('open-booking-modal', { trigger: $el })" class="text-[#C5A880] hover:text-white font-medium transition duration-200">{{ __('navigation.booking') }} &rarr;</a></li>
                 </ul>
             </div>
 
@@ -113,3 +160,4 @@
         </div>
     </div>
 </footer>
+@endif

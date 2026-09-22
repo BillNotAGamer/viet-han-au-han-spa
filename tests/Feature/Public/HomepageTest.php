@@ -168,7 +168,8 @@ class HomepageTest extends TestCase
         $viResponse->assertStatus(200);
         $viResponse->assertSee('Liệu Trình Chăm Sóc Da Hoàng Cung');
         $viResponse->assertSee('Trị Liệu Mặt');
-        $viResponse->assertDontSee('Dịch Vụ Không Nổi Bật');
+        $mainContent = explode('id="booking-modal"', (string) $viResponse->getContent())[0];
+        $this->assertStringNotContainsString('Dịch Vụ Không Nổi Bật', $mainContent);
         $viResponse->assertDontSee('Dịch Vụ Bản Nháp');
 
         // Critical check: Service 1 has no EN translation, must NOT appear on /en

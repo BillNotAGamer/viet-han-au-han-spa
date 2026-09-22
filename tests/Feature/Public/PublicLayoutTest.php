@@ -145,14 +145,177 @@ class PublicLayoutTest extends TestCase
         $response = $this->get('/');
         $response->assertStatus(200);
 
-        // Verify section heading uses safe word-boundary wrapping and no break-all
-        $response->assertSee('break-words', false);
+        // V2 semantic heading roles carry word-safe wrapping in the design-system CSS.
+        $response->assertSee('v2-type-display-xl', false);
         $response->assertDontSee('break-all', false);
 
-        // Verify logo-only header branding remains accessible after the Phase 9.5 header rebuild
+        // Verify the V2 logo-only header branding remains accessible.
         $response->assertSee('aria-label="Việt Hàn Âu Hàn Spa"', false);
-        $response->assertSee('class="public-header__logo"', false);
-        $response->assertSee('class="public-header__mobile-logo"', false);
+        $response->assertSee('v2-header__logo--white', false);
+        $response->assertSee('v2-header__mobile-logo', false);
         $response->assertSee('<span class="sr-only">Việt Hàn Âu Hàn Spa</span>', false);
+    }
+
+    public function test_all_normal_public_pages_use_the_v2_shell(): void
+    {
+        foreach ([
+            '/',
+            '/en',
+            '/gioi-thieu',
+            '/en/about',
+            '/lien-he',
+            '/en/contact',
+            '/dich-vu',
+            '/en/services',
+            '/dao-tao',
+            '/en/training',
+            '/blog',
+            '/en/blog',
+            '/dat-lich',
+            '/en/booking',
+        ] as $path) {
+            $this->get($path)
+                ->assertStatus(200)
+                ->assertSee('v2-public-shell', false)
+                ->assertSee('v2-header__nav--left', false)
+                ->assertSee('v2-language-switcher', false);
+        }
+    }
+
+    public function test_v2_motion_is_progressive_public_only_and_uses_optimized_home_hero(): void
+    {
+        $content = (string) $this->get('/')->assertStatus(200)->getContent();
+
+        $this->assertStringContainsString('@view-transition { navigation: auto; }', $content);
+        $this->assertStringContainsString('data-persistent-quiet-hero', $content);
+        $this->assertStringContainsString('data-persistent-ui', $content);
+        $this->assertStringNotContainsString('motion-ready', $content);
+
+        $heroPath = resource_path('images/homepage/viet-han-banner-hero.webp');
+        $this->assertFileExists($heroPath);
+        $this->assertLessThan(500 * 1024, filesize($heroPath));
+
+        $homepage = (string) file_get_contents(resource_path('views/public/home.blade.php'));
+        $this->assertStringContainsString('viet-han-banner-hero.webp', $homepage);
+        $this->assertStringNotContainsString('viet-han-banner-hero.png', $homepage);
+
+        $styles = (string) file_get_contents(resource_path('css/app.css'));
+        $this->assertStringContainsString('html.motion-ready [data-reveal]', $styles);
+        $this->assertStringContainsString('@media (prefers-reduced-motion: reduce)', $styles);
+        $this->assertStringContainsString('::view-transition-old(v2-public-root)', $styles);
+
+        $motionCoordinator = (string) file_get_contents(resource_path('js/app.js'));
+        $this->assertStringContainsString('IntersectionObserver', $motionCoordinator);
+        $this->assertStringContainsString('revealObserver.unobserve', $motionCoordinator);
+        $this->assertStringContainsString('v2-skip-next-transition', $motionCoordinator);
+        $this->assertStringNotContainsString('data-parallax', $motionCoordinator);
+    }
+
+    public function test_v2_header_centers_logo_and_moves_language_switching_to_footer(): void
+    {
+        foreach ([
+            ['path' => '/', 'target' => url('/en'), 'active_label' => 'Tiếng Việt'],
+            ['path' => '/en', 'target' => url('/'), 'active_label' => 'English'],
+        ] as $case) {
+            $content = (string) $this->get($case['path'])->assertStatus(200)->getContent();
+
+            preg_match('/<header\b[^>]*>.*<\/header>/s', $content, $fullHeaderMatch);
+            $fullHeader = $fullHeaderMatch[0] ?? '';
+            preg_match('/<div class="v2-header__desktop">(.*?)<div class="public-header__mobile">/s', $content, $headerMatch);
+            $desktopHeader = $headerMatch[1] ?? '';
+            preg_match('/<footer class="v2-footer">.*<\/footer>/s', $content, $footerMatch);
+            $footer = $footerMatch[0] ?? '';
+
+            $this->assertNotSame('', $desktopHeader);
+            $this->assertNotSame('', $fullHeader);
+            $this->assertStringContainsString('v2-header__nav--left', $desktopHeader);
+            $this->assertStringContainsString('v2-header__brand-link', $desktopHeader);
+            $this->assertStringContainsString('v2-header__nav--right', $desktopHeader);
+            $this->assertTrue(strpos($desktopHeader, 'v2-header__nav--left') < strpos($desktopHeader, 'v2-header__brand-link'));
+            $this->assertTrue(strpos($desktopHeader, 'v2-header__brand-link') < strpos($desktopHeader, 'v2-header__nav--right'));
+            $this->assertStringNotContainsString('data-booking-modal-trigger', $desktopHeader);
+            $this->assertStringNotContainsString('public-language-switcher', $desktopHeader);
+            $this->assertStringNotContainsString('public-language-switcher', $fullHeader);
+            $this->assertStringNotContainsString('v2-language-switcher', $fullHeader);
+
+            $this->assertNotSame('', $footer);
+            $this->assertStringContainsString('v2-language-switcher', $footer);
+            $this->assertStringContainsString('href="'.$case['target'].'"', $footer);
+            $this->assertMatchesRegularExpression(
+                '/<a(?=[^>]*aria-current="page")(?=[^>]*aria-label="'.preg_quote($case['active_label'], '/').'")[^>]*>/',
+                $footer
+            );
+        }
+
+        $aboutContent = (string) $this->get('/gioi-thieu')->assertStatus(200)->getContent();
+        $this->assertStringNotContainsString('public-language-switcher', $aboutContent);
+        $this->assertStringContainsString('v2-language-switcher', $aboutContent);
+    }
+
+    public function test_floating_contact_dock_renders_correct_targets_order_and_accessibility(): void
+    {
+        // 1. Vietnamese layout
+        $viResponse = $this->get('/');
+        $viResponse->assertStatus(200);
+
+        // Verify dock container exists
+        $viResponse->assertSee('class="contact-dock"', false);
+        $viResponse->assertSee('aria-label="Kênh liên hệ nhanh"', false);
+
+        // Verify Facebook target & attributes
+        $viResponse->assertSee('href="https://www.facebook.com/profile.php?id=61575606630966"', false);
+        $viResponse->assertSee('aria-label="Facebook Việt Hàn Âu Hàn Spa"', false);
+
+        // Verify Messenger target & attributes
+        $viResponse->assertSee('aria-label="Messenger Việt Hàn Âu Hàn Spa"', false);
+
+        // Verify Zalo target & attributes
+        $viResponse->assertSee('href="https://zalo.me/0902309026"', false);
+        $viResponse->assertSee('aria-label="Zalo Việt Hàn Âu Hàn Spa"', false);
+
+        // Verify Hotline tel target (no target="_blank")
+        $viResponse->assertSee('href="tel:0902309026"', false);
+        $viResponse->assertSee('aria-label="Gọi hotline Việt Hàn Âu Hàn Spa"', false);
+
+        // Verify target="_blank" and rel="noopener noreferrer" on external links
+        $content = (string) $viResponse->getContent();
+        $this->assertMatchesRegularExpression('/href="https:\/\/zalo\.me\/0902309026"\s+target="_blank"\s+rel="noopener noreferrer"/', $content);
+
+        // Verify strict vertical order: Facebook -> Messenger -> Zalo -> Hotline
+        $fbPos = strpos($content, 'aria-label="Facebook Việt Hàn Âu Hàn Spa"');
+        $msgPos = strpos($content, 'aria-label="Messenger Việt Hàn Âu Hàn Spa"');
+        $zaloPos = strpos($content, 'aria-label="Zalo Việt Hàn Âu Hàn Spa"');
+        $phonePos = strpos($content, 'aria-label="Gọi hotline Việt Hàn Âu Hàn Spa"');
+
+        $this->assertNotFalse($fbPos);
+        $this->assertNotFalse($msgPos);
+        $this->assertNotFalse($zaloPos);
+        $this->assertNotFalse($phonePos);
+        $this->assertTrue($fbPos < $msgPos, 'Facebook must precede Messenger');
+        $this->assertTrue($msgPos < $zaloPos, 'Messenger must precede Zalo');
+        $this->assertTrue($zaloPos < $phonePos, 'Zalo must precede Hotline');
+
+        // Verify Vietnamese tooltips
+        $viResponse->assertSee('role="tooltip" aria-hidden="true">Facebook</span>', false);
+        $viResponse->assertSee('role="tooltip" aria-hidden="true">Messenger</span>', false);
+        $viResponse->assertSee('role="tooltip" aria-hidden="true">Zalo</span>', false);
+        $viResponse->assertSee('role="tooltip" aria-hidden="true">Gọi ngay</span>', false);
+
+        // 2. English layout
+        $enResponse = $this->get('/en');
+        $enResponse->assertStatus(200);
+        $enResponse->assertSee('class="contact-dock"', false);
+        $enResponse->assertSee('aria-label="Call hotline Việt Hàn Âu Hàn Spa"', false);
+        $enResponse->assertSee('role="tooltip" aria-hidden="true">Call now</span>', false);
+    }
+
+    public function test_floating_contact_dock_is_excluded_from_admin_panel(): void
+    {
+        $response = $this->get('/admin/login');
+
+        // Dock must NEVER be rendered on admin authentication or Filament pages
+        $response->assertDontSee('contact-dock', false);
+        $response->assertDontSee('https://zalo.me/0902309026', false);
+        $response->assertDontSee('tel:0902309026', false);
     }
 }
