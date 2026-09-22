@@ -6,7 +6,7 @@
     $blogUrl = $isVi ? route('vi.blog.index') : route('en.blog.index');
     $aboutUrl = $isVi ? route('vi.about') : route('en.about');
 
-    $defaultHeroUrl = Vite::asset('resources/images/homepage/viet-han-banner-hero.png');
+    $defaultHeroUrl = Vite::asset('resources/images/homepage/viet-han-banner-hero.webp');
     $heroImageUrl = !empty($heroMedia['url']) ? $heroMedia['url'] : $defaultHeroUrl;
     $heroImageAlt = !empty($heroMedia['alt']) ? $heroMedia['alt'] : '';
     $philosophyImage = Vite::asset('resources/images/pages/about/about-facial-therapy-care.webp');
@@ -16,7 +16,7 @@
 @endphp
 
 <x-layouts.public variant="v2" header-mode="overlay" :contact-href="$bookingUrl" :seo="$seo ?? null">
-    <section class="v2-home-hero" aria-labelledby="home-hero-title">
+    <section class="v2-home-hero" data-persistent-quiet-hero aria-labelledby="home-hero-title">
         <img src="{{ $heroImageUrl }}" alt="{{ $heroImageAlt }}" class="v2-home-hero__image" loading="eager" fetchpriority="high">
         <div class="v2-home-hero__veil" aria-hidden="true"></div>
         <div class="v2-container v2-home-hero__inner">

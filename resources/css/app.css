@@ -709,72 +709,36 @@
    REVERSIBLE SCROLL MOTION SYSTEM & EDITORIAL INTERACTIONS
    =================================================== */
 
-/* Progressive Enhancement:
-   Without .motion-ready (JS disabled/failed), everything remains 100% visible immediately.
-*/
+/* Motion is enhanced only after JavaScript marks the document ready.
+   The V2 coordinator reveals a composition once; no-JS remains visible. */
 html.motion-ready [data-reveal] {
     opacity: 0;
     transform: translateY(20px);
     transition:
-        opacity 750ms cubic-bezier(0.22, 1, 0.36, 1),
-        transform 750ms cubic-bezier(0.22, 1, 0.36, 1);
+        opacity var(--v2-motion-slow, 900ms) var(--v2-ease-cinematic, cubic-bezier(0.22, 1, 0.36, 1)) var(--v2-reveal-delay, 0ms),
+        transform var(--v2-motion-slow, 900ms) var(--v2-ease-cinematic, cubic-bezier(0.22, 1, 0.36, 1)) var(--v2-reveal-delay, 0ms);
     will-change: opacity, transform;
 }
 
-/* Visible in Viewport */
-html.motion-ready [data-reveal].is-visible,
 html.motion-ready [data-reveal].is-revealed {
     opacity: 1;
     transform: translateY(0);
+    will-change: auto;
 }
 
-/* Exited Above Viewport (scrolled down past element) */
-html.motion-ready [data-reveal].is-exited-above {
+html.motion-ready [data-reveal-image] > img {
     opacity: 0;
-    transform: translateY(-16px);
-}
-
-/* Exited Below Viewport (scrolled up past element or pending below) */
-html.motion-ready [data-reveal].is-exited-below {
-    opacity: 0;
-    transform: translateY(20px);
-}
-
-/* Reversible Image Reveal / Fade */
-html.motion-ready [data-reveal-image] {
-    overflow: hidden;
-}
-
-html.motion-ready [data-reveal-image] img {
-    opacity: 0;
-    transform: scale(1.03) translateY(12px);
+    transform: scale(1.03);
     transition:
-        opacity 800ms ease,
-        transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+        opacity var(--v2-motion-cinematic, 1200ms) var(--v2-ease-cinematic, cubic-bezier(0.22, 1, 0.36, 1)),
+        transform var(--v2-motion-cinematic, 1200ms) var(--v2-ease-cinematic, cubic-bezier(0.22, 1, 0.36, 1));
     will-change: opacity, transform;
 }
 
-html.motion-ready [data-reveal-image].is-visible img,
-html.motion-ready [data-reveal-image].is-revealed img {
+html.motion-ready [data-reveal-image].is-revealed > img {
     opacity: 1;
-    transform: scale(1) translateY(0);
-}
-
-html.motion-ready [data-reveal-image].is-exited-above img {
-    opacity: 0;
-    transform: scale(1.02) translateY(-12px);
-}
-
-html.motion-ready [data-reveal-image].is-exited-below img {
-    opacity: 0;
-    transform: scale(1.03) translateY(12px);
-}
-
-/* Subtle Desktop Parallax Container */
-[data-parallax] {
-    transform: translateY(var(--parallax-offset, 0px));
-    will-change: transform;
-    transition: transform 120ms ease-out;
+    transform: scale(1);
+    will-change: auto;
 }
 
 /* Editorial Card & Image Interactions */
@@ -1176,16 +1140,9 @@ html.motion-ready [data-reveal-image].is-exited-below img {
     }
 
     html.motion-ready [data-reveal],
-    html.motion-ready [data-reveal].is-visible,
     html.motion-ready [data-reveal].is-revealed,
-    html.motion-ready [data-reveal].is-exited-above,
-    html.motion-ready [data-reveal].is-exited-below,
-    html.motion-ready [data-reveal-image] img,
-    html.motion-ready [data-reveal-image].is-visible img,
-    html.motion-ready [data-reveal-image].is-revealed img,
-    html.motion-ready [data-reveal-image].is-exited-above img,
-    html.motion-ready [data-reveal-image].is-exited-below img,
-    [data-parallax],
+    html.motion-ready [data-reveal-image] > img,
+    html.motion-ready [data-reveal-image].is-revealed > img,
     .editorial-card,
     .editorial-card:hover,
     .editorial-image-zoom img,
@@ -1242,8 +1199,11 @@ html.motion-ready [data-reveal-image].is-exited-below img {
 
     --v2-motion-fast: 200ms;
     --v2-motion-base: 280ms;
+    --v2-motion-state: 380ms;
+    --v2-motion-page: 500ms;
     --v2-motion-slow: 900ms;
-    --v2-motion-cinematic: 1400ms;
+    --v2-motion-cinematic: 1200ms;
+    --v2-motion-stagger: 80ms;
     --v2-ease-standard: cubic-bezier(0.2, 0.7, 0.2, 1);
     --v2-ease-cinematic: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -3421,5 +3381,158 @@ html.motion-ready [data-reveal-image].is-exited-below img {
     .v2-journal-index a,
     .v2-journal-feature a {
         transition: none;
+    }
+}
+
+/* ===========================================================================
+   Public Design System V2 — Phase 4 quiet cinematic motion
+   ======================================================================== */
+
+.v2-public-shell {
+    view-transition-name: v2-public-root;
+}
+
+html.v2-skip-next-transition,
+html.v2-skip-next-transition .v2-public-shell {
+    view-transition-name: none;
+}
+
+::view-transition-old(v2-public-root) {
+    animation: v2-page-recede var(--v2-motion-page) var(--v2-ease-standard) both;
+}
+
+::view-transition-new(v2-public-root) {
+    animation: v2-page-arrive var(--v2-motion-page) var(--v2-ease-cinematic) both;
+}
+
+@keyframes v2-page-recede {
+    to {
+        opacity: 0;
+        transform: scale(0.995);
+    }
+}
+
+@keyframes v2-page-arrive {
+    from {
+        opacity: 0;
+        transform: translateY(0.5rem);
+    }
+}
+
+.v2-header {
+    transition:
+        background-color var(--v2-motion-state) var(--v2-ease-standard),
+        border-color var(--v2-motion-state) var(--v2-ease-standard),
+        color var(--v2-motion-state) var(--v2-ease-standard);
+}
+
+.v2-header__brand-link {
+    position: relative;
+    width: 5.75rem;
+    height: 5.75rem;
+    justify-content: center;
+}
+
+.v2-header__logo,
+.v2-header__logo--white,
+.v2-header__logo--compact,
+.v2-header.public-header--sticky .v2-header__logo--white,
+.v2-header.public-header--sticky .v2-header__logo--compact {
+    position: absolute;
+    inset: 0;
+    display: block;
+    margin: auto;
+    transition:
+        opacity var(--v2-motion-state) var(--v2-ease-standard),
+        visibility var(--v2-motion-state) step-end;
+}
+
+.v2-header__logo--white,
+.v2-header.public-header--sticky .v2-header__logo--white {
+    opacity: 1;
+    visibility: visible;
+}
+
+.v2-header__logo--compact,
+.v2-header.public-header--sticky .v2-header__logo--compact {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.v2-header.public-header--sticky .v2-header__logo--white {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.v2-header.public-header--sticky .v2-header__logo--compact {
+    opacity: 1;
+    visibility: visible;
+}
+
+.v2-header__link {
+    transition:
+        border-color var(--v2-motion-fast) var(--v2-ease-standard),
+        color var(--v2-motion-fast) var(--v2-ease-standard);
+}
+
+.v2-button {
+    transition:
+        background-color var(--v2-motion-fast) var(--v2-ease-standard),
+        border-color var(--v2-motion-fast) var(--v2-ease-standard),
+        color var(--v2-motion-fast) var(--v2-ease-standard),
+        transform var(--v2-motion-fast) var(--v2-ease-standard);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .v2-button:hover {
+        transform: translateY(-1px);
+    }
+
+    .v2-button:hover > [aria-hidden='true'],
+    .v2-text-link:hover > [aria-hidden='true'] {
+        transform: translateX(0.25rem);
+    }
+
+    a:hover > .v2-media-frame > img,
+    a:focus-visible > .v2-media-frame > img {
+        transform: scale(1.02);
+    }
+}
+
+.v2-button > [aria-hidden='true'],
+.v2-text-link > [aria-hidden='true'] {
+    transition: transform var(--v2-motion-base) var(--v2-ease-standard);
+}
+
+html.motion-ready [data-persistent-ui] {
+    transition:
+        opacity var(--v2-motion-state) var(--v2-ease-standard),
+        transform var(--v2-motion-state) var(--v2-ease-standard),
+        visibility var(--v2-motion-state) step-end;
+}
+
+html.motion-ready [data-persistent-ui].is-quiet {
+    pointer-events: none;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(0.5rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(v2-public-root),
+    ::view-transition-new(v2-public-root) {
+        animation-duration: 0.01ms;
+    }
+
+    html.motion-ready [data-reveal],
+    html.motion-ready [data-reveal].is-revealed,
+    html.motion-ready [data-reveal-image] > img,
+    html.motion-ready [data-reveal-image].is-revealed > img,
+    html.motion-ready [data-persistent-ui],
+    html.motion-ready [data-persistent-ui].is-quiet {
+        visibility: visible !important;
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
     }
 }

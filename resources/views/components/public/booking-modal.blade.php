@@ -56,10 +56,10 @@
     {{-- Dark Translucent Backdrop --}}
     <div
         x-show="isOpen"
-        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter="transition ease-out duration-400"
         x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100"
-        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave="transition ease-in duration-240"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
         @click="close()"
@@ -70,12 +70,12 @@
     {{-- Modal Dialog Surface --}}
     <div
         x-show="isOpen"
-        x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+        x-transition:enter="transition ease-out duration-400"
+        x-transition:enter-start="opacity-0 scale-[0.985] translate-y-2"
         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave="transition ease-in duration-240"
         x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-        x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+        x-transition:leave-end="opacity-0 scale-[0.985] translate-y-2"
         @click.stop
         class="v2-booking-modal__dialog relative w-full max-w-[840px] max-h-[calc(100vh-24px)] max-h-[calc(100dvh-24px)] sm:max-h-[calc(100vh-48px)] sm:max-h-[calc(100dvh-48px)] my-auto bg-[#FFFCF8] rounded-2xl sm:rounded-3xl border border-[#E8DFC8] shadow-2xl overflow-hidden flex flex-col z-10"
     >

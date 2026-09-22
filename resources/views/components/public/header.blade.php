@@ -50,6 +50,7 @@
         isSolid: @js($isSolid),
         isSticky: @js($isSolid),
         init() {
+            let scrollFrame = null;
             const updateHeader = () => {
                 if (this.isSolid) {
                     this.isSticky = true;
@@ -60,7 +61,16 @@
             };
 
             updateHeader();
-            window.addEventListener('scroll', updateHeader, { passive: true });
+            window.addEventListener('scroll', () => {
+                if (scrollFrame !== null) {
+                    return;
+                }
+
+                scrollFrame = window.requestAnimationFrame(() => {
+                    updateHeader();
+                    scrollFrame = null;
+                });
+            }, { passive: true });
         }
     }"
     :class="isSticky ? 'public-header--sticky' : 'public-header--overlay'"
@@ -156,12 +166,12 @@
         id="public-mobile-menu"
         x-show="mobileOpen"
         x-cloak
-        x-transition:enter="transition ease-out duration-200"
-        x-transition:enter-start="opacity-0 -translate-y-2"
+        x-transition:enter="transition ease-out duration-400"
+        x-transition:enter-start="opacity-0 -translate-y-1"
         x-transition:enter-end="opacity-100 translate-y-0"
-        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave="transition ease-in duration-280"
         x-transition:leave-start="opacity-100 translate-y-0"
-        x-transition:leave-end="opacity-0 -translate-y-2"
+        x-transition:leave-end="opacity-0 -translate-y-1"
         class="public-header__drawer"
     >
         <nav aria-label="{{ __('navigation.main_navigation') }}" class="public-header__drawer-nav">

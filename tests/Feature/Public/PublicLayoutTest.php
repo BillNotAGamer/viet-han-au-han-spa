@@ -182,6 +182,35 @@ class PublicLayoutTest extends TestCase
         }
     }
 
+    public function test_v2_motion_is_progressive_public_only_and_uses_optimized_home_hero(): void
+    {
+        $content = (string) $this->get('/')->assertStatus(200)->getContent();
+
+        $this->assertStringContainsString('@view-transition { navigation: auto; }', $content);
+        $this->assertStringContainsString('data-persistent-quiet-hero', $content);
+        $this->assertStringContainsString('data-persistent-ui', $content);
+        $this->assertStringNotContainsString('motion-ready', $content);
+
+        $heroPath = resource_path('images/homepage/viet-han-banner-hero.webp');
+        $this->assertFileExists($heroPath);
+        $this->assertLessThan(500 * 1024, filesize($heroPath));
+
+        $homepage = (string) file_get_contents(resource_path('views/public/home.blade.php'));
+        $this->assertStringContainsString('viet-han-banner-hero.webp', $homepage);
+        $this->assertStringNotContainsString('viet-han-banner-hero.png', $homepage);
+
+        $styles = (string) file_get_contents(resource_path('css/app.css'));
+        $this->assertStringContainsString('html.motion-ready [data-reveal]', $styles);
+        $this->assertStringContainsString('@media (prefers-reduced-motion: reduce)', $styles);
+        $this->assertStringContainsString('::view-transition-old(v2-public-root)', $styles);
+
+        $motionCoordinator = (string) file_get_contents(resource_path('js/app.js'));
+        $this->assertStringContainsString('IntersectionObserver', $motionCoordinator);
+        $this->assertStringContainsString('revealObserver.unobserve', $motionCoordinator);
+        $this->assertStringContainsString('v2-skip-next-transition', $motionCoordinator);
+        $this->assertStringNotContainsString('data-parallax', $motionCoordinator);
+    }
+
     public function test_v2_header_centers_logo_and_moves_language_switching_to_footer(): void
     {
         foreach ([

@@ -20,6 +20,11 @@
     <x-seo.head :seo="$seoMetadata" :title="$title" />
     {{ Vite::fonts() }}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @if($isV2)
+        <style>
+            @view-transition { navigation: auto; }
+        </style>
+    @endif
     <x-tracking.head />
 </head>
 <body @class([
@@ -40,7 +45,7 @@
         {{ $slot }}
     </main>
 
-    <div @class(['public-floating-booking', 'v2-floating-booking' => $isV2])>
+    <div @class(['public-floating-booking', 'v2-floating-booking' => $isV2]) @if($isV2) data-persistent-ui @endif>
         <a
             href="{{ $bookingHref }}"
             x-data="{}"
@@ -57,7 +62,7 @@
     </div>
 
     <!-- Floating Contact Dock -->
-    <x-public.contact-dock />
+    <x-public.contact-dock :motion-hook="$isV2" />
 
     <!-- Global Booking Modal -->
     <x-public.booking-modal />

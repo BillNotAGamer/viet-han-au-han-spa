@@ -23,7 +23,7 @@
     };
 @endphp
 
-<figure {{ $attributes->class(['v2-media-frame', $roleClass, $positionClass]) }}>
+<figure {{ $attributes->class(['v2-media-frame', $roleClass, $positionClass]) }} data-reveal-image>
     <img
         src="{{ $src }}"
         alt="{{ $alt }}"
