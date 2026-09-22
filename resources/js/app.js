@@ -8,115 +8,125 @@ import.meta.glob([
     '!../images/images resource/**',
 ], { eager: true });
 
-// Public V2 Motion Coordinator
-// Progressive enhancement only: content remains visible until this runs.
+// Site-wide Premium Reversible Motion Engine
 (() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+        return;
+    }
+
     const initMotion = () => {
-        if (!document.body?.classList.contains('v2-public-shell')) {
-            return;
-        }
-
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (prefersReducedMotion) {
-            return;
-        }
-
         document.documentElement.classList.add('motion-ready');
 
-        // Native cross-document transitions remain browser-owned for public
-        // navigation. Form submissions deliberately retain their normal PRG
-        // behavior without a transition snapshot or interception.
-        document.addEventListener('submit', () => {
-            document.documentElement.classList.add('v2-skip-next-transition');
-            window.setTimeout(() => {
-                document.documentElement.classList.remove('v2-skip-next-transition');
-            }, 1000);
-        }, { capture: true });
-
-        // Small editorial groups receive a restrained stagger. Longer lists
-        // converge quickly rather than becoming a cascading animation.
+        // Setup auto-stagger delays for groups first
         const revealGroups = document.querySelectorAll('[data-reveal-group]');
         revealGroups.forEach(group => {
             const items = group.querySelectorAll('[data-reveal]');
             items.forEach((item, idx) => {
                 if (!item.hasAttribute('data-reveal-delay')) {
-                    item.style.setProperty('--v2-reveal-delay', `${Math.min(idx, 2) * 80}ms`);
+                    item.setAttribute('data-reveal-delay', (idx * 80).toString());
                 }
             });
         });
 
-        // Reveal compositions once on entry. They are deliberately never
-        // hidden again when a visitor scrolls back through the page.
+        // Reversible Scroll Reveal Elements
         const revealElements = document.querySelectorAll('[data-reveal], [data-reveal-image]');
-        const reveal = element => {
-            element.classList.add('is-revealed');
-        };
-
-        if ('IntersectionObserver' in window && revealElements.length) {
-            const revealObserver = new IntersectionObserver(entries => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        reveal(entry.target);
-                        revealObserver.unobserve(entry.target);
-                    }
-                });
-            }, {
-                rootMargin: '0px 0px -8% 0px',
-                threshold: 0.08,
-            });
-
-            revealElements.forEach(element => {
-                const rect = element.getBoundingClientRect();
-                if (rect.top < window.innerHeight && rect.bottom > 0) {
-                    reveal(element);
-                } else {
-                    revealObserver.observe(element);
-                }
-            });
-        } else {
-            revealElements.forEach(reveal);
+        if (!revealElements.length) {
+            return;
         }
 
-        const quietHero = document.querySelector('[data-persistent-quiet-hero]');
-        const persistentControls = document.querySelectorAll('[data-persistent-ui]');
-        const focusableSelector = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
-
-        const setPersistentQuiet = isQuiet => {
-            persistentControls.forEach(control => {
-                control.classList.toggle('is-quiet', isQuiet);
-                control.toggleAttribute('aria-hidden', isQuiet);
-
-                if ('inert' in control) {
-                    control.inert = isQuiet;
-                }
-
-                control.querySelectorAll(focusableSelector).forEach(focusable => {
-                    if (isQuiet) {
-                        focusable.dataset.v2MotionTabindex = focusable.getAttribute('tabindex') ?? '';
-                        focusable.setAttribute('tabindex', '-1');
-                    } else if ('v2MotionTabindex' in focusable.dataset) {
-                        const previousTabindex = focusable.dataset.v2MotionTabindex;
-                        if (previousTabindex === '') {
-                            focusable.removeAttribute('tabindex');
-                        } else {
-                            focusable.setAttribute('tabindex', previousTabindex);
-                        }
-                        delete focusable.dataset.v2MotionTabindex;
-                    }
-                });
+        if (!('IntersectionObserver' in window)) {
+            revealElements.forEach(el => {
+                el.classList.add('is-visible', 'is-revealed');
             });
+            return;
+        }
+
+        // Synchronous initial placement:
+        // Elements currently in the viewport (hero at top, or mid-page upon refresh)
+        // become instantly visible without any blank flash.
+        const windowHeight = window.innerHeight;
+        revealElements.forEach(el => {
+            const rect = el.getBoundingClientRect();
+            if (rect.top < windowHeight && rect.bottom > 0) {
+                el.classList.add('is-visible', 'is-revealed');
+            } else if (rect.top < 0) {
+                el.classList.add('is-exited-above');
+            } else {
+                el.classList.add('is-exited-below');
+            }
+        });
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px 0px -4% 0px',
+            threshold: 0.05,
         };
 
-        if (quietHero && persistentControls.length && 'IntersectionObserver' in window) {
-            const heroRect = quietHero.getBoundingClientRect();
-            const initialVisibleHeight = Math.min(heroRect.bottom, window.innerHeight) - Math.max(heroRect.top, 0);
-            setPersistentQuiet(initialVisibleHeight / heroRect.height >= 0.35);
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const target = entry.target;
+                if (entry.isIntersecting) {
+                    // Re-entering viewport: fade in
+                    const delay = target.getAttribute('data-reveal-delay');
+                    if (delay && !isNaN(parseInt(delay, 10))) {
+                        target.style.transitionDelay = `${delay}ms`;
+                    } else {
+                        target.style.transitionDelay = '0ms';
+                    }
 
-            const persistentObserver = new IntersectionObserver(entries => {
-                entries.forEach(entry => setPersistentQuiet(entry.intersectionRatio >= 0.35));
-            }, { threshold: 0.35 });
+                    target.classList.add('is-visible', 'is-revealed');
+                    target.classList.remove('is-exited-above', 'is-exited-below');
+                } else {
+                    // Leaving viewport: fade out in scroll direction
+                    target.style.transitionDelay = '0ms';
+                    target.classList.remove('is-visible', 'is-revealed');
 
-            persistentObserver.observe(quietHero);
+                    if (entry.boundingClientRect.top < 0) {
+                        target.classList.add('is-exited-above');
+                        target.classList.remove('is-exited-below');
+                    } else {
+                        target.classList.add('is-exited-below');
+                        target.classList.remove('is-exited-above');
+                    }
+                }
+            });
+        }, observerOptions);
+
+        revealElements.forEach(el => {
+            revealObserver.observe(el);
+        });
+
+        // Subtle Parallax Engine for [data-parallax] (Desktop only, clamped to 18px max)
+        const parallaxElements = document.querySelectorAll('[data-parallax]');
+        if (parallaxElements.length && window.innerWidth >= 1024) {
+            let ticking = false;
+
+            const updateParallax = () => {
+                const h = window.innerHeight;
+
+                parallaxElements.forEach(el => {
+                    const rect = el.getBoundingClientRect();
+                    if (rect.top < h && rect.bottom > 0) {
+                        const speed = parseFloat(el.getAttribute('data-parallax-speed') || '0.04');
+                        const centerY = rect.top + rect.height / 2;
+                        const offset = (centerY - h / 2) * speed;
+                        const clampedOffset = Math.max(-18, Math.min(18, offset));
+                        el.style.setProperty('--parallax-offset', `${clampedOffset.toFixed(1)}px`);
+                    }
+                });
+
+                ticking = false;
+            };
+
+            window.addEventListener('scroll', () => {
+                if (!ticking) {
+                    window.requestAnimationFrame(updateParallax);
+                    ticking = true;
+                }
+            }, { passive: true });
+
+            updateParallax();
         }
     };
 

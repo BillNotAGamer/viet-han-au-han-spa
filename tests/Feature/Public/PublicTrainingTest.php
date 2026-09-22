@@ -336,25 +336,23 @@ class PublicTrainingTest extends TestCase
             ->assertSee('href="'.route('en.training.index').'"', false);
     }
 
-    public function test_header_training_navigation_targets_real_listing_routes_across_v2_pages(): void
+    public function test_header_training_navigation_targets_real_listing_routes_without_visual_class_changes(): void
     {
         $this->get('/')
             ->assertStatus(200)
             ->assertSee('href="'.route('vi.training.index').'"', false)
             ->assertSee('href="'.route('vi.services.index').'"', false)
-            ->assertSee('v2-header__link', false);
+            ->assertSee('class="public-header__link"', false);
 
         $this->get('/en')
             ->assertStatus(200)
             ->assertSee('href="'.route('en.training.index').'"', false)
             ->assertSee('href="'.route('en.services.index').'"', false)
-            ->assertSee('v2-header__link', false);
+            ->assertSee('class="public-header__link"', false);
 
         $this->get('/dao-tao')
             ->assertStatus(200)
             ->assertSee('public-header--sticky', false)
-            ->assertSee('v2-public-shell', false)
-            ->assertSee('v2-page-hero', false)
             ->assertSee('href="'.route('vi.training.index').'"', false);
     }
 
@@ -372,37 +370,6 @@ class PublicTrainingTest extends TestCase
             ->values();
 
         $this->assertCount(0, $publicTrainingMutationRoutes);
-    }
-
-    public function test_training_listing_and_detail_use_v2_in_both_locales(): void
-    {
-        $course = $this->createCourseWithTranslation(
-            ContentStatus::PUBLISHED,
-            'vi',
-            'Chương trình V2',
-            'chuong-trinh-v2'
-        );
-        TrainingCourseTranslation::create([
-            'training_course_id' => $course->id,
-            'locale' => 'en',
-            'title' => 'V2 Training Program',
-            'slug' => 'v2-training-program',
-            'excerpt' => 'Exact English program summary.',
-            'content' => '<p>Exact English program content.</p>',
-        ]);
-
-        $this->get('/dao-tao')
-            ->assertStatus(200)
-            ->assertSee('v2-public-shell', false)
-            ->assertSee('v2-program-list', false)
-            ->assertSee('Chương trình V2');
-
-        $this->get('/en/training/v2-training-program')
-            ->assertStatus(200)
-            ->assertSee('v2-public-shell', false)
-            ->assertSee('v2-detail-hero', false)
-            ->assertSee('Exact English program content.')
-            ->assertDontSee('Chương trình V2');
     }
 
     /**

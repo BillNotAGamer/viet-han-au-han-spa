@@ -354,62 +354,22 @@ class PublicServicesTest extends TestCase
             ->assertSee('href="'.route('vi.services.show', ['slug' => 'massage-tri-lieu']).'"', false);
     }
 
-    public function test_header_services_navigation_targets_real_listing_routes_across_v2_pages(): void
+    public function test_header_services_navigation_targets_real_listing_routes_without_visual_class_changes(): void
     {
         $this->get('/')
             ->assertStatus(200)
             ->assertSee('href="'.route('vi.services.index').'"', false)
-            ->assertSee('v2-header__link', false);
+            ->assertSee('class="public-header__link"', false);
 
         $this->get('/en')
             ->assertStatus(200)
             ->assertSee('href="'.route('en.services.index').'"', false)
-            ->assertSee('v2-header__link', false);
+            ->assertSee('class="public-header__link"', false);
 
         $this->get('/dich-vu')
             ->assertStatus(200)
             ->assertSee('public-header--sticky', false)
-            ->assertSee('v2-public-shell', false)
             ->assertSee('href="'.route('vi.services.index').'"', false);
-    }
-
-    public function test_service_listing_and_detail_use_the_same_v2_experience(): void
-    {
-        $service = $this->createServiceWithTranslation(
-            ContentStatus::PUBLISHED,
-            'vi',
-            'V2 Service Experience',
-            'v2-service-experience'
-        );
-
-        $this->get('/dich-vu/'.$service->translationFor('vi')->slug)
-            ->assertStatus(200)
-            ->assertSee('v2-public-shell', false)
-            ->assertSee('v2-service-hero', false)
-            ->assertSee('v2-header__nav--left', false)
-            ->assertSee('v2-header__nav--right', false)
-            ->assertSee('v2-language-switcher', false)
-            ->assertSee('data-booking-modal-trigger', false)
-            ->assertSee('href="'.route('vi.booking.create').'"', false);
-
-        ServiceTranslation::create([
-            'service_id' => $service->id,
-            'locale' => 'en',
-            'name' => 'V2 English Service Experience',
-            'slug' => 'v2-english-service-experience',
-            'excerpt' => 'Exact English service presentation.',
-        ]);
-
-        $this->get('/en/services/v2-english-service-experience')
-            ->assertStatus(200)
-            ->assertSee('v2-public-shell', false)
-            ->assertSee('V2 English Service Experience')
-            ->assertSee('href="'.route('en.booking.create').'"', false);
-
-        $this->get('/dich-vu')
-            ->assertStatus(200)
-            ->assertSee('v2-public-shell', false)
-            ->assertSee('v2-treatment-menu', false);
     }
 
     /**

@@ -9,7 +9,6 @@ return [
     'blog' => 'Blog',
     'about' => 'About',
     'contact' => 'Contact',
-    'booking' => 'Book now',
     'book_now' => 'Book now',
     'skip_to_content' => 'Skip to main content',
     'main_navigation' => 'Main navigation',

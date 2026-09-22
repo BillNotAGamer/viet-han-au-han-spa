@@ -9,7 +9,6 @@ return [
     'blog' => 'Blog',
     'about' => 'Giới thiệu',
     'contact' => 'Liên hệ',
-    'booking' => 'Đặt lịch',
     'book_now' => 'Đặt lịch',
     'skip_to_content' => 'Bỏ qua đến nội dung chính',
     'main_navigation' => 'Điều hướng chính',
