@@ -3192,27 +3192,12 @@ html.motion-ready [data-reveal-image].is-revealed > img {
         outline-offset: 1px;
     }
 
-    .v2-booking-form__textarea {
-        min-height: 8rem;
-        resize: vertical;
-    }
-
-    .v2-booking-form__consent-label {
-        display: flex;
-        gap: var(--v2-space-3);
-        align-items: flex-start;
-        color: var(--color-v2-text-muted) !important;
+    .v2-booking-form__notice {
+        margin: 0;
+        color: var(--color-v2-text-muted);
+        font-family: var(--font-v2-ui);
         font-size: 0.9rem;
         line-height: 1.6;
-        cursor: pointer;
-    }
-
-    .v2-booking-form__checkbox {
-        flex: 0 0 auto;
-        margin-top: var(--v2-space-1);
-        border-color: var(--color-v2-border-strong);
-        border-radius: var(--v2-radius-sm);
-        color: var(--color-v2-brand);
     }
 
     .v2-booking-form__submit {
@@ -3504,20 +3489,6 @@ html.v2-skip-next-transition .v2-public-shell {
     transition: transform var(--v2-motion-base) var(--v2-ease-standard);
 }
 
-html.motion-ready [data-persistent-ui] {
-    transition:
-        opacity var(--v2-motion-state) var(--v2-ease-standard),
-        transform var(--v2-motion-state) var(--v2-ease-standard),
-        visibility var(--v2-motion-state) step-end;
-}
-
-html.motion-ready [data-persistent-ui].is-quiet {
-    pointer-events: none;
-    visibility: hidden;
-    opacity: 0;
-    transform: translateY(0.5rem);
-}
-
 @media (prefers-reduced-motion: reduce) {
     ::view-transition-old(v2-public-root),
     ::view-transition-new(v2-public-root) {
@@ -3527,9 +3498,7 @@ html.motion-ready [data-persistent-ui].is-quiet {
     html.motion-ready [data-reveal],
     html.motion-ready [data-reveal].is-revealed,
     html.motion-ready [data-reveal-image] > img,
-    html.motion-ready [data-reveal-image].is-revealed > img,
-    html.motion-ready [data-persistent-ui],
-    html.motion-ready [data-persistent-ui].is-quiet {
+    html.motion-ready [data-reveal-image].is-revealed > img {
         visibility: visible !important;
         opacity: 1 !important;
         transform: none !important;

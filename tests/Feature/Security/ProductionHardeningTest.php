@@ -132,7 +132,6 @@ class ProductionHardeningTest extends TestCase
             'phone' => '0901234567',
             'preferred_date' => now()->addDays(2)->format('Y-m-d'),
             'preferred_time' => '10:00',
-            'consent' => '1',
         ];
 
         // Send request from IP 1
@@ -158,7 +157,6 @@ class ProductionHardeningTest extends TestCase
             'phone' => '0901234567',
             'preferred_date' => now()->addDays(2)->format('Y-m-d'),
             'preferred_time' => '10:00',
-            'consent' => '1',
         ];
 
         $server = ['REMOTE_ADDR' => '198.51.100.1'];

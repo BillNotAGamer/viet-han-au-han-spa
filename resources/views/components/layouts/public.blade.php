@@ -45,7 +45,7 @@
         {{ $slot }}
     </main>
 
-    <div @class(['public-floating-booking', 'v2-floating-booking' => $isV2]) @if($isV2) data-persistent-ui @endif>
+    <div @class(['public-floating-booking', 'v2-floating-booking' => $isV2])>
         <a
             href="{{ $bookingHref }}"
             x-data="{}"
@@ -62,7 +62,7 @@
     </div>
 
     <!-- Floating Contact Dock -->
-    <x-public.contact-dock :motion-hook="$isV2" />
+    <x-public.contact-dock />
 
     <!-- Global Booking Modal -->
     <x-public.booking-modal />

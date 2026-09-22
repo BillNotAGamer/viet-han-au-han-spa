@@ -1,7 +1,3 @@
-@props([
-    'motionHook' => false,
-])
-
 @php
     $fbIcon = Vite::asset('resources/images/general/icons/Facebook.png');
     $msgIcon = Vite::asset('resources/images/general/icons/messenger.png');
@@ -13,7 +9,7 @@
     $phoneAria = $isEn ? 'Call hotline Việt Hàn Âu Hàn Spa' : 'Gọi hotline Việt Hàn Âu Hàn Spa';
 @endphp
 
-<nav class="contact-dock" @if($motionHook) data-persistent-ui @endif aria-label="{{ $isEn ? 'Quick contact channels' : 'Kênh liên hệ nhanh' }}">
+<nav class="contact-dock" aria-label="{{ $isEn ? 'Quick contact channels' : 'Kênh liên hệ nhanh' }}">
     <ul class="contact-dock__list">
         {{-- 1. Facebook --}}
         <li class="contact-dock__item">

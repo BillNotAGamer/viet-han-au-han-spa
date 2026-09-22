@@ -110,7 +110,7 @@ class BookingModalAndNotificationTest extends TestCase
         $this->assertStringContainsString("locale: 'vi'", $viContent);
 
         // The push fires on open(), before any customer input exists — verify the pushed
-        // payload carries no name/phone/email/notes keys (PII prohibition, AGENTS.md #16).
+        // payload carries no customer PII keys (PII prohibition, AGENTS.md #16).
         $openMethod = substr($viContent, (int) strpos($viContent, 'open(event) {'));
         $openMethod = substr($openMethod, 0, (int) strpos($openMethod, 'this.$nextTick'));
         $this->assertStringNotContainsString('customer_name', $openMethod);
@@ -129,31 +129,23 @@ class BookingModalAndNotificationTest extends TestCase
         // Full booking page
         $pageResponse = $this->get('/dat-lich');
         $pageResponse->assertStatus(200);
-        $pageResponse->assertSee('name="customer_name"', false);
-        $pageResponse->assertSee('name="phone"', false);
-        $pageResponse->assertSee('name="email"', false);
-        $pageResponse->assertSee('name="service_id"', false);
-        $pageResponse->assertSee('name="preferred_date"', false);
-        $pageResponse->assertSee('name="preferred_time"', false);
-        $pageResponse->assertSee('name="notes"', false);
-        $pageResponse->assertSee('name="consent"', false);
         $pageHtml = explode('id="booking-modal"', (string) $pageResponse->getContent())[0];
+        $this->assertSame(
+            ['customer_name', 'phone', 'service_id', 'preferred_date', 'preferred_time'],
+            $this->customerInputNames($pageHtml)
+        );
         $this->assertStringContainsString('class="v2-booking-form"', $pageHtml);
-        $this->assertStringContainsString('rows="4"', $pageHtml);
         $this->assertStringNotContainsString('class="space-y-3"', $pageHtml);
+        $this->assertStringContainsString(__('booking.contact_notice', [], 'vi'), $pageHtml);
 
         // Modal component on public page
         $homeResponse = $this->get('/');
         $homeResponse->assertStatus(200);
         $modalHtml = explode('id="booking-modal"', (string) $homeResponse->getContent())[1] ?? '';
-        $this->assertStringContainsString('name="customer_name"', $modalHtml);
-        $this->assertStringContainsString('name="phone"', $modalHtml);
-        $this->assertStringContainsString('name="email"', $modalHtml);
-        $this->assertStringContainsString('name="service_id"', $modalHtml);
-        $this->assertStringContainsString('name="preferred_date"', $modalHtml);
-        $this->assertStringContainsString('name="preferred_time"', $modalHtml);
-        $this->assertStringContainsString('name="notes"', $modalHtml);
-        $this->assertStringContainsString('name="consent"', $modalHtml);
+        $this->assertSame(
+            ['customer_name', 'phone', 'service_id', 'preferred_date', 'preferred_time'],
+            $this->customerInputNames($modalHtml)
+        );
         $this->assertStringContainsString('max-w-[840px]', $modalHtml);
         $this->assertStringContainsString('max-h-[calc(100dvh-48px)]', $modalHtml);
         $this->assertStringContainsString('relative h-40 sm:h-32', $modalHtml);
@@ -162,8 +154,7 @@ class BookingModalAndNotificationTest extends TestCase
         $this->assertStringContainsString('class="space-y-3"', $modalHtml);
         $this->assertStringContainsString('sm:gap-x-5 sm:gap-y-3', $modalHtml);
         $this->assertStringContainsString('h-12 sm:h-11', $modalHtml);
-        $this->assertStringContainsString('sm:h-[76px] sm:min-h-[76px]', $modalHtml);
-        $this->assertStringContainsString('rows="3"', $modalHtml);
+        $this->assertStringContainsString(__('booking.contact_notice', [], 'vi'), $modalHtml);
     }
 
     public function test_email_notification_disabled_by_default(): void
@@ -200,7 +191,6 @@ class BookingModalAndNotificationTest extends TestCase
         $payload = $this->validPayload($service->id, [
             'customer_name' => 'Tran Thi Mai',
             'phone' => '091 234 5678',
-            'email' => 'mai@example.test',
         ]);
 
         $response = $this->from('/dat-lich')->post('/dat-lich', $payload);
@@ -230,11 +220,10 @@ class BookingModalAndNotificationTest extends TestCase
         $invalidPayload = $this->validPayload($service->id, [
             'customer_name' => '',
             'phone' => 'invalid-phone',
-            'consent' => '0',
         ]);
 
         $response = $this->from('/dat-lich')->post('/dat-lich', $invalidPayload);
-        $response->assertSessionHasErrors(['customer_name', 'phone', 'consent']);
+        $response->assertSessionHasErrors(['customer_name', 'phone']);
 
         $this->assertDatabaseCount('bookings', 0);
         Mail::assertNothingSent();
@@ -285,6 +274,28 @@ class BookingModalAndNotificationTest extends TestCase
         $this->assertStringNotContainsString('session_id', $html);
     }
 
+    public function test_simplified_booking_notification_contains_required_details_without_empty_legacy_sections(): void
+    {
+        $service = $this->createTestService('vi', 'Chăm Sóc Da Cơ Bản');
+        $this->post('/dat-lich', $this->validPayload($service->id, [
+            'customer_name' => 'Nguyễn Thị Lan',
+            'phone' => '090 555 6677',
+        ]))->assertRedirect('/dat-lich');
+
+        $booking = Booking::firstOrFail();
+        $html = (new BookingRequestSubmitted($booking))->render();
+
+        $this->assertStringContainsString($booking->reference, $html);
+        $this->assertStringContainsString('Nguyễn Thị Lan', $html);
+        $this->assertStringContainsString('090 555 6677', $html);
+        $this->assertStringContainsString('Chăm Sóc Da Cơ Bản', $html);
+        $this->assertStringContainsString($booking->preferred_date->format('Y-m-d'), $html);
+        $this->assertStringContainsString('14:30', $html);
+        $this->assertNull($booking->email);
+        $this->assertNull($booking->customer_note);
+        $this->assertStringNotContainsString('class="notes-box"', $html);
+    }
+
     public function test_email_notification_failure_does_not_destroy_or_fail_booking(): void
     {
         config([
@@ -314,8 +325,6 @@ class BookingModalAndNotificationTest extends TestCase
         $payload = $this->validPayload($service->id, [
             'customer_name' => 'Nguyen Isolation',
             'phone' => '093 333 4444',
-            'email' => 'isolation@example.test',
-            'notes' => 'Secret customer note',
         ]);
 
         // Submission must succeed from user standpoint (302 redirect with flash)
@@ -394,13 +403,24 @@ class BookingModalAndNotificationTest extends TestCase
         return array_merge([
             'customer_name' => 'Khách Hàng Mẫu',
             'phone' => '090 123 4567',
-            'email' => 'khach@example.test',
             'service_id' => $serviceId,
             'preferred_date' => CarbonImmutable::now('Asia/Ho_Chi_Minh')->addDay()->toDateString(),
             'preferred_time' => '14:30',
-            'notes' => 'Phòng yên tĩnh',
-            'consent' => '1',
         ], $overrides);
+    }
+
+    /**
+     * @return list<string>
+     */
+    protected function customerInputNames(string $html): array
+    {
+        preg_match('/<form\b[^>]*>.*?<\/form>/s', $html, $formMatch);
+        preg_match_all('/<(?:input|select|textarea)\b[^>]*\bname="([^"]+)"/i', $formMatch[0] ?? '', $matches);
+
+        return array_values(array_filter(
+            $matches[1] ?? [],
+            fn (string $name): bool => $name !== '_token'
+        ));
     }
 
     protected function assertStandaloneBookingTrigger(string $content, string $href, ?string $componentClass = null): void

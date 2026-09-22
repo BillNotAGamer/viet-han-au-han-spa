@@ -37,6 +37,9 @@ class PublicBookingTest extends TestCase
 
         $viPayload = $this->validPayload($viService->id, [
             'customer_name' => 'Nguyen Van A',
+            'email' => 'legacy-input@example.test',
+            'notes' => 'Legacy input must not be collected.',
+            'consent' => '1',
             'locale' => 'en',
             'status' => BookingStatus::CONFIRMED->value,
             'admin_note' => 'hacked',
@@ -54,7 +57,10 @@ class PublicBookingTest extends TestCase
         $this->assertSame('Nguyen Van A', $viBooking->customer_name);
         $this->assertSame('090 123 4567', $viBooking->phone);
         $this->assertSame('+84901234567', $viBooking->phone_normalized);
+        $this->assertNull($viBooking->email);
+        $this->assertNull($viBooking->customer_note);
         $this->assertNull($viBooking->admin_note);
+        $this->assertNotEmpty($viBooking->reference);
 
         $this->from('/en/booking')
             ->post('/en/booking', $this->validPayload($enService->id, ['customer_name' => 'English Guest']))
@@ -83,17 +89,13 @@ class PublicBookingTest extends TestCase
 
     public function test_booking_validation_rejects_missing_or_invalid_input_without_persisting(): void
     {
-        $service = $this->createServiceWithTranslation('vi', 'Validation Service', 'validation-service');
-
-        $payload = $this->validPayload($service->id, [
+        $payload = [
             'customer_name' => '',
             'phone' => '',
-            'email' => 'not-an-email',
+            'service_id' => '',
             'preferred_date' => CarbonImmutable::now('Asia/Ho_Chi_Minh')->subDay()->toDateString(),
             'preferred_time' => '25:99',
-            'notes' => str_repeat('x', 2001),
-            'consent' => null,
-        ]);
+        ];
 
         $this->from('/dat-lich')
             ->post('/dat-lich', $payload)
@@ -101,11 +103,9 @@ class PublicBookingTest extends TestCase
             ->assertSessionHasErrors([
                 'customer_name',
                 'phone',
-                'email',
+                'service_id',
                 'preferred_date',
                 'preferred_time',
-                'notes',
-                'consent',
             ]);
 
         $this->assertDatabaseCount('bookings', 0);
@@ -276,10 +276,13 @@ class PublicBookingTest extends TestCase
                 ->assertSee('class="v2-booking-form"', false)
                 ->assertSee('action="'.$action.'"', false)
                 ->assertSee('name="customer_name"', false)
+                ->assertSee('name="phone"', false)
                 ->assertSee('name="service_id"', false)
                 ->assertSee('name="preferred_date"', false)
                 ->assertSee('name="preferred_time"', false)
-                ->assertSee('name="consent"', false);
+                ->assertDontSee('name="email"', false)
+                ->assertDontSee('name="notes"', false)
+                ->assertDontSee('name="consent"', false);
         }
     }
 
@@ -292,12 +295,9 @@ class PublicBookingTest extends TestCase
         return array_merge([
             'customer_name' => 'Test Guest',
             'phone' => '090 123 4567',
-            'email' => 'guest@example.test',
             'service_id' => $serviceId,
             'preferred_date' => CarbonImmutable::now('Asia/Ho_Chi_Minh')->addDay()->toDateString(),
             'preferred_time' => '14:30',
-            'notes' => 'Quiet room preferred.',
-            'consent' => '1',
         ], $overrides);
     }
 

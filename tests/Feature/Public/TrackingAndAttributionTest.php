@@ -420,12 +420,9 @@ class TrackingAndAttributionTest extends TestCase
         return array_merge([
             'customer_name' => 'Test Guest',
             'phone' => '090 123 4567',
-            'email' => 'guest@example.test',
             'service_id' => $serviceId,
             'preferred_date' => CarbonImmutable::now('Asia/Ho_Chi_Minh')->addDay()->toDateString(),
             'preferred_time' => '14:30',
-            'notes' => 'Quiet room preferred.',
-            'consent' => '1',
         ], $overrides);
     }
 

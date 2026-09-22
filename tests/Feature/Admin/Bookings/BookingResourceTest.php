@@ -37,6 +37,39 @@ class BookingResourceTest extends TestCase
         $this->actingAs($admin)->get("/admin/bookings/{$booking->id}/edit")->assertStatus(404);
     }
 
+    public function test_admin_view_prioritizes_five_field_booking_data_and_keeps_legacy_details_available(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $newBooking = Booking::factory()->create([
+            'email' => null,
+            'customer_note' => null,
+        ]);
+
+        $this->actingAs($admin)
+            ->get("/admin/bookings/{$newBooking->id}")
+            ->assertOk()
+            ->assertSee($newBooking->reference)
+            ->assertSee($newBooking->customer_name)
+            ->assertSee($newBooking->phone)
+            ->assertSee('Ngày mong muốn')
+            ->assertSee('Giờ mong muốn')
+            ->assertSee('Trạng thái')
+            ->assertSee('Thời gian gửi')
+            ->assertDontSee('Email (dữ liệu cũ)')
+            ->assertDontSee('Ghi chú khách hàng (dữ liệu cũ)');
+
+        $legacyBooking = Booking::factory()->create([
+            'email' => 'legacy@example.test',
+            'customer_note' => 'Ghi chú lịch sử cần giữ lại',
+        ]);
+
+        $this->actingAs($admin)
+            ->get("/admin/bookings/{$legacyBooking->id}")
+            ->assertOk()
+            ->assertSee('legacy@example.test')
+            ->assertSee('Ghi chú lịch sử cần giữ lại');
+    }
+
     public function test_booking_workflow_can_contact_confirm_cancel_and_save_admin_note(): void
     {
         $workflow = app(BookingWorkflow::class);

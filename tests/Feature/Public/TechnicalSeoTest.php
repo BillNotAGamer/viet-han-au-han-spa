@@ -470,8 +470,6 @@ class TechnicalSeoTest extends TestCase
             'service_id' => $service->id,
             'preferred_date' => now()->addDays(2)->toDateString(),
             'preferred_time' => '10:00',
-            'notes' => 'Secret Customer Note',
-            'consent' => '1',
         ]);
 
         $postResponse->assertRedirect('/dat-lich');
@@ -481,7 +479,6 @@ class TechnicalSeoTest extends TestCase
             ->assertSee('<link rel="canonical" href="https://viethanauhanspa.com/dat-lich">', false);
 
         $content = $followed->getContent();
-        $this->assertStringNotContainsString('Secret Customer Note', $content);
         $this->assertStringNotContainsString('0901234567', $content);
     }
 }

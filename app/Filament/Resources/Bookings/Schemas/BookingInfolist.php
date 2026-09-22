@@ -23,7 +23,7 @@ class BookingInfolist
                         TextEntry::make('phone')->label('Số điện thoại')->copyable(),
                     ]),
                     Grid::make(3)->schema([
-                        TextEntry::make('email')->label('Email')->placeholder('—'),
+                        TextEntry::make('email')->label('Email (dữ liệu cũ)')->visible(fn (Booking $record): bool => filled($record->email)),
                         TextEntry::make('service')->label('Dịch vụ quan tâm')->getStateUsing(fn (Booking $record) => $record->service_name_snapshot ?: $record->service?->translationFor('vi')?->name ?? '—'),
                         TextEntry::make('locale')->label('Ngôn ngữ'),
                     ]),
@@ -32,7 +32,7 @@ class BookingInfolist
                         TextEntry::make('preferred_time')->label('Giờ mong muốn'),
                         TextEntry::make('guest_count')->label('Số khách'),
                     ]),
-                    TextEntry::make('customer_note')->label('Ghi chú khách hàng')->columnSpanFull()->placeholder('Không có ghi chú'),
+                    TextEntry::make('customer_note')->label('Ghi chú khách hàng (dữ liệu cũ)')->columnSpanFull()->visible(fn (Booking $record): bool => filled($record->customer_note)),
                     TextEntry::make('created_at')->label('Thời gian gửi')->dateTime('d/m/Y H:i:s'),
                 ]),
 

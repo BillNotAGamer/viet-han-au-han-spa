@@ -77,47 +77,6 @@ import.meta.glob([
             revealElements.forEach(reveal);
         }
 
-        const quietHero = document.querySelector('[data-persistent-quiet-hero]');
-        const persistentControls = document.querySelectorAll('[data-persistent-ui]');
-        const focusableSelector = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
-
-        const setPersistentQuiet = isQuiet => {
-            persistentControls.forEach(control => {
-                control.classList.toggle('is-quiet', isQuiet);
-                control.toggleAttribute('aria-hidden', isQuiet);
-
-                if ('inert' in control) {
-                    control.inert = isQuiet;
-                }
-
-                control.querySelectorAll(focusableSelector).forEach(focusable => {
-                    if (isQuiet) {
-                        focusable.dataset.v2MotionTabindex = focusable.getAttribute('tabindex') ?? '';
-                        focusable.setAttribute('tabindex', '-1');
-                    } else if ('v2MotionTabindex' in focusable.dataset) {
-                        const previousTabindex = focusable.dataset.v2MotionTabindex;
-                        if (previousTabindex === '') {
-                            focusable.removeAttribute('tabindex');
-                        } else {
-                            focusable.setAttribute('tabindex', previousTabindex);
-                        }
-                        delete focusable.dataset.v2MotionTabindex;
-                    }
-                });
-            });
-        };
-
-        if (quietHero && persistentControls.length && 'IntersectionObserver' in window) {
-            const heroRect = quietHero.getBoundingClientRect();
-            const initialVisibleHeight = Math.min(heroRect.bottom, window.innerHeight) - Math.max(heroRect.top, 0);
-            setPersistentQuiet(initialVisibleHeight / heroRect.height >= 0.35);
-
-            const persistentObserver = new IntersectionObserver(entries => {
-                entries.forEach(entry => setPersistentQuiet(entry.intersectionRatio >= 0.35));
-            }, { threshold: 0.35 });
-
-            persistentObserver.observe(quietHero);
-        }
     };
 
     if (document.readyState === 'loading') {

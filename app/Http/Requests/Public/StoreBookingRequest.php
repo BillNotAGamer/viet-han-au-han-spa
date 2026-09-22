@@ -26,7 +26,6 @@ class StoreBookingRequest extends FormRequest
         return [
             'customer_name' => ['required', 'string', 'max:150'],
             'phone' => ['required', 'string', 'max:30', 'regex:/\A[0-9+\s().-]{7,30}\z/'],
-            'email' => ['nullable', 'email:rfc', 'max:255'],
             'service_id' => [
                 'required',
                 'integer',
@@ -54,8 +53,6 @@ class StoreBookingRequest extends FormRequest
                 },
             ],
             'preferred_time' => ['required', 'date_format:H:i'],
-            'notes' => ['nullable', 'string', 'max:2000'],
-            'consent' => ['accepted'],
         ];
     }
 
@@ -69,11 +66,9 @@ class StoreBookingRequest extends FormRequest
         return [
             'customer_name' => trim((string) $validated['customer_name']),
             'phone' => trim((string) $validated['phone']),
-            'email' => isset($validated['email']) ? trim((string) $validated['email']) : null,
             'service_id' => (int) $validated['service_id'],
             'preferred_date' => (string) $validated['preferred_date'],
             'preferred_time' => (string) $validated['preferred_time'],
-            'customer_note' => isset($validated['notes']) ? trim((string) $validated['notes']) : null,
         ];
     }
 }

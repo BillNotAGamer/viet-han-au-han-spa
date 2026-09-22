@@ -182,13 +182,15 @@ class PublicLayoutTest extends TestCase
         }
     }
 
-    public function test_v2_motion_is_progressive_public_only_and_uses_optimized_home_hero(): void
+    public function test_v2_motion_is_progressive_public_only_and_keeps_persistent_controls_independent_of_the_home_hero(): void
     {
         $content = (string) $this->get('/')->assertStatus(200)->getContent();
 
         $this->assertStringContainsString('@view-transition { navigation: auto; }', $content);
-        $this->assertStringContainsString('data-persistent-quiet-hero', $content);
-        $this->assertStringContainsString('data-persistent-ui', $content);
+        $this->assertStringContainsString('<div class="public-floating-booking v2-floating-booking">', $content);
+        $this->assertStringContainsString('<nav class="contact-dock" aria-label="Kênh liên hệ nhanh">', $content);
+        $this->assertStringNotContainsString('data-persistent-quiet-hero', $content);
+        $this->assertStringNotContainsString('data-persistent-ui', $content);
         $this->assertStringNotContainsString('motion-ready', $content);
 
         $heroPath = resource_path('images/homepage/viet-han-banner-hero.webp');
@@ -208,7 +210,25 @@ class PublicLayoutTest extends TestCase
         $this->assertStringContainsString('IntersectionObserver', $motionCoordinator);
         $this->assertStringContainsString('revealObserver.unobserve', $motionCoordinator);
         $this->assertStringContainsString('v2-skip-next-transition', $motionCoordinator);
+        $this->assertStringNotContainsString('setPersistentQuiet', $motionCoordinator);
+        $this->assertStringNotContainsString('persistentObserver', $motionCoordinator);
         $this->assertStringNotContainsString('data-parallax', $motionCoordinator);
+
+        $this->assertStringNotContainsString('[data-persistent-ui]', $styles);
+        $this->assertStringNotContainsString('.is-quiet', $styles);
+    }
+
+    public function test_contact_dock_and_floating_booking_cta_remain_usable_on_home_and_other_public_pages(): void
+    {
+        foreach (['/', '/dich-vu', '/en'] as $path) {
+            $content = (string) $this->get($path)->assertOk()->getContent();
+
+            $this->assertStringContainsString('class="contact-dock"', $content);
+            $this->assertStringContainsString('class="public-floating-booking__link"', $content);
+            $this->assertStringContainsString('data-booking-modal-trigger', $content);
+            $this->assertStringNotContainsString('data-persistent-ui', $content);
+            $this->assertStringNotContainsString('data-persistent-quiet-hero', $content);
+        }
     }
 
     public function test_v2_header_centers_logo_and_moves_language_switching_to_footer(): void
