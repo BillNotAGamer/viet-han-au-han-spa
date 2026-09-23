@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Services\Schemas;
 
 use App\Enums\ContentStatus;
+use App\Enums\HeaderServiceGroup;
 use App\Models\Media;
 use App\Models\ServiceCategory;
 use Filament\Forms\Components\Hidden;
@@ -41,6 +42,12 @@ class ServiceForm
                                     })
                                     ->searchable()
                                     ->required(),
+
+                                Select::make('header_group_key')
+                                    ->label('Nhóm hiển thị trên menu Dịch vụ')
+                                    ->options(HeaderServiceGroup::options())
+                                    ->placeholder('Không thuộc nhóm menu')
+                                    ->nullable(),
 
                                 Select::make('status')
                                     ->label('Trạng thái')
@@ -210,10 +217,11 @@ class ServiceForm
                                 Grid::make(4)
                                     ->schema([
                                         TextInput::make('duration_minutes')
-                                            ->label('Thời lượng (Phút)')
+                                            ->label('Thời lượng (Phút, nếu có)')
                                             ->numeric()
                                             ->minValue(1)
-                                            ->required(),
+                                            ->nullable()
+                                            ->helperText('Để trống nếu chưa xác minh thời lượng.'),
 
                                         TextInput::make('price_amount')
                                             ->label('Giá (VND)')
