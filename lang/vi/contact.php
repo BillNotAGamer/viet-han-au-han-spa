@@ -5,7 +5,7 @@ declare(strict_types=1);
 return [
     'meta' => [
         'title' => 'Liên hệ',
-        'description' => 'Thông tin liên hệ chính thức của Việt Hàn Âu Hàn Spa. Kết nối với chúng tôi qua hotline, email hoặc đặt lịch hẹn trực tuyến.',
+        'description' => 'Thông tin liên hệ chính thức của Việt Hàn Âu Hàn Spa tại 115 Nguyễn Bỉnh Khiêm, Tân Định, Hồ Chí Minh. Kết nối qua điện thoại, Zalo hoặc Facebook.',
     ],
     'hero' => [
         'eyebrow' => 'Kết nối cùng chúng tôi',
@@ -14,28 +14,39 @@ return [
     ],
     'cards' => [
         'phone' => [
-            'label' => 'Hotline tư vấn',
-            'value' => '090 123 4567',
-            'href' => 'tel:0901234567',
+            'label' => 'Điện thoại',
+            'value' => '0902309026',
+            'href' => 'tel:0902309026',
             'subtext' => 'Hỗ trợ giải đáp thắc mắc và tư vấn liệu trình',
         ],
-        'email' => [
-            'label' => 'Hòm thư điện tử',
-            'value' => 'info@viethanauhanspa.com',
-            'href' => 'mailto:info@viethanauhanspa.com',
-            'subtext' => 'Phản hồi các câu hỏi thông tin và hợp tác',
+        'address' => [
+            'label' => 'Địa chỉ',
+            'lines' => [
+                '115 Nguyễn Bỉnh Khiêm,',
+                'Tân Định,',
+                'Hồ Chí Minh,',
+                'Việt Nam',
+            ],
+            'subtext' => 'Địa chỉ chính thức của Việt Hàn Âu Hàn Spa',
         ],
-        'booking' => [
-            'label' => 'Đặt lịch trực tuyến',
-            'title' => 'Chủ động chọn thời gian mong muốn',
-            'subtext' => 'Gửi yêu cầu hẹn trước để nhận xác nhận nhanh chóng',
-            'cta' => 'Đặt lịch trải nghiệm',
+        'social' => [
+            'label' => 'Kết nối trực tuyến',
+            'subtext' => 'Liên hệ với spa qua kênh phù hợp với bạn',
+            'zalo' => [
+                'label' => 'Zalo',
+                'href' => 'https://zalo.me/0902309026',
+            ],
+            'facebook' => [
+                'label' => 'Facebook',
+                'href' => 'https://www.facebook.com/profile.php?id=61575606630966',
+            ],
         ],
     ],
     'atmosphere' => [
-        'badge' => 'Không gian đón tiếp',
-        'title' => 'Khu vực tư vấn & thưởng trà thư giãn',
-        'description' => 'Ngay từ khi bước chân qua cánh cửa, hương thơm thảo mộc dịu mát cùng tách trà ấm sẽ giúp bạn gác lại mọi lo toan bên ngoài.',
+        'badge' => 'Vị trí spa',
+        'title' => 'Việt Hàn Âu Hàn Spa tại 115 Nguyễn Bỉnh Khiêm',
+        'description' => 'Tìm chúng tôi tại 115 Nguyễn Bỉnh Khiêm, Tân Định, Hồ Chí Minh, Việt Nam.',
+        'map_title' => 'Bản đồ Việt Hàn Âu Hàn Spa - 115 Nguyễn Bỉnh Khiêm',
     ],
     'cta' => [
         'badge' => 'Khởi đầu liệu trình',

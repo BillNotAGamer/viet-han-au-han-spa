@@ -5,7 +5,7 @@ declare(strict_types=1);
 return [
     'meta' => [
         'title' => 'Contact',
-        'description' => 'Official contact details for Việt Hàn Âu Hàn Spa. Connect with us via phone, email, or online appointment booking.',
+        'description' => 'Official contact details for Việt Hàn Âu Hàn Spa at 115 Nguyễn Bỉnh Khiêm, Tân Định, Hồ Chí Minh, Việt Nam. Connect by phone, Zalo, or Facebook.',
     ],
     'hero' => [
         'eyebrow' => 'Get in Touch',
@@ -14,28 +14,39 @@ return [
     ],
     'cards' => [
         'phone' => [
-            'label' => 'Direct Hotline',
-            'value' => '090 123 4567',
-            'href' => 'tel:0901234567',
+            'label' => 'Phone',
+            'value' => '0902309026',
+            'href' => 'tel:0902309026',
             'subtext' => 'Treatment consultation and appointment assistance',
         ],
-        'email' => [
-            'label' => 'Email Inquiry',
-            'value' => 'info@viethanauhanspa.com',
-            'href' => 'mailto:info@viethanauhanspa.com',
-            'subtext' => 'General questions and partnership correspondence',
+        'address' => [
+            'label' => 'Address',
+            'lines' => [
+                '115 Nguyễn Bỉnh Khiêm,',
+                'Tân Định,',
+                'Hồ Chí Minh,',
+                'Việt Nam',
+            ],
+            'subtext' => 'Official address of Việt Hàn Âu Hàn Spa',
         ],
-        'booking' => [
-            'label' => 'Online Booking',
-            'title' => 'Reserve Your Preferred Time',
-            'subtext' => 'Submit your appointment request for prompt confirmation',
-            'cta' => 'Book Your Appointment',
+        'social' => [
+            'label' => 'Connect Online',
+            'subtext' => 'Contact the spa through your preferred channel',
+            'zalo' => [
+                'label' => 'Zalo',
+                'href' => 'https://zalo.me/0902309026',
+            ],
+            'facebook' => [
+                'label' => 'Facebook',
+                'href' => 'https://www.facebook.com/profile.php?id=61575606630966',
+            ],
         ],
     ],
     'atmosphere' => [
-        'badge' => 'Welcoming Space',
-        'title' => 'Consultation & Relaxation Tea Lounge',
-        'description' => 'From the moment you arrive, delicate herbal aromas and a soothing cup of tea invite you to leave outside worries behind.',
+        'badge' => 'Spa Location',
+        'title' => 'Việt Hàn Âu Hàn Spa at 115 Nguyễn Bỉnh Khiêm',
+        'description' => 'Find us at 115 Nguyễn Bỉnh Khiêm, Tân Định, Hồ Chí Minh, Việt Nam.',
+        'map_title' => 'Map of Việt Hàn Âu Hàn Spa - 115 Nguyễn Bỉnh Khiêm',
     ],
     'cta' => [
         'badge' => 'Begin Your Journey',

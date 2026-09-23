@@ -37,6 +37,11 @@ class HomepageTest extends TestCase
         $viResponse->assertStatus(200);
         $viResponse->assertSee(__('home.hero.title', [], 'vi'), false);
         $viResponse->assertSee(__('home.cta.button_empty', [], 'vi'), false);
+        $viResponse->assertSee('about-herbal-head-spa', false);
+        $viResponse->assertSee('v2-home-services__empty', false);
+        $viResponse->assertSee('services-signature-therapy', false);
+        $viResponse->assertSee('v2-home-cta__image', false);
+        $viResponse->assertSee('homepage-atmosphere-foot-ritual', false);
 
         $enResponse = $this->get('/en');
         $enResponse->assertStatus(200);

@@ -85,7 +85,7 @@ class BookingModalAndNotificationTest extends TestCase
         // the same real href + dispatch wiring as every other booking CTA in the layout.
         $viContent = (string) $viResponse->getContent();
         $this->assertMatchesRegularExpression(
-            '/<a\s+href="'.preg_quote(route('vi.booking.create'), '/').'"\s+data-booking-modal-trigger\s+@click\.prevent="mobileOpen = false; \$dispatch\(\'open-booking-modal\', \{ trigger: \$el \}\)"\s+class="public-header__drawer-cta"/',
+            '/<a\s+href="'.preg_quote(route('vi.booking.create'), '/').'"\s+data-booking-modal-trigger\s+@click\.prevent="closeMobileMenu\(false\); \$dispatch\(\'open-booking-modal\', \{ trigger: \$el \}\)"\s+class="public-header__drawer-cta"/',
             $viContent
         );
 
@@ -93,7 +93,7 @@ class BookingModalAndNotificationTest extends TestCase
         $enResponse->assertStatus(200);
         $enContent = (string) $enResponse->getContent();
         $this->assertMatchesRegularExpression(
-            '/<a\s+href="'.preg_quote(route('en.booking.create'), '/').'"\s+data-booking-modal-trigger\s+@click\.prevent="mobileOpen = false; \$dispatch\(\'open-booking-modal\', \{ trigger: \$el \}\)"\s+class="public-header__drawer-cta"/',
+            '/<a\s+href="'.preg_quote(route('en.booking.create'), '/').'"\s+data-booking-modal-trigger\s+@click\.prevent="closeMobileMenu\(false\); \$dispatch\(\'open-booking-modal\', \{ trigger: \$el \}\)"\s+class="public-header__drawer-cta"/',
             $enContent
         );
     }

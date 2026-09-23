@@ -20,6 +20,7 @@
     };
     $brandName = __('common.brand_name');
     $logoUrl = Vite::asset('resources/images/general/viet-han-logo.png');
+    $scrolledLogoUrl = Vite::asset('resources/images/general/viet-han-spa-no-bg-original-logo.png');
     $aboutUrl = $isVi ? route('vi.about') : route('en.about');
     $servicesUrl = $isVi ? route('vi.services.index') : route('en.services.index');
     $trainingUrl = $isVi ? route('vi.training.index') : route('en.training.index');
@@ -51,9 +52,72 @@
     class="public-header {{ $isSolid ? 'public-header--sticky' : 'public-header--overlay' }}{{ $isV2 ? ' v2-header' : '' }}"
     x-data="{
         mobileOpen: false,
+        mobileMenuActivatedByUser: false,
+        desktopMediaQuery: null,
+        desktopMediaQueryHandler: null,
+        pageHideHandler: null,
+        pageShowHandler: null,
+        resizeHandler: null,
+        visibilityChangeHandler: null,
         isSolid: @js($isSolid),
         isSticky: @js($isSolid),
+        get effectiveDrawerOpen() {
+            return this.mobileOpen && this.mobileMenuActivatedByUser;
+        },
+        syncMobileDrawerState() {
+            document.body.classList.toggle('public-mobile-menu-open', this.effectiveDrawerOpen);
+        },
+        closeMobileMenu(restoreFocus = true) {
+            const wasOpen = this.effectiveDrawerOpen;
+            this.mobileOpen = false;
+            this.mobileMenuActivatedByUser = false;
+            this.syncMobileDrawerState();
+
+            if (restoreFocus && wasOpen) {
+                this.$nextTick(() => this.$refs.mobileMenuTrigger?.focus());
+            }
+        },
+        openMobileMenu() {
+            this.mobileMenuActivatedByUser = true;
+            this.mobileOpen = true;
+            this.syncMobileDrawerState();
+        },
         init() {
+            // A Header is recreated on every public navigation: never carry an
+            // open drawer across refreshes, locale changes, or breakpoint changes.
+            this.mobileOpen = false;
+            this.mobileMenuActivatedByUser = false;
+            this.$watch('mobileOpen', () => this.syncMobileDrawerState());
+            this.$watch('mobileMenuActivatedByUser', () => this.syncMobileDrawerState());
+            this.syncMobileDrawerState();
+
+            this.desktopMediaQuery = window.matchMedia('(min-width: 1180px)');
+            this.desktopMediaQueryHandler = (event) => {
+                if (event.matches) {
+                    this.closeMobileMenu(false);
+                }
+            };
+            this.desktopMediaQuery.addEventListener('change', this.desktopMediaQueryHandler);
+
+            // A drawer is never navigation state. Clear it before a document can be
+            // frozen into BFCache and again whenever it becomes active.
+            this.pageHideHandler = () => this.closeMobileMenu(false);
+            window.addEventListener('pagehide', this.pageHideHandler);
+
+            this.pageShowHandler = () => this.closeMobileMenu(false);
+            window.addEventListener('pageshow', this.pageShowHandler);
+
+            // Resizing must never reveal or preserve an armed mobile drawer.
+            this.resizeHandler = () => this.closeMobileMenu(false);
+            window.addEventListener('resize', this.resizeHandler, { passive: true });
+
+            this.visibilityChangeHandler = () => {
+                if (document.visibilityState === 'visible') {
+                    this.closeMobileMenu(false);
+                }
+            };
+            document.addEventListener('visibilitychange', this.visibilityChangeHandler);
+
             let scrollFrame = null;
             const updateHeader = () => {
                 if (this.isSolid) {
@@ -75,10 +139,18 @@
                     scrollFrame = null;
                 });
             }, { passive: true });
+        },
+        destroy() {
+            this.desktopMediaQuery?.removeEventListener('change', this.desktopMediaQueryHandler);
+            window.removeEventListener('pagehide', this.pageHideHandler);
+            window.removeEventListener('pageshow', this.pageShowHandler);
+            window.removeEventListener('resize', this.resizeHandler);
+            document.removeEventListener('visibilitychange', this.visibilityChangeHandler);
+            this.closeMobileMenu(false);
         }
     }"
     :class="isSticky ? 'public-header--sticky' : 'public-header--overlay'"
-    @keydown.escape.window="mobileOpen = false"
+    @keydown.escape.window="closeMobileMenu()"
 >
     @if($isV2)
         <div class="v2-header__desktop">
@@ -118,7 +190,7 @@
 
             <a href="{{ $homeUrl }}" aria-label="{{ $brandName }}" class="v2-header__brand-link">
                 <x-public.v2.logo variant="white" decorative class="v2-header__logo v2-header__logo--white" />
-                <x-public.v2.logo variant="compact" decorative class="v2-header__logo v2-header__logo--compact" />
+                <img src="{{ $scrolledLogoUrl }}" alt="" width="1254" height="1254" loading="eager" decoding="async" aria-hidden="true" class="v2-header__logo v2-header__logo--compact">
                 <span class="sr-only">{{ $brandName }}</span>
             </a>
 
@@ -177,15 +249,16 @@
             <button
                 type="button"
                 class="public-header__menu-button"
-                @click="mobileOpen = !mobileOpen"
-                :aria-expanded="mobileOpen.toString()"
+                x-ref="mobileMenuTrigger"
+                @click="effectiveDrawerOpen ? closeMobileMenu() : openMobileMenu()"
+                :aria-expanded="effectiveDrawerOpen.toString()"
                 aria-controls="public-mobile-menu"
                 aria-label="{{ __('navigation.toggle_menu') }}"
             >
-                <svg x-show="!mobileOpen" class="public-header__menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <svg x-show="!effectiveDrawerOpen" class="public-header__menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
-                <svg x-show="mobileOpen" x-cloak class="public-header__menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <svg x-show="effectiveDrawerOpen" x-cloak class="public-header__menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
@@ -193,8 +266,16 @@
     </div>
 
     <div
+        x-cloak
+        x-show="effectiveDrawerOpen"
+        @click="closeMobileMenu()"
+        class="public-header__drawer-backdrop"
+        aria-hidden="true"
+    ></div>
+
+    <div
         id="public-mobile-menu"
-        x-show="mobileOpen"
+        x-show="effectiveDrawerOpen"
         x-cloak
         x-transition:enter="transition ease-out duration-400"
         x-transition:enter-start="opacity-0 -translate-y-1"
@@ -208,13 +289,13 @@
             <ul class="public-header__drawer-list">
                 @foreach($allNavLinks as $link)
                     <li>
-                        <a href="{{ $link['url'] }}" @click="mobileOpen = false" class="{{ $isActive($link['key']) ? 'public-header__drawer-link public-header__drawer-link--active' : 'public-header__drawer-link' }}" @if($isActive($link['key'])) aria-current="page" @endif>
+                        <a href="{{ $link['url'] }}" @click="closeMobileMenu(false)" class="{{ $isActive($link['key']) ? 'public-header__drawer-link public-header__drawer-link--active' : 'public-header__drawer-link' }}" @if($isActive($link['key'])) aria-current="page" @endif>
                             {{ $link['label'] }}
                         </a>
                         @if($isV2 && $link['key'] === 'services')
                             <ul class="public-header__drawer-service-groups">
                                 @foreach($serviceGroups as $group)
-                                    <li><a href="{{ $group['url'] }}" @click="mobileOpen = false" class="public-header__drawer-service-group-link">{{ $group['label'] }}</a></li>
+                                    <li><a href="{{ $group['url'] }}" @click="closeMobileMenu(false)" class="public-header__drawer-service-group-link">{{ $group['label'] }}</a></li>
                                 @endforeach
                             </ul>
                         @endif
@@ -225,7 +306,7 @@
             <a
                 href="{{ $bookingUrl }}"
                 data-booking-modal-trigger
-                @click.prevent="mobileOpen = false; $dispatch('open-booking-modal', { trigger: $el })"
+                @click.prevent="closeMobileMenu(false); $dispatch('open-booking-modal', { trigger: $el })"
                 class="public-header__drawer-cta"
             >
                 {{ __('navigation.book_now') }}

@@ -97,8 +97,64 @@ class PublicLayoutTest extends TestCase
         $response->assertSee('aria-label="Điều hướng chính"', false);
 
         // 4. Mobile trigger button exists with aria-expanded
-        $response->assertSee(':aria-expanded="mobileOpen.toString()"', false);
+        $response->assertSee(':aria-expanded="effectiveDrawerOpen.toString()"', false);
         $response->assertSee('aria-label="Chuyển đổi menu di động"', false);
+    }
+
+    public function test_mobile_drawer_is_closed_by_default_and_uses_the_header_state_lifecycle(): void
+    {
+        foreach ([
+            '/',
+            '/gioi-thieu',
+            '/dich-vu',
+            '/dao-tao',
+            '/blog',
+            '/lien-he',
+            '/en',
+            '/en/about',
+            '/en/services',
+            '/en/training',
+            '/en/blog',
+            '/en/contact',
+        ] as $path) {
+            $content = (string) $this->get($path)->assertOk()->getContent();
+
+            $this->assertStringContainsString('mobileOpen: false', $content);
+            $this->assertStringContainsString('mobileMenuActivatedByUser: false', $content);
+            $this->assertStringContainsString('return this.mobileOpen && this.mobileMenuActivatedByUser', $content);
+            $this->assertStringContainsString('x-ref="mobileMenuTrigger"', $content);
+            $this->assertStringContainsString('@click="effectiveDrawerOpen ? closeMobileMenu() : openMobileMenu()"', $content);
+            $this->assertStringContainsString(':aria-expanded="effectiveDrawerOpen.toString()"', $content);
+            $this->assertStringContainsString('id="public-mobile-menu"', $content);
+            $this->assertSame(3, substr_count($content, 'x-show="effectiveDrawerOpen"'));
+            $this->assertStringContainsString('x-show="!effectiveDrawerOpen"', $content);
+            $this->assertStringContainsString('class="public-header__drawer"', $content);
+            $this->assertStringContainsString('class="public-header__drawer-backdrop"', $content);
+            $this->assertStringContainsString('@keydown.escape.window="closeMobileMenu()"', $content);
+            $this->assertStringContainsString("window.matchMedia('(min-width: 1180px)')", $content);
+            $this->assertStringContainsString("window.addEventListener('pagehide', this.pageHideHandler)", $content);
+            $this->assertStringContainsString("window.addEventListener('pageshow', this.pageShowHandler)", $content);
+            $this->assertStringContainsString('this.pageHideHandler = () => this.closeMobileMenu(false)', $content);
+            $this->assertStringContainsString('this.pageShowHandler = () => this.closeMobileMenu(false)', $content);
+            $this->assertStringContainsString('this.resizeHandler = () => this.closeMobileMenu(false)', $content);
+            $this->assertStringContainsString("window.addEventListener('resize', this.resizeHandler, { passive: true })", $content);
+            $this->assertStringContainsString("window.removeEventListener('resize', this.resizeHandler)", $content);
+            $this->assertStringContainsString("document.addEventListener('visibilitychange', this.visibilityChangeHandler)", $content);
+            $this->assertStringContainsString("document.removeEventListener('visibilitychange', this.visibilityChangeHandler)", $content);
+            $this->assertStringContainsString("if (document.visibilityState === 'visible')", $content);
+            $this->assertStringContainsString('window.removeEventListener(\'pagehide\', this.pageHideHandler)', $content);
+            $this->assertStringContainsString('window.removeEventListener(\'pageshow\', this.pageShowHandler)', $content);
+            $this->assertStringContainsString('this.mobileMenuActivatedByUser = false;', $content);
+            $this->assertStringContainsString("document.body.classList.toggle('public-mobile-menu-open', this.effectiveDrawerOpen)", $content);
+            $this->assertSame(1, substr_count($content, 'this.mobileMenuActivatedByUser = true;'));
+            $this->assertSame(1, substr_count($content, 'this.mobileOpen = true;'));
+            $this->assertStringContainsString('public-mobile-menu-open', $content);
+        }
+
+        $styles = (string) file_get_contents(resource_path('css/app.css'));
+        $this->assertStringContainsString('[x-cloak]', $styles);
+        $this->assertStringContainsString('display: none !important;', $styles);
+        $this->assertStringContainsString('.public-mobile-menu-open', $styles);
     }
 
     public function test_site_settings_public_consumption_and_private_safety(): void
@@ -182,6 +238,30 @@ class PublicLayoutTest extends TestCase
         }
     }
 
+    public function test_primary_inner_page_heroes_opt_into_the_shared_display_scale_without_affecting_home(): void
+    {
+        foreach ([
+            '/gioi-thieu',
+            '/en/about',
+            '/dich-vu',
+            '/en/services',
+            '/dao-tao',
+            '/en/training',
+            '/blog',
+            '/en/blog',
+            '/lien-he',
+            '/en/contact',
+        ] as $path) {
+            $this->get($path)
+                ->assertOk()
+                ->assertSee('v2-primary-page-hero__title', false);
+        }
+
+        $this->get('/')
+            ->assertOk()
+            ->assertDontSee('v2-primary-page-hero__title', false);
+    }
+
     public function test_v2_motion_is_progressive_public_only_and_keeps_persistent_controls_independent_of_the_home_hero(): void
     {
         $content = (string) $this->get('/')->assertStatus(200)->getContent();
@@ -251,6 +331,8 @@ class PublicLayoutTest extends TestCase
             $this->assertStringContainsString('v2-header__nav--left', $desktopHeader);
             $this->assertStringContainsString('v2-header__brand-link', $desktopHeader);
             $this->assertStringContainsString('v2-header__nav--right', $desktopHeader);
+            $this->assertStringContainsString('viet-han-spa-white-logo-', $desktopHeader);
+            $this->assertStringContainsString('viet-han-spa-no-bg-original-logo-', $desktopHeader);
             $this->assertTrue(strpos($desktopHeader, 'v2-header__nav--left') < strpos($desktopHeader, 'v2-header__brand-link'));
             $this->assertTrue(strpos($desktopHeader, 'v2-header__brand-link') < strpos($desktopHeader, 'v2-header__nav--right'));
             $this->assertStringNotContainsString('data-booking-modal-trigger', $desktopHeader);
@@ -270,6 +352,37 @@ class PublicLayoutTest extends TestCase
         $aboutContent = (string) $this->get('/gioi-thieu')->assertStatus(200)->getContent();
         $this->assertStringNotContainsString('public-language-switcher', $aboutContent);
         $this->assertStringContainsString('v2-language-switcher', $aboutContent);
+    }
+
+    public function test_v2_footer_renders_authoritative_contact_information_and_lazy_google_map_for_both_locales(): void
+    {
+        $mapUrl = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1162.253074056725!2d106.6994668582927!3d10.791759610991093!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317528b57e3038f9%3A0xdabf60e42628bc2f!2zMTE1IE5ndXnhu4VuIELhu4luaCBLaGnDqm0sIFTDom4gxJDhu4tuaCwgSOG7kyBDaMOtIE1pbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1790164676789!5m2!1svi!2s';
+
+        foreach ([
+            ['path' => '/', 'locale' => 'vi'],
+            ['path' => '/en', 'locale' => 'en'],
+        ] as $case) {
+            $content = (string) $this->get($case['path'])->assertOk()->getContent();
+            preg_match('/<footer class="v2-footer">.*<\/footer>/s', $content, $footerMatch);
+            $footer = $footerMatch[0] ?? '';
+
+            $this->assertNotSame('', $footer);
+            $this->assertStringContainsString('href="tel:0902309026"', $footer);
+            $this->assertStringContainsString('0902309026', $footer);
+            $this->assertStringContainsString('115 Nguyễn Bỉnh Khiêm,', $footer);
+            $this->assertStringContainsString('Tân Định,', $footer);
+            $this->assertStringContainsString('Hồ Chí Minh,', $footer);
+            $this->assertStringContainsString('Việt Nam', $footer);
+            $this->assertStringContainsString(__('footer.phone', [], $case['locale']), $footer);
+            $this->assertStringContainsString(__('footer.address', [], $case['locale']), $footer);
+            $this->assertStringContainsString(__('footer.location', [], $case['locale']), $footer);
+            $this->assertStringContainsString('class="v2-footer__map-frame"', $footer);
+            $this->assertStringContainsString('loading="lazy"', $footer);
+            $this->assertStringContainsString('referrerpolicy="strict-origin-when-cross-origin"', $footer);
+            $this->assertStringContainsString('title="'.__('footer.map_title', [], $case['locale']).'"', $footer);
+            $this->assertStringContainsString($mapUrl, html_entity_decode($footer, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+            $this->assertStringContainsString('v2-language-switcher', $footer);
+        }
     }
 
     public function test_floating_contact_dock_renders_correct_targets_order_and_accessibility(): void

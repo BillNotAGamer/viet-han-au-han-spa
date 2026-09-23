@@ -8,6 +8,7 @@ use App\Enums\BookingStatus;
 use App\Models\Booking;
 use App\Models\Service;
 use App\Services\Booking\BookingWorkflow;
+use App\Services\Booking\BookingXlsxExport;
 use Filament\Actions\Action;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\ViewAction;
@@ -15,11 +16,13 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Livewire\Component;
 
 class BookingsTable
 {
@@ -87,6 +90,19 @@ class BookingsTable
                     ]),
 
                 TrashedFilter::make(),
+            ])
+            ->headerActions([
+                Action::make('exportXlsx')
+                    ->label('Xuất Excel')
+                    ->icon(Heroicon::OutlinedArrowDownTray)
+                    ->color('gray')
+                    ->action(function (Component $livewire, BookingXlsxExport $export): mixed {
+                        if (! $livewire instanceof HasTable) {
+                            abort(500);
+                        }
+
+                        return $export->download($livewire->getTableQueryForExport());
+                    }),
             ])
             ->actions([
                 ViewAction::make(),

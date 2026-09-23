@@ -21,6 +21,14 @@
     $emailHref = filter_var($email, FILTER_VALIDATE_EMAIL) ? 'mailto:'.$email : null;
     $logoUrl = Vite::asset('resources/images/general/viet-han-logo.png');
     $isV2 = $variant === 'v2';
+    $footerPhone = '0902309026';
+    $footerAddressLines = [
+        '115 Nguyễn Bỉnh Khiêm,',
+        'Tân Định,',
+        'Hồ Chí Minh,',
+        'Việt Nam',
+    ];
+    $footerMapEmbedUrl = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1162.253074056725!2d106.6994668582927!3d10.791759610991093!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317528b57e3038f9%3A0xdabf60e42628bc2f!2zMTE1IE5ndXnhu4VuIELhu4luaCBLaGnDqm0sIFTDom4gxJDhu4tuaCwgSOG7kyBDaMOtIE1pbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1790164676789!5m2!1svi!2s';
 @endphp
 
 @if($isV2)
@@ -35,6 +43,7 @@
         </div>
 
         <nav aria-label="{{ $isVi ? 'Điều hướng cuối trang' : 'Footer navigation' }}" class="v2-footer__nav">
+            <p class="v2-footer__heading">{{ __('footer.navigation') }}</p>
             <a href="{{ $aboutUrl }}">{{ __('navigation.about') }}</a>
             <a href="{{ $servicesUrl }}">{{ __('navigation.services') }}</a>
             <a href="{{ $trainingUrl }}">{{ __('navigation.training') }}</a>
@@ -44,15 +53,35 @@
         </nav>
 
         <div class="v2-footer__contact">
-            @if($address)
-                <p>{{ $address }}</p>
-            @endif
-            @if($phone && $phoneHref)
-                <a href="{{ $phoneHref }}">{{ $phone }}</a>
-            @endif
-            @if($email && $emailHref)
-                <a href="{{ $emailHref }}">{{ $email }}</a>
-            @endif
+            <p class="v2-footer__heading">{{ __('footer.contact') }}</p>
+            <div class="v2-footer__contact-item">
+                <span class="v2-footer__contact-label">{{ __('footer.phone') }}</span>
+                <a href="tel:0902309026">{{ $footerPhone }}</a>
+            </div>
+            <div class="v2-footer__contact-item">
+                <span class="v2-footer__contact-label">{{ __('footer.address') }}</span>
+                <address class="v2-footer__address">
+                    @foreach($footerAddressLines as $line)
+                        <span>{{ $line }}</span>
+                    @endforeach
+                </address>
+            </div>
+        </div>
+
+        <div class="v2-footer__map">
+            <p class="v2-footer__heading">{{ __('footer.location') }}</p>
+            <div class="v2-footer__map-frame">
+                <iframe
+                    title="{{ __('footer.map_title') }}"
+                    src="{{ $footerMapEmbedUrl }}"
+                    width="600"
+                    height="450"
+                    style="border:0;"
+                    allowfullscreen
+                    loading="lazy"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                ></iframe>
+            </div>
         </div>
     </div>
 

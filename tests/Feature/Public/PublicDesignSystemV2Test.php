@@ -13,6 +13,7 @@ class PublicDesignSystemV2Test extends TestCase
     {
         $logos = [
             'resources/images/general/viet-han-spa-no-bg-logo.png' => [1254, 1254],
+            'resources/images/general/viet-han-spa-no-bg-original-logo.png' => [1254, 1254],
             'resources/images/general/viet-han-spa-white-logo.png' => [1254, 1254],
             'resources/images/general/viet-han-logo.png' => [480, 480],
         ];

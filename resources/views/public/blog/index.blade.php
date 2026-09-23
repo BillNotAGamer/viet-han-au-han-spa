@@ -9,7 +9,7 @@
         <x-public.v2.container>
             <div class="v2-page-hero__copy">
                 <x-public.v2.eyebrow>{{ __('blog.index.eyebrow') }}</x-public.v2.eyebrow>
-                <x-public.v2.display-heading level="1" size="xl">{{ __('blog.index.title') }}</x-public.v2.display-heading>
+                <x-public.v2.display-heading level="1" size="xl" class="v2-primary-page-hero__title">{{ __('blog.index.title') }}</x-public.v2.display-heading>
                 <x-public.v2.editorial-copy size="lg">{{ __('blog.index.intro') }}</x-public.v2.editorial-copy>
             </div>
         </x-public.v2.container>

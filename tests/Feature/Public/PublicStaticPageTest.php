@@ -42,18 +42,24 @@ class PublicStaticPageTest extends TestCase
         $this->get('/lien-he')
             ->assertStatus(200)
             ->assertSee(__('contact.hero.title', [], 'vi'))
-            ->assertSee('090 123 4567')
-            ->assertSee('tel:0901234567', false)
-            ->assertSee('mailto:info@viethanauhanspa.com', false)
+            ->assertSee('0902309026')
+            ->assertSee('tel:0902309026', false)
+            ->assertSee('115 Nguyễn Bỉnh Khiêm,')
+            ->assertSee('https://zalo.me/0902309026', false)
+            ->assertSee('https://www.facebook.com/profile.php?id=61575606630966', false)
+            ->assertDontSee('mailto:info@viethanauhanspa.com', false)
             ->assertSee('contact-reception-lobby');
 
         // EN Contact
         $this->get('/en/contact')
             ->assertStatus(200)
             ->assertSee(__('contact.hero.title', [], 'en'))
-            ->assertSee('090 123 4567')
-            ->assertSee('tel:0901234567', false)
-            ->assertSee('mailto:info@viethanauhanspa.com', false)
+            ->assertSee('0902309026')
+            ->assertSee('tel:0902309026', false)
+            ->assertSee('115 Nguyễn Bỉnh Khiêm,')
+            ->assertSee('https://zalo.me/0902309026', false)
+            ->assertSee('https://www.facebook.com/profile.php?id=61575606630966', false)
+            ->assertDontSee('mailto:info@viethanauhanspa.com', false)
             ->assertSee('contact-reception-lobby');
 
         // Non-canonical /vi prefix routes return 404
@@ -246,10 +252,37 @@ class PublicStaticPageTest extends TestCase
         // Contact page main content contains verified links and no form
         $response = $this->get('/lien-he');
         $response->assertStatus(200);
-        $response->assertSee('href="tel:0901234567"', false);
-        $response->assertSee('href="mailto:info@viethanauhanspa.com"', false);
+        $response->assertSee('href="tel:0902309026"', false);
+        $response->assertSee('href="https://zalo.me/0902309026"', false);
+        $response->assertSee('href="https://www.facebook.com/profile.php?id=61575606630966"', false);
+        $response->assertDontSee('mailto:', false);
         $contactContent = explode('id="booking-modal"', (string) $response->getContent())[0];
         $this->assertStringNotContainsString('<form', $contactContent);
+    }
+
+    public function test_contact_pages_render_authoritative_location_map_and_public_favicons(): void
+    {
+        $mapUrl = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1162.253074056725!2d106.6994668582927!3d10.791759610991093!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317528b57e3038f9%3A0xdabf60e42628bc2f!2zMTE1IE5ndXnhu4VuIELhu4luaCBLaGnDqm0sIFTDom4gxJDhu4tuaCwgSOG7kyBDaMOtIE1pbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1790164676789!5m2!1svi!2s';
+
+        foreach (['/lien-he', '/en/contact'] as $path) {
+            $content = (string) $this->get($path)->assertOk()->getContent();
+
+            $this->assertStringContainsString($mapUrl, html_entity_decode($content, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+            $this->assertStringContainsString('loading="lazy"', $content);
+            $this->assertStringContainsString('referrerpolicy="strict-origin-when-cross-origin"', $content);
+            $this->assertStringContainsString('rel="icon" type="image/png" sizes="32x32"', $content);
+            $this->assertStringContainsString('rel="icon" type="image/png" sizes="16x16"', $content);
+            $this->assertStringContainsString('rel="apple-touch-icon" sizes="180x180"', $content);
+        }
+
+        foreach (['favicon-16x16.png', 'favicon-32x32.png', 'favicon.ico', 'apple-touch-icon.png'] as $favicon) {
+            $this->assertFileExists(public_path($favicon));
+            $this->assertGreaterThan(0, filesize(public_path($favicon)));
+        }
+
+        $this->assertSame([16, 16], array_slice(getimagesize(public_path('favicon-16x16.png')), 0, 2));
+        $this->assertSame([32, 32], array_slice(getimagesize(public_path('favicon-32x32.png')), 0, 2));
+        $this->assertSame([180, 180], array_slice(getimagesize(public_path('apple-touch-icon.png')), 0, 2));
     }
 
     public function test_static_about_and_contact_pages_use_v2_without_cms_dependencies(): void

@@ -9,10 +9,13 @@
     $defaultHeroUrl = Vite::asset('resources/images/homepage/viet-han-banner-hero.webp');
     $heroImageUrl = !empty($heroMedia['url']) ? $heroMedia['url'] : $defaultHeroUrl;
     $heroImageAlt = !empty($heroMedia['alt']) ? $heroMedia['alt'] : '';
+    $introImage = Vite::asset('resources/images/pages/about/about-herbal-head-spa.webp');
     $philosophyImage = Vite::asset('resources/images/pages/about/about-facial-therapy-care.webp');
     $sanctuaryImage = Vite::asset('resources/images/pages/about/about-sound-bath-sanctuary.webp');
     $trainingImage = Vite::asset('resources/images/pages/training/training-practical-mastery.webp');
     $serviceFallbackImage = Vite::asset('resources/images/pages/services/services-signature-therapy.webp');
+    $serviceEmptyImage = Vite::asset('resources/images/pages/services/services-signature-therapy.webp');
+    $ctaImage = Vite::asset('resources/images/pages/homepage/homepage-atmosphere-foot-ritual.webp');
 @endphp
 
 <x-layouts.public variant="v2" header-mode="overlay" :contact-href="$bookingUrl" :seo="$seo ?? null">
@@ -39,9 +42,10 @@
     </section>
 
     <section class="v2-home-intro v2-surface--paper" aria-labelledby="home-intro-title">
-        <div class="v2-container v2-home-intro__grid">
-            <x-public.v2.eyebrow>{{ __('home.editorial.eyebrow') }}</x-public.v2.eyebrow>
+        <div class="v2-container v2-home-intro__editorial">
+            <x-public.v2.media-frame :src="$introImage" alt="" role="portrait" position="portrait" class="v2-home-intro__media" data-reveal />
             <div class="v2-home-intro__statement" data-reveal>
+                <x-public.v2.eyebrow>{{ __('home.editorial.eyebrow') }}</x-public.v2.eyebrow>
                 <x-public.v2.display-heading id="home-intro-title" size="heading-lg">{{ __('home.editorial.title') }}</x-public.v2.display-heading>
                 <p class="v2-type-body-lg">{{ __('home.editorial.content') }}</p>
                 <x-public.v2.button :href="$aboutUrl" variant="text">{{ __('navigation.about') }} <span aria-hidden="true">&rarr;</span></x-public.v2.button>
@@ -60,17 +64,17 @@
             </header>
 
             @if(!empty($featuredServices))
-                <div class="v2-experience-list" data-reveal-group>
-                    @foreach(array_slice($featuredServices, 0, 4) as $service)
-                        <article class="v2-experience" data-reveal>
+                <div class="v2-home-services__collection" data-reveal-group>
+                    @foreach(array_slice($featuredServices, 0, 3) as $service)
+                        <article class="v2-home-service-card" data-reveal>
                             <x-public.v2.media-frame
                                 :src="!empty($service['media']['url']) ? $service['media']['url'] : $serviceFallbackImage"
                                 :alt="$service['media']['alt'] ?? ''"
                                 role="landscape"
-                                class="v2-experience__media"
+                                class="v2-home-service-card__media"
                             />
-                            <div class="v2-experience__body">
-                                <p class="v2-experience__number">{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</p>
+                            <div class="v2-home-service-card__body">
+                                <p class="v2-home-service-card__number">{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</p>
                                 @if(!empty($service['category_name']))
                                     <p class="v2-type-caption">{{ $service['category_name'] }}</p>
                                 @endif
@@ -83,7 +87,10 @@
                     @endforeach
                 </div>
             @else
-                <p class="v2-empty-state">{{ __('home.services.empty_notice') }}</p>
+                <div class="v2-home-services__empty" data-reveal>
+                    <x-public.v2.media-frame :src="$serviceEmptyImage" alt="" role="landscape" class="v2-home-services__empty-media" />
+                    <p class="v2-empty-state">{{ __('home.services.empty_notice') }}</p>
+                </div>
             @endif
 
             <div class="v2-section-action">
@@ -183,6 +190,10 @@
     </section>
 
     <section class="v2-home-cta v2-surface--brand" aria-labelledby="home-cta-title">
+        <div class="v2-home-cta__media" data-reveal-image aria-hidden="true">
+            <img src="{{ $ctaImage }}" alt="" class="v2-home-cta__image" loading="lazy" decoding="async">
+        </div>
+        <div class="v2-home-cta__veil" aria-hidden="true"></div>
         <div class="v2-container v2-home-cta__inner" data-reveal>
             <x-public.v2.eyebrow inverse>{{ __('home.cta.eyebrow') }}</x-public.v2.eyebrow>
             <x-public.v2.display-heading id="home-cta-title" size="heading-lg">{{ __('home.cta.title') }}</x-public.v2.display-heading>

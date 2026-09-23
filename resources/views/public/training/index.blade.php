@@ -8,7 +8,7 @@
             <div class="v2-page-hero__grid">
                 <div class="v2-page-hero__copy">
                     <x-public.v2.eyebrow>{{ __('training.index.eyebrow') }}</x-public.v2.eyebrow>
-                    <x-public.v2.display-heading level="1" size="xl">{{ __('training.index.title') }}</x-public.v2.display-heading>
+                    <x-public.v2.display-heading level="1" size="xl" class="v2-primary-page-hero__title">{{ __('training.index.title') }}</x-public.v2.display-heading>
                     <x-public.v2.editorial-copy size="lg">{{ __('training.index.intro') }}</x-public.v2.editorial-copy>
                 </div>
 

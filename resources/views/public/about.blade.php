@@ -17,7 +17,7 @@
             <x-public.v2.container>
                 <div class="v2-about-hero__copy">
                     <x-public.v2.eyebrow inverse>{{ $content['hero']['eyebrow'] }}</x-public.v2.eyebrow>
-                    <x-public.v2.display-heading level="1" size="xl">{{ $content['hero']['title'] }}</x-public.v2.display-heading>
+                    <x-public.v2.display-heading level="1" size="xl" class="v2-primary-page-hero__title">{{ $content['hero']['title'] }}</x-public.v2.display-heading>
                     <p class="v2-type-body-lg">{{ $content['hero']['lead'] }}</p>
                 </div>
             </x-public.v2.container>
