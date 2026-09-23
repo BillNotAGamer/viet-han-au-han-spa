@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Tests\Feature\Admin\Services;
 
 use App\Enums\ContentStatus;
+use App\Enums\HeaderServiceGroup;
 use App\Models\Booking;
 use App\Models\Media;
+use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\User;
 use App\Services\ServiceCatalog\ServiceWriter;
@@ -31,7 +33,83 @@ class ServiceResourceTest extends TestCase
         $admin = User::factory()->admin()->create();
 
         $this->actingAs($admin)->get('/admin/services')->assertStatus(200);
-        $this->actingAs($admin)->get('/admin/services/create')->assertStatus(200);
+        $this->actingAs($admin)->get('/admin/services/create')
+            ->assertStatus(200)
+            ->assertSee('Nhóm hiển thị trên menu Dịch vụ')
+            ->assertSee('Không thuộc nhóm menu')
+            ->assertSee('Thời lượng (Phút, nếu có)')
+            ->assertSee('Để trống nếu chưa xác minh thời lượng.');
+    }
+
+    public function test_service_writer_persists_and_can_clear_optional_header_group_assignment(): void
+    {
+        $writer = app(ServiceWriter::class);
+        $category = ServiceCategory::factory()->create();
+
+        $service = $writer->create([
+            'service_category_id' => $category->id,
+            'header_group_key' => HeaderServiceGroup::SKIN_CARE,
+            'status' => ContentStatus::DRAFT,
+            'vi' => ['name' => 'Dịch Vụ Có Nhóm Menu', 'slug' => 'dich-vu-co-nhom-menu'],
+        ]);
+
+        $this->assertSame(HeaderServiceGroup::SKIN_CARE, $service->header_group_key);
+        $this->assertDatabaseHas('services', [
+            'id' => $service->id,
+            'header_group_key' => HeaderServiceGroup::SKIN_CARE->value,
+        ]);
+
+        $updated = $writer->update($service, [
+            'service_category_id' => $category->id,
+            'header_group_key' => HeaderServiceGroup::ACNE_SCAR_TREATMENT,
+            'status' => ContentStatus::DRAFT,
+            'vi' => ['name' => 'Dịch Vụ Đổi Nhóm Menu', 'slug' => 'dich-vu-doi-nhom-menu'],
+        ]);
+
+        $this->assertSame(HeaderServiceGroup::ACNE_SCAR_TREATMENT, $updated->header_group_key);
+        $this->assertDatabaseHas('services', [
+            'id' => $service->id,
+            'header_group_key' => HeaderServiceGroup::ACNE_SCAR_TREATMENT->value,
+        ]);
+
+        $cleared = $writer->update($updated, [
+            'service_category_id' => $category->id,
+            'header_group_key' => null,
+            'status' => ContentStatus::DRAFT,
+            'vi' => ['name' => 'Dịch Vụ Không Thuộc Nhóm Menu', 'slug' => 'dich-vu-khong-thuoc-nhom-menu'],
+        ]);
+
+        $this->assertNull($cleared->header_group_key);
+        $this->assertDatabaseHas('services', [
+            'id' => $service->id,
+            'header_group_key' => null,
+        ]);
+    }
+
+    public function test_service_writer_creates_unassigned_header_group_as_null(): void
+    {
+        $service = app(ServiceWriter::class)->create([
+            'service_category_id' => ServiceCategory::factory()->create()->id,
+            'status' => ContentStatus::DRAFT,
+            'vi' => ['name' => 'Dịch Vụ Không Gán Nhóm', 'slug' => 'dich-vu-khong-gan-nhom'],
+        ]);
+
+        $this->assertNull($service->header_group_key);
+        $this->assertDatabaseHas('services', [
+            'id' => $service->id,
+            'header_group_key' => null,
+        ]);
+    }
+
+    public function test_admin_can_render_edit_form_for_existing_unassigned_service(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $service = Service::factory()->create(['header_group_key' => null]);
+
+        $this->actingAs($admin)->get('/admin/services/'.$service->id.'/edit')
+            ->assertOk()
+            ->assertSee('Nhóm hiển thị trên menu Dịch vụ')
+            ->assertSee('Không thuộc nhóm menu');
     }
 
     public function test_service_writer_creates_service_atomically_with_prices_and_gallery(): void

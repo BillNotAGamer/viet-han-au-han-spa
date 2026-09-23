@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Services\Tables;
 
 use App\Enums\ContentStatus;
+use App\Enums\HeaderServiceGroup;
 use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Services\ServiceCatalog\ServiceWriter;
@@ -38,6 +39,10 @@ class ServicesTable
                 TextColumn::make('category')
                     ->label('Danh mục')
                     ->getStateUsing(fn (Service $record) => $record->category?->translationFor('vi')?->name ?? '—'),
+
+                TextColumn::make('header_group_key')
+                    ->label('Nhóm menu')
+                    ->getStateUsing(fn (Service $record) => $record->header_group_key?->label('vi') ?? 'Không thuộc nhóm menu'),
 
                 TextColumn::make('pricing')
                     ->label('Mức giá (VND)')
@@ -84,6 +89,10 @@ class ServicesTable
                         return ServiceCategory::with('translations')->get()
                             ->mapWithKeys(fn ($c) => [$c->id => $c->translationFor('vi')?->name ?? 'Category #'.$c->id]);
                     }),
+
+                SelectFilter::make('header_group_key')
+                    ->label('Nhóm menu')
+                    ->options(HeaderServiceGroup::options()),
 
                 TernaryFilter::make('is_featured')
                     ->label('Nổi bật'),

@@ -34,7 +34,9 @@
                             <div class="v2-service-price">
                                 <div>
                                     @if(!empty($price['label']))<h3>{{ $price['label'] }}</h3>@endif
-                                    <p>{{ __('services.detail.duration', ['minutes' => $price['duration_minutes']]) }}</p>
+                                    @if($price['duration_minutes'] !== null)
+                                        <p>{{ __('services.detail.duration', ['minutes' => $price['duration_minutes']]) }}</p>
+                                    @endif
                                 </div>
                                 <strong>{{ $price['price_display'] }}</strong>
                             </div>

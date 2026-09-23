@@ -3,8 +3,8 @@
         <x-public.v2.container>
             <div class="v2-page-hero__copy">
                 <x-public.v2.eyebrow>{{ __('services.index.eyebrow') }}</x-public.v2.eyebrow>
-                <x-public.v2.display-heading level="1" size="xl">{{ __('services.index.title') }}</x-public.v2.display-heading>
-                <x-public.v2.editorial-copy size="lg">{{ __('services.index.intro') }}</x-public.v2.editorial-copy>
+                <x-public.v2.display-heading level="1" size="xl">{{ $heading }}</x-public.v2.display-heading>
+                <x-public.v2.editorial-copy size="lg">{{ $intro }}</x-public.v2.editorial-copy>
             </div>
         </x-public.v2.container>
     </section>
@@ -60,7 +60,7 @@
                 {{ $services->links('components.public.v2.pagination') }}
             @else
                 <div class="v2-empty-state" role="status">
-                    <p class="v2-type-body-lg">{{ __('services.index.empty') }}</p>
+                    <p class="v2-type-body-lg">{{ $emptyCopy }}</p>
                 </div>
             @endif
         </x-public.v2.container>

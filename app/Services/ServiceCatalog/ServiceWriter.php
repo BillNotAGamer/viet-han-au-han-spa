@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\ServiceCatalog;
 
 use App\Enums\ContentStatus;
+use App\Enums\HeaderServiceGroup;
 use App\Models\Booking;
 use App\Models\Service;
 use App\Models\ServicePrice;
@@ -13,6 +14,7 @@ use App\Models\ServiceTranslation;
 use DomainException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 class ServiceWriter
 {
@@ -28,6 +30,7 @@ class ServiceWriter
 
             $service = Service::create([
                 'service_category_id' => (int) $data['service_category_id'],
+                'header_group_key' => $this->headerGroupKey($data['header_group_key'] ?? null),
                 'hero_media_id' => ! empty($data['hero_media_id']) ? (int) $data['hero_media_id'] : null,
                 'status' => $status,
                 'is_featured' => (bool) ($data['is_featured'] ?? false),
@@ -100,6 +103,9 @@ class ServiceWriter
 
             $service->update([
                 'service_category_id' => (int) ($data['service_category_id'] ?? $service->service_category_id),
+                'header_group_key' => $this->headerGroupKey(
+                    array_key_exists('header_group_key', $data) ? $data['header_group_key'] : $service->header_group_key
+                ),
                 'hero_media_id' => ! empty($data['hero_media_id']) ? (int) $data['hero_media_id'] : null,
                 'status' => $status,
                 'is_featured' => (bool) ($data['is_featured'] ?? $service->is_featured),
@@ -196,6 +202,22 @@ class ServiceWriter
         return ! empty($filtered) ? array_values($filtered) : null;
     }
 
+    protected function headerGroupKey(mixed $value): ?string
+    {
+        if ($value instanceof HeaderServiceGroup) {
+            return $value->value;
+        }
+
+        $key = trim((string) $value);
+
+        if ($key === '') {
+            return null;
+        }
+
+        return HeaderServiceGroup::tryFrom($key)?->value
+            ?? throw new InvalidArgumentException('Invalid header service group.');
+    }
+
     /**
      * ID-aware price tier synchronization.
      *
@@ -213,7 +235,7 @@ class ServiceWriter
                 // Update existing tier with stable ID
                 $price = $existingPrices->get($priceId);
                 $price->update([
-                    'duration_minutes' => (int) $tier['duration_minutes'],
+                    'duration_minutes' => $this->durationMinutes($tier['duration_minutes'] ?? null),
                     'price_amount' => (int) $tier['price_amount'],
                     'sort_order' => (int) ($tier['sort_order'] ?? 0),
                     'is_active' => (bool) ($tier['is_active'] ?? true),
@@ -223,7 +245,7 @@ class ServiceWriter
                 // Create new tier
                 $price = ServicePrice::create([
                     'service_id' => $service->id,
-                    'duration_minutes' => (int) $tier['duration_minutes'],
+                    'duration_minutes' => $this->durationMinutes($tier['duration_minutes'] ?? null),
                     'price_amount' => (int) $tier['price_amount'],
                     'sort_order' => (int) ($tier['sort_order'] ?? 0),
                     'is_active' => (bool) ($tier['is_active'] ?? true),
@@ -261,6 +283,21 @@ class ServiceWriter
                 }
             }
         }
+    }
+
+    protected function durationMinutes(mixed $value): ?int
+    {
+        if ($value === null || (is_string($value) && trim($value) === '')) {
+            return null;
+        }
+
+        $duration = (int) $value;
+
+        if ($duration < 1) {
+            throw new InvalidArgumentException('Service price duration must be a positive number of minutes when provided.');
+        }
+
+        return $duration;
     }
 
     /**

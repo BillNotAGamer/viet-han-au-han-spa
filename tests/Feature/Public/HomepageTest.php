@@ -508,10 +508,13 @@ class HomepageTest extends TestCase
         $response = $this->get('/');
         $response->assertStatus(200);
 
-        // Assert no premature Phase 10 detail URLs exist in page body
-        $response->assertDontSee('/dich-vu/', false);
-        $response->assertDontSee('/dao-tao-hoc-vien/', false);
-        $response->assertDontSee('/blog/', false);
+        // Assert no premature Phase 10 detail URLs exist in Homepage card content.
+        // Global navigation may legitimately link to separately implemented routes.
+        preg_match('/<main\b[^>]*>(.*?)<\/main>/s', (string) $response->getContent(), $mainMatch);
+        $homepageCards = $mainMatch[1] ?? '';
+        $this->assertStringNotContainsString('/dich-vu/', $homepageCards);
+        $this->assertStringNotContainsString('/dao-tao-hoc-vien/', $homepageCards);
+        $this->assertStringNotContainsString('/blog/', $homepageCards);
     }
 
     /**

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Public;
 
 use App\Enums\ContentStatus;
+use App\Enums\HeaderServiceGroup;
 use App\Models\Media;
 use App\Models\MediaTranslation;
 use App\Models\Service;
@@ -40,6 +41,144 @@ class PublicServicesTest extends TestCase
             ->assertStatus(200)
             ->assertSee(__('services.index.empty', [], 'en'))
             ->assertDontSee('Service #');
+    }
+
+    public function test_header_service_groups_render_exactly_four_localized_desktop_and_mobile_links(): void
+    {
+        foreach ([
+            ['/', 'vi', 'vi.services.index'],
+            ['/en', 'en', 'en.services.index'],
+        ] as [$path, $locale, $indexRoute]) {
+            $content = (string) $this->get($path)->assertOk()->getContent();
+            preg_match('/<div[^>]*class="v2-header__services-menu".*?<\/div>/s', $content, $desktopMatch);
+            preg_match('/<ul class="public-header__drawer-service-groups">.*?<\/ul>/s', $content, $mobileMatch);
+
+            $desktop = $desktopMatch[0] ?? '';
+            $mobile = $mobileMatch[0] ?? '';
+
+            $this->assertNotSame('', $desktop);
+            $this->assertNotSame('', $mobile);
+            $this->assertSame(4, substr_count($desktop, 'v2-header__services-menu-link'));
+            $this->assertSame(4, substr_count($mobile, 'public-header__drawer-service-group-link'));
+            $this->assertStringContainsString('href="'.route($indexRoute).'"', $content);
+
+            foreach (HeaderServiceGroup::cases() as $group) {
+                $route = route($locale === 'vi' ? 'vi.services.group' : 'en.services.group', [
+                    'group' => $group->routeSlug($locale),
+                ]);
+
+                $this->assertStringContainsString(e($group->label($locale)), $desktop);
+                $this->assertStringContainsString('href="'.$route.'"', $desktop);
+                $this->assertStringContainsString(e($group->label($locale)), $mobile);
+                $this->assertStringContainsString('href="'.$route.'"', $mobile);
+            }
+        }
+    }
+
+    public function test_desktop_service_dropdown_uses_a_continuous_pointer_bridge(): void
+    {
+        $header = (string) file_get_contents(resource_path('views/components/public/header.blade.php'));
+        $styles = (string) file_get_contents(resource_path('css/app.css'));
+
+        $this->assertStringContainsString('v2-header__services-menu-panel', $header);
+        $this->assertStringContainsString('top: 100%;', $styles);
+        $this->assertStringContainsString('padding-top: 0.45rem;', $styles);
+        $this->assertStringNotContainsString('top: calc(100% + 0.45rem);', $styles);
+    }
+
+    public function test_group_pages_are_database_driven_and_preserve_publication_locale_and_ordering_rules(): void
+    {
+        $matching = $this->createServiceWithTranslation(
+            ContentStatus::PUBLISHED,
+            'vi',
+            'Assigned Skin Care Service',
+            'assigned-skin-care-service',
+            ['header_group_key' => HeaderServiceGroup::SKIN_CARE, 'sort_order' => 20]
+        );
+        $first = $this->createServiceWithTranslation(
+            ContentStatus::PUBLISHED,
+            'vi',
+            'First Assigned Skin Care Service',
+            'first-assigned-skin-care-service',
+            ['header_group_key' => HeaderServiceGroup::SKIN_CARE, 'sort_order' => 5]
+        );
+        $otherGroup = $this->createServiceWithTranslation(
+            ContentStatus::PUBLISHED,
+            'vi',
+            'Other Header Group Service',
+            'other-header-group-service',
+            ['header_group_key' => HeaderServiceGroup::ACNE_SCAR_TREATMENT]
+        );
+        $ungrouped = $this->createServiceWithTranslation(
+            ContentStatus::PUBLISHED,
+            'vi',
+            'Ungrouped Catalog Service',
+            'ungrouped-catalog-service'
+        );
+        $draft = $this->createServiceWithTranslation(
+            ContentStatus::DRAFT,
+            'vi',
+            'Draft Group Service',
+            'draft-group-service',
+            ['header_group_key' => HeaderServiceGroup::SKIN_CARE]
+        );
+
+        ServiceTranslation::create([
+            'service_id' => $matching->id,
+            'locale' => 'en',
+            'name' => 'Assigned Skin Care Service EN',
+            'slug' => 'assigned-skin-care-service-en',
+        ]);
+
+        $viResponse = $this->get('/dich-vu/nhom/cham-soc-da');
+        $viResponse
+            ->assertOk()
+            ->assertSee('CHĂM SÓC DA')
+            ->assertSee('Assigned Skin Care Service')
+            ->assertSee('First Assigned Skin Care Service')
+            ->assertSee('<link rel="canonical" href="https://viethanauhanspa.com/dich-vu/nhom/cham-soc-da">', false)
+            ->assertSee('hreflang="en" href="https://viethanauhanspa.com/en/services/group/skin-care"', false);
+
+        $viContent = (string) $viResponse->getContent();
+        preg_match('/<main\b[^>]*>(.*?)<\/main>/s', $viContent, $mainMatch);
+        $main = $mainMatch[1] ?? '';
+        $this->assertStringNotContainsString('Other Header Group Service', $main);
+        $this->assertStringNotContainsString('Ungrouped Catalog Service', $main);
+        $this->assertStringNotContainsString('Draft Group Service', $main);
+        $this->assertTrue(
+            strpos($main, 'First Assigned Skin Care Service') < strpos($main, 'Assigned Skin Care Service')
+        );
+
+        $enResponse = $this->get('/en/services/group/skin-care');
+        $enResponse
+            ->assertOk()
+            ->assertSee('SKIN CARE')
+            ->assertSee('Assigned Skin Care Service EN');
+
+        $enContent = (string) $enResponse->getContent();
+        preg_match('/<main\b[^>]*>(.*?)<\/main>/s', $enContent, $enMainMatch);
+        $enMain = $enMainMatch[1] ?? '';
+        $this->assertStringNotContainsString('/dich-vu/assigned-skin-care-service', $enMain);
+
+        $this->get('/dich-vu')
+            ->assertOk()
+            ->assertSee('Ungrouped Catalog Service')
+            ->assertSee('Other Header Group Service');
+
+        $this->get('/dich-vu/nhom/not-a-group')->assertNotFound();
+    }
+
+    public function test_empty_header_groups_return_successful_localized_empty_states(): void
+    {
+        $this->get('/dich-vu/nhom/goi-dau-duong-sinh-dong-y')
+            ->assertOk()
+            ->assertSee('GỘI ĐẦU DƯỠNG SINH ĐÔNG Y')
+            ->assertSee(__('services.groups.empty', [], 'vi'));
+
+        $this->get('/en/services/group/herbal-hair-scalp-care')
+            ->assertOk()
+            ->assertSee('TRADITIONAL HERBAL HAIR & SCALP CARE')
+            ->assertSee(__('services.groups.empty', [], 'en'));
     }
 
     public function test_listing_filters_by_publication_status_and_detail_hides_unpublished_services(): void
@@ -273,7 +412,37 @@ class PublicServicesTest extends TestCase
         $response->assertSee('Goi Chuyen Sau');
         $response->assertSee('690.000');
         $response->assertSee('490.000');
+        $response->assertSee('90 phút');
+        $response->assertSee('60 phút');
         $response->assertDontSee('Leaked English Package');
+    }
+
+    public function test_price_without_duration_renders_normally_without_duration_copy(): void
+    {
+        $service = $this->createServiceWithTranslation(
+            ContentStatus::PUBLISHED,
+            'vi',
+            'Dịch Vụ Giá Chưa Rõ Thời Lượng',
+            'dich-vu-gia-chua-ro-thoi-luong'
+        );
+        ServicePrice::create([
+            'service_id' => $service->id,
+            'duration_minutes' => null,
+            'price_amount' => 1200000,
+            'sort_order' => 1,
+            'is_active' => true,
+        ]);
+
+        $this->get('/dich-vu/dich-vu-gia-chua-ro-thoi-luong')
+            ->assertOk()
+            ->assertSee('1.200.000')
+            ->assertDontSee('0 phút')
+            ->assertDontSee('null phút');
+
+        $this->get('/dich-vu')
+            ->assertOk()
+            ->assertSee('1.200.000')
+            ->assertDontSee('&middot;', false);
     }
 
     public function test_category_label_uses_exact_locale_only(): void

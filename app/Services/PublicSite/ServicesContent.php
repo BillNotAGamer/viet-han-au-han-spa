@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\PublicSite;
 
 use App\Enums\ContentStatus;
+use App\Enums\HeaderServiceGroup;
 use App\Models\Media;
 use App\Models\Service;
 use App\Models\ServicePrice;
@@ -23,6 +24,29 @@ class ServicesContent
      */
     public function listingForLocale(string $locale, int $perPage = 12): LengthAwarePaginator
     {
+        return $this->publicListingQuery($locale)
+            ->paginate($perPage)
+            ->withQueryString()
+            ->through(fn (Service $service) => $this->presentListingService($service, $locale));
+    }
+
+    /**
+     * @return LengthAwarePaginator<int, array<string, mixed>>
+     */
+    public function listingForHeaderGroup(string $locale, HeaderServiceGroup $group, int $perPage = 12): LengthAwarePaginator
+    {
+        return $this->publicListingQuery($locale)
+            ->where('header_group_key', $group->value)
+            ->paginate($perPage)
+            ->withQueryString()
+            ->through(fn (Service $service) => $this->presentListingService($service, $locale));
+    }
+
+    /**
+     * @return Builder<Service>
+     */
+    protected function publicListingQuery(string $locale): Builder
+    {
         return Service::query()
             ->where('status', ContentStatus::PUBLISHED)
             ->whereHas('translations', fn (Builder $query) => $query->where('locale', $locale))
@@ -37,10 +61,7 @@ class ServicesContent
                     ->orderBy('id', 'asc'),
             ])
             ->orderBy('sort_order', 'asc')
-            ->orderBy('id', 'asc')
-            ->paginate($perPage)
-            ->withQueryString()
-            ->through(fn (Service $service) => $this->presentListingService($service, $locale));
+            ->orderBy('id', 'asc');
     }
 
     /**

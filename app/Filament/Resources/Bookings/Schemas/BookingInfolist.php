@@ -41,7 +41,10 @@ class BookingInfolist
                     Grid::make(4)->schema([
                         TextEntry::make('service_name_snapshot')->label('Tên dịch vụ')->placeholder('—'),
                         TextEntry::make('service_price_label_snapshot')->label('Gói giá')->placeholder('—'),
-                        TextEntry::make('duration_minutes_snapshot')->label('Thời lượng')->suffix(' phút')->placeholder('—'),
+                        TextEntry::make('duration_minutes_snapshot')
+                            ->label('Thời lượng')
+                            ->formatStateUsing(fn (?int $state): ?string => $state === null ? null : $state.' phút')
+                            ->placeholder('—'),
                         TextEntry::make('price_amount_snapshot')->label('Giá')->money('VND', divideBy: 1)->placeholder('—'),
                     ]),
                 ]),

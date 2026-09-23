@@ -27,6 +27,10 @@
     $contactUrl = $isVi ? route('vi.contact') : route('en.contact');
     $bookingUrl = $isVi ? route('vi.booking.create') : route('en.booking.create');
     $isV2 = $variant === 'v2';
+    $serviceGroups = array_map(fn (\App\Enums\HeaderServiceGroup $group) => [
+        'label' => $group->label($locale),
+        'url' => route($isVi ? 'vi.services.group' : 'en.services.group', ['group' => $group->routeSlug($locale)]),
+    ], \App\Enums\HeaderServiceGroup::cases());
 
     $leftNavLinks = [
         ['key' => 'home', 'label' => __('navigation.home'), 'url' => $homeUrl],
@@ -80,9 +84,35 @@
         <div class="v2-header__desktop">
             <nav aria-label="{{ __('navigation.main_navigation') }}" class="v2-header__nav v2-header__nav--left">
                 @foreach($leftNavLinks as $link)
-                    <a href="{{ $link['url'] }}" class="{{ $isActive($link['key']) ? 'v2-header__link v2-header__link--active' : 'v2-header__link' }}" @if($isActive($link['key'])) aria-current="page" @endif>
-                        {{ $link['label'] }}
-                    </a>
+                    @if($link['key'] === 'services')
+                        <div
+                            class="v2-header__services"
+                            x-data="{ open: false }"
+                            @mouseenter="open = true"
+                            @mouseleave="open = false"
+                            @focusin="open = true"
+                            @focusout="if (!$el.contains($event.relatedTarget)) open = false"
+                            @keydown.escape.prevent.stop="open = false; $refs.servicesLink.focus()"
+                        >
+                            <a x-ref="servicesLink" href="{{ $link['url'] }}" class="{{ $isActive($link['key']) ? 'v2-header__link v2-header__link--active' : 'v2-header__link' }}" @if($isActive($link['key'])) aria-current="page" @endif>
+                                {{ $link['label'] }}
+                            </a>
+
+                            <div x-cloak x-show="open" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-1" class="v2-header__services-menu">
+                                <div class="v2-header__services-menu-panel">
+                                    <ul>
+                                        @foreach($serviceGroups as $group)
+                                            <li><a href="{{ $group['url'] }}" class="v2-header__services-menu-link">{{ $group['label'] }}</a></li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <a href="{{ $link['url'] }}" class="{{ $isActive($link['key']) ? 'v2-header__link v2-header__link--active' : 'v2-header__link' }}" @if($isActive($link['key'])) aria-current="page" @endif>
+                            {{ $link['label'] }}
+                        </a>
+                    @endif
                 @endforeach
             </nav>
 
@@ -181,6 +211,13 @@
                         <a href="{{ $link['url'] }}" @click="mobileOpen = false" class="{{ $isActive($link['key']) ? 'public-header__drawer-link public-header__drawer-link--active' : 'public-header__drawer-link' }}" @if($isActive($link['key'])) aria-current="page" @endif>
                             {{ $link['label'] }}
                         </a>
+                        @if($isV2 && $link['key'] === 'services')
+                            <ul class="public-header__drawer-service-groups">
+                                @foreach($serviceGroups as $group)
+                                    <li><a href="{{ $group['url'] }}" @click="mobileOpen = false" class="public-header__drawer-service-group-link">{{ $group['label'] }}</a></li>
+                                @endforeach
+                            </ul>
+                        @endif
                     </li>
                 @endforeach
             </ul>

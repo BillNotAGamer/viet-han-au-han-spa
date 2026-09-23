@@ -37,6 +37,7 @@ Route::middleware('set.locale:vi')->group(function () {
     Route::get('/dat-lich', [BookingController::class, 'create'])->name('vi.booking.create');
     Route::post('/dat-lich', [BookingController::class, 'store'])->middleware('throttle:booking-submissions')->name('vi.booking.store');
     Route::get('/dich-vu', [ServiceController::class, 'index'])->name('vi.services.index');
+    Route::get('/dich-vu/nhom/{group}', [ServiceController::class, 'group'])->name('vi.services.group');
     Route::get('/dich-vu/{slug}', [ServiceController::class, 'show'])->name('vi.services.show');
     Route::get('/dao-tao', [TrainingController::class, 'index'])->name('vi.training.index');
     Route::get('/dao-tao/{slug}', [TrainingController::class, 'show'])->name('vi.training.show');
@@ -52,6 +53,7 @@ Route::prefix('en')->middleware('set.locale:en')->group(function () {
     Route::get('/booking', [BookingController::class, 'create'])->name('en.booking.create');
     Route::post('/booking', [BookingController::class, 'store'])->middleware('throttle:booking-submissions')->name('en.booking.store');
     Route::get('/services', [ServiceController::class, 'index'])->name('en.services.index');
+    Route::get('/services/group/{group}', [ServiceController::class, 'group'])->name('en.services.group');
     Route::get('/services/{slug}', [ServiceController::class, 'show'])->name('en.services.show');
     Route::get('/training', [TrainingController::class, 'index'])->name('en.training.index');
     Route::get('/training/{slug}', [TrainingController::class, 'show'])->name('en.training.show');

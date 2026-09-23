@@ -16,6 +16,62 @@ class PriceTierSynchronizationTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_price_tier_can_be_created_without_an_invented_duration(): void
+    {
+        $service = app(ServiceWriter::class)->create([
+            'service_category_id' => ServiceCategory::factory()->create()->id,
+            'status' => ContentStatus::DRAFT,
+            'vi' => ['name' => 'Dịch Vụ Giá Chưa Rõ Thời Lượng', 'slug' => 'dich-vu-gia-chua-ro-thoi-luong'],
+            'prices' => [
+                [
+                    'duration_minutes' => '',
+                    'price_amount' => 1200000,
+                    'sort_order' => 1,
+                    'is_active' => true,
+                ],
+            ],
+        ]);
+
+        $price = $service->prices->sole();
+
+        $this->assertNull($price->duration_minutes);
+        $this->assertSame(1200000, $price->price_amount);
+        $this->assertDatabaseHas('service_prices', [
+            'id' => $price->id,
+            'duration_minutes' => null,
+            'price_amount' => 1200000,
+        ]);
+    }
+
+    public function test_price_tier_duration_can_be_cleared_without_changing_its_price_or_id(): void
+    {
+        $writer = app(ServiceWriter::class);
+        $category = ServiceCategory::factory()->create();
+        $service = $writer->create([
+            'service_category_id' => $category->id,
+            'status' => ContentStatus::DRAFT,
+            'vi' => ['name' => 'Dịch Vụ Có Thời Lượng', 'slug' => 'dich-vu-co-thoi-luong'],
+            'prices' => [
+                ['duration_minutes' => 90, 'price_amount' => 600000, 'sort_order' => 1, 'is_active' => true],
+            ],
+        ]);
+        $price = $service->prices->sole();
+
+        $updated = $writer->update($service, [
+            'service_category_id' => $category->id,
+            'status' => ContentStatus::DRAFT,
+            'vi' => ['name' => 'Dịch Vụ Có Thời Lượng', 'slug' => 'dich-vu-co-thoi-luong'],
+            'prices' => [
+                ['id' => $price->id, 'duration_minutes' => '', 'price_amount' => 600000, 'sort_order' => 1, 'is_active' => true],
+            ],
+        ]);
+        $clearedPrice = $updated->prices->sole();
+
+        $this->assertSame($price->id, $clearedPrice->id);
+        $this->assertNull($clearedPrice->duration_minutes);
+        $this->assertSame(600000, $clearedPrice->price_amount);
+    }
+
     public function test_updating_existing_price_tier_preserves_stable_id(): void
     {
         $writer = app(ServiceWriter::class);

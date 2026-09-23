@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Seo;
 
+use App\Enums\HeaderServiceGroup;
 use App\Services\Settings\SiteSettings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Lang;
@@ -259,6 +260,34 @@ class SeoManager
             title: $title,
             description: $description,
             canonical: $canonical,
+            locale: $locale,
+            alternateUrls: $alternatesData['alternates'],
+            xDefaultUrl: $alternatesData['xDefault'],
+            robots: 'index, follow',
+            ogType: 'website',
+            ogImage: null,
+            twitterCard: 'summary',
+            jsonLd: $this->buildBeautySalonJsonLd(),
+        );
+    }
+
+    public function composeForServiceGroup(HeaderServiceGroup $group, string $locale, ?int $page = null): SeoMetadata
+    {
+        $paths = [
+            'vi' => route('vi.services.group', ['group' => $group->routeSlug('vi')]),
+            'en' => route('en.services.group', ['group' => $group->routeSlug('en')]),
+        ];
+        $title = $this->computeTitle(null, $group->label($locale), $locale);
+        $description = $this->computeDescription(
+            null,
+            (string) __('services.groups.'.$group->value.'.meta_description', [], $locale)
+        );
+        $alternatesData = $this->resolveAlternates($paths, $page);
+
+        return new SeoMetadata(
+            title: $title,
+            description: $description,
+            canonical: $this->canonicalUrl($paths[$locale] ?? $paths['vi'], $page),
             locale: $locale,
             alternateUrls: $alternatesData['alternates'],
             xDefaultUrl: $alternatesData['xDefault'],

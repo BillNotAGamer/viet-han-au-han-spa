@@ -21,6 +21,7 @@ class ServiceFactory extends Factory
     {
         return [
             'service_category_id' => ServiceCategory::factory(),
+            'header_group_key' => null,
             'hero_media_id' => Media::factory(),
             'status' => ContentStatus::PUBLISHED,
             'is_featured' => $this->faker->boolean(30),

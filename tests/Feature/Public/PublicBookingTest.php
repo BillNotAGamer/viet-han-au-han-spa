@@ -211,6 +211,26 @@ class PublicBookingTest extends TestCase
         $this->assertSame(690000, $booking->price_amount_snapshot);
     }
 
+    public function test_booking_persists_a_null_duration_snapshot_when_service_pricing_is_unknown(): void
+    {
+        $service = $this->createServiceWithTranslation('vi', 'Dịch Vụ Chưa Rõ Thời Lượng', 'dich-vu-chua-ro-thoi-luong');
+        $price = ServicePrice::create([
+            'service_id' => $service->id,
+            'duration_minutes' => null,
+            'price_amount' => 1200000,
+            'sort_order' => 1,
+            'is_active' => true,
+        ]);
+
+        $this->post('/dat-lich', $this->validPayload($service->id))
+            ->assertRedirect('/dat-lich');
+
+        $booking = Booking::sole();
+        $this->assertSame($price->id, $booking->service_price_id);
+        $this->assertNull($booking->duration_minutes_snapshot);
+        $this->assertSame(1200000, $booking->price_amount_snapshot);
+    }
+
     public function test_booking_post_is_rate_limited(): void
     {
         RateLimiter::clear('203.0.113.44');

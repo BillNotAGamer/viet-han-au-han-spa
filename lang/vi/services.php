@@ -14,6 +14,33 @@ return [
         'details' => 'Xem chi tiết',
         'from_price' => 'Từ',
     ],
+    'groups' => [
+        'empty' => 'Hiện chưa có dịch vụ được cập nhật trong nhóm này.',
+        'cham-soc-da' => [
+            'label' => 'CHĂM SÓC DA',
+            'route_slug' => 'cham-soc-da',
+            'intro' => 'Khám phá các dịch vụ chăm sóc da hiện có của Việt Hàn Âu Hàn Spa.',
+            'meta_description' => 'Khám phá các dịch vụ chăm sóc da hiện có của Việt Hàn Âu Hàn Spa.',
+        ],
+        'triet-long-cong-nghe-cao' => [
+            'label' => 'TRIỆT LÔNG CÔNG NGHỆ CAO',
+            'route_slug' => 'triet-long-cong-nghe-cao',
+            'intro' => 'Khám phá các dịch vụ triệt lông công nghệ cao hiện có của Việt Hàn Âu Hàn Spa.',
+            'meta_description' => 'Khám phá các dịch vụ triệt lông công nghệ cao hiện có của Việt Hàn Âu Hàn Spa.',
+        ],
+        'dieu-tri-mun-seo' => [
+            'label' => 'ĐIỀU TRỊ MỤN & SẸO',
+            'route_slug' => 'dieu-tri-mun-seo',
+            'intro' => 'Khám phá các dịch vụ điều trị mụn và sẹo hiện có của Việt Hàn Âu Hàn Spa.',
+            'meta_description' => 'Khám phá các dịch vụ điều trị mụn và sẹo hiện có của Việt Hàn Âu Hàn Spa.',
+        ],
+        'goi-dau-duong-sinh-dong-y' => [
+            'label' => 'GỘI ĐẦU DƯỠNG SINH ĐÔNG Y',
+            'route_slug' => 'goi-dau-duong-sinh-dong-y',
+            'intro' => 'Khám phá các dịch vụ gội đầu dưỡng sinh Đông y hiện có của Việt Hàn Âu Hàn Spa.',
+            'meta_description' => 'Khám phá các dịch vụ gội đầu dưỡng sinh Đông y hiện có của Việt Hàn Âu Hàn Spa.',
+        ],
+    ],
     'detail' => [
         'overview' => 'Tổng quan dịch vụ',
         'benefits' => 'Lợi ích',

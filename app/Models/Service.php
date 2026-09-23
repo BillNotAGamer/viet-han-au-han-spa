@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\ContentStatus;
+use App\Enums\HeaderServiceGroup;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,6 +19,7 @@ class Service extends Model
 
     protected $fillable = [
         'service_category_id',
+        'header_group_key',
         'hero_media_id',
         'status',
         'is_featured',
@@ -28,6 +30,7 @@ class Service extends Model
     {
         return [
             'status' => ContentStatus::class,
+            'header_group_key' => HeaderServiceGroup::class,
             'is_featured' => 'boolean',
             'sort_order' => 'integer',
         ];
