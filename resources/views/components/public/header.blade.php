@@ -233,11 +233,19 @@
 
     <div class="public-header__mobile">
         <a href="{{ $homeUrl }}" aria-label="{{ $brandName }}" class="public-header__mobile-brand">
-            @if($isV2)
-                <x-public.v2.logo variant="compact" decorative class="public-header__mobile-logo v2-header__mobile-logo" />
-            @else
-                <img src="{{ $logoUrl }}" alt="" class="public-header__mobile-logo" aria-hidden="true">
-            @endif
+            <img
+                src="{{ $scrolledLogoUrl }}"
+                alt=""
+                width="1536"
+                height="1024"
+                loading="eager"
+                decoding="async"
+                aria-hidden="true"
+                @class([
+                    'public-header__mobile-logo',
+                    'v2-header__mobile-logo' => $isV2,
+                ])
+            >
             <span class="sr-only">{{ $brandName }}</span>
         </a>
 

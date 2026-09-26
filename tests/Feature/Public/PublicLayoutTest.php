@@ -323,16 +323,21 @@ class PublicLayoutTest extends TestCase
             $fullHeader = $fullHeaderMatch[0] ?? '';
             preg_match('/<div class="v2-header__desktop">(.*?)<div class="public-header__mobile">/s', $content, $headerMatch);
             $desktopHeader = $headerMatch[1] ?? '';
+            preg_match('/<div class="public-header__mobile">(.*?)<div class="public-header__mobile-actions">/s', $content, $mobileHeaderMatch);
+            $mobileHeader = $mobileHeaderMatch[1] ?? '';
             preg_match('/<footer class="v2-footer">.*<\/footer>/s', $content, $footerMatch);
             $footer = $footerMatch[0] ?? '';
 
             $this->assertNotSame('', $desktopHeader);
+            $this->assertNotSame('', $mobileHeader);
             $this->assertNotSame('', $fullHeader);
             $this->assertStringContainsString('v2-header__nav--left', $desktopHeader);
             $this->assertStringContainsString('v2-header__brand-link', $desktopHeader);
             $this->assertStringContainsString('v2-header__nav--right', $desktopHeader);
             $this->assertStringContainsString('viet-han-spa-white-logo-', $desktopHeader);
             $this->assertStringContainsString('viet-han-spa-no-bg-original-logo-', $desktopHeader);
+            $this->assertStringContainsString('viet-han-spa-no-bg-original-logo-', $mobileHeader);
+            $this->assertStringNotContainsString('viet-han-logo-', $mobileHeader);
             $this->assertTrue(strpos($desktopHeader, 'v2-header__nav--left') < strpos($desktopHeader, 'v2-header__brand-link'));
             $this->assertTrue(strpos($desktopHeader, 'v2-header__brand-link') < strpos($desktopHeader, 'v2-header__nav--right'));
             $this->assertStringNotContainsString('data-booking-modal-trigger', $desktopHeader);
