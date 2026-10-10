@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Bookings\Tables;
 
+use App\Enums\BookingGoogleSheetsSyncStatus;
 use App\Enums\BookingStatus;
 use App\Models\Booking;
 use App\Models\Service;
@@ -22,14 +23,21 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Schema as DatabaseSchema;
 use Livewire\Component;
 
 class BookingsTable
 {
     public static function configure(Table $table): Table
     {
+        $query = Booking::query()->with(['service.translations', 'servicePrice.translations']);
+
+        if (DatabaseSchema::hasTable('booking_google_sheets_syncs')) {
+            $query->with('googleSheetsSync');
+        }
+
         return $table
-            ->query(Booking::query()->with(['service.translations', 'servicePrice.translations']))
+            ->query($query)
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('reference')
@@ -68,6 +76,14 @@ class BookingsTable
                 TextColumn::make('status')
                     ->label('Trạng thái')
                     ->badge(),
+
+                TextColumn::make('googleSheetsSync.status')
+                    ->label('Google Sheets')
+                    ->formatStateUsing(fn (BookingGoogleSheetsSyncStatus|string|null $state): string => $state instanceof BookingGoogleSheetsSyncStatus
+                        ? $state->value
+                        : ($state ?? 'not_queued'))
+                    ->badge()
+                    ->visible(fn (): bool => DatabaseSchema::hasTable('booking_google_sheets_syncs')),
             ])
             ->filters([
                 SelectFilter::make('status')

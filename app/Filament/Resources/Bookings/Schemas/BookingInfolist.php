@@ -9,6 +9,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Schema as DatabaseSchema;
 
 class BookingInfolist
 {
@@ -59,6 +60,45 @@ class BookingInfolist
                         TextEntry::make('cancelled_at')->label('Đã hủy')->dateTime('d/m/Y H:i:s')->placeholder('Chưa hủy'),
                     ]),
                     TextEntry::make('admin_note')->label('Ghi chú nội bộ')->columnSpanFull()->placeholder('Chưa có ghi chú'),
+                ]),
+
+            Section::make('Đồng bộ Google Sheets')
+                ->visible(fn (): bool => DatabaseSchema::hasTable('booking_google_sheets_syncs'))
+                ->schema([
+                    Grid::make(3)->schema([
+                        TextEntry::make('googleSheetsSync.status')
+                            ->label('Trạng thái đồng bộ')
+                            ->formatStateUsing(fn (mixed $state): string => $state instanceof \BackedEnum ? (string) $state->value : (string) ($state ?? 'not_queued'))
+                            ->badge(),
+                        TextEntry::make('googleSheetsSync.attempts')
+                            ->label('Số lần xử lý')
+                            ->placeholder('0'),
+                        TextEntry::make('googleSheetsSync.last_attempted_at')
+                            ->label('Lần xử lý gần nhất')
+                            ->dateTime('d/m/Y H:i:s')
+                            ->placeholder('Chưa xử lý'),
+                    ]),
+                    Grid::make(3)->schema([
+                        TextEntry::make('googleSheetsSync.synced_at')
+                            ->label('Đồng bộ lúc')
+                            ->dateTime('d/m/Y H:i:s')
+                            ->placeholder('Chưa đồng bộ'),
+                        TextEntry::make('googleSheetsSync.last_error_code')
+                            ->label('Mã lỗi gần nhất')
+                            ->placeholder('—'),
+                        TextEntry::make('googleSheetsSync.requires_manual_intervention')
+                            ->label('Cần can thiệp thủ công')
+                            ->formatStateUsing(fn (mixed $state): string => $state ? 'Có' : 'Không')
+                            ->placeholder('Không'),
+                    ]),
+                    TextEntry::make('googleSheetsSync.last_error_summary')
+                        ->label('Lỗi đã được lược bỏ dữ liệu nhạy cảm')
+                        ->placeholder('Không có lỗi')
+                        ->columnSpanFull(),
+                    TextEntry::make('googleSheetsSync.append_safe')
+                        ->label('Có thể nối thêm an toàn sau khi xác nhận')
+                        ->formatStateUsing(fn (mixed $state): string => $state ? 'Có' : 'Không')
+                        ->placeholder('Không'),
                 ]),
 
             Section::make('Dữ liệu nguồn & tiếp thị (Attribution Read-Only)')

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Admin\Bookings;
 
+use App\Enums\BookingGoogleSheetsSyncStatus;
 use App\Enums\BookingStatus;
 use App\Models\Booking;
+use App\Models\BookingGoogleSheetsSyncRecord;
 use App\Models\Service;
 use App\Models\User;
 use App\Policies\BookingPolicy;
@@ -96,6 +98,46 @@ class BookingResourceTest extends TestCase
         $this->assertNotNull($cancellable->fresh()->cancelled_at);
     }
 
+    public function test_admin_can_inspect_google_sync_status_and_uncertain_records_cannot_be_retried(): void
+    {
+        config(['booking.google_sheets.enabled' => true]);
+        $admin = User::factory()->admin()->create();
+        $booking = Booking::factory()->create();
+        BookingGoogleSheetsSyncRecord::query()->create([
+            'booking_id' => $booking->id,
+            'booking_reference' => $booking->reference,
+            'destination' => BookingGoogleSheetsSyncRecord::DESTINATION,
+            'status' => BookingGoogleSheetsSyncStatus::UNCERTAIN,
+            'attempts' => 2,
+            'last_attempted_at' => now(),
+            'last_error_code' => 'APPEND_OUTCOME_UNKNOWN',
+            'last_error_summary' => 'The append outcome is ambiguous.',
+            'requires_manual_intervention' => true,
+        ]);
+
+        $this->actingAs($admin)
+            ->get("/admin/bookings/{$booking->id}")
+            ->assertOk()
+            ->assertSee('Đồng bộ Google Sheets')
+            ->assertSee('uncertain')
+            ->assertSee('APPEND_OUTCOME_UNKNOWN')
+            ->assertSee('Kiểm tra đồng bộ')
+            ->assertDontSee('Thử đồng bộ lại');
+    }
+
+    public function test_google_sync_admin_policy_rejects_non_admin_and_allows_admin(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $user = User::factory()->create(['is_admin' => false]);
+        $booking = Booking::factory()->create();
+        $policy = new BookingPolicy;
+
+        $this->assertTrue($policy->reconcileGoogleSheets($admin, $booking));
+        $this->assertTrue($policy->retryGoogleSheets($admin, $booking));
+        $this->assertFalse($policy->reconcileGoogleSheets($user, $booking));
+        $this->assertFalse($policy->retryGoogleSheets($user, $booking));
+    }
+
     public function test_invalid_booking_workflow_transitions_are_rejected(): void
     {
         $workflow = app(BookingWorkflow::class);
@@ -153,6 +195,8 @@ class BookingResourceTest extends TestCase
         $this->assertTrue($policy->view($admin, $booking));
         $this->assertTrue($policy->update($admin, $booking));
         $this->assertTrue($policy->restore($admin, $booking));
+        $this->assertTrue($policy->reconcileGoogleSheets($admin, $booking));
+        $this->assertTrue($policy->retryGoogleSheets($admin, $booking));
         $this->assertFalse($policy->create($admin));
         $this->assertFalse($policy->delete($admin, $booking));
         $this->assertFalse($policy->forceDelete($admin, $booking));

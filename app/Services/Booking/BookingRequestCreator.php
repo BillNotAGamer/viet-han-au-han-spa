@@ -20,7 +20,8 @@ class BookingRequestCreator
     public function __construct(
         protected BookingServiceCatalog $serviceCatalog,
         protected MarketingAttribution $marketingAttribution,
-        protected BookingNotificationService $notificationService
+        protected BookingNotificationService $notificationService,
+        protected BookingGoogleSheetsOutbox $googleSheetsOutbox,
     ) {}
 
     /**
@@ -48,7 +49,7 @@ class BookingRequestCreator
 
             $price = $service->prices->first();
 
-            return Booking::create([
+            $booking = Booking::create([
                 'reference' => $this->makeReference(),
                 'service_id' => $service->id,
                 'service_price_id' => $price?->id,
@@ -81,6 +82,10 @@ class BookingRequestCreator
                 'landing_page' => $attribution['landing_page'] ?? null,
                 'referrer' => $attribution['referrer'] ?? null,
             ]);
+
+            $this->googleSheetsOutbox->createFor($booking);
+
+            return $booking;
         });
 
         $this->notificationService->notifySubmitted($booking);

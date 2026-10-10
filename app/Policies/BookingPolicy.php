@@ -29,6 +29,16 @@ class BookingPolicy
         return (bool) $user->is_admin;
     }
 
+    public function reconcileGoogleSheets(User $user, Booking $booking): bool
+    {
+        return (bool) $user->is_admin;
+    }
+
+    public function retryGoogleSheets(User $user, Booking $booking): bool
+    {
+        return (bool) $user->is_admin;
+    }
+
     public function delete(User $user, Booking $booking): bool
     {
         return false;

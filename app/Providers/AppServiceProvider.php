@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\Booking\Contracts\BookingSheetsClient;
+use App\Services\Booking\GoogleBookingSheetsClient;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -14,7 +16,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(BookingSheetsClient::class, GoogleBookingSheetsClient::class);
     }
 
     /**
