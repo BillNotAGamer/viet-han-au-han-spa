@@ -295,10 +295,11 @@
     >
         <nav aria-label="{{ __('navigation.main_navigation') }}" class="public-header__drawer-nav">
             <ul class="public-header__drawer-list">
-                @foreach($allNavLinks as $link)
+                @foreach($allNavLinks as $idx => $link)
                     <li>
-                        <a href="{{ $link['url'] }}" @click="closeMobileMenu(false)" class="{{ $isActive($link['key']) ? 'public-header__drawer-link public-header__drawer-link--active' : 'public-header__drawer-link' }}" @if($isActive($link['key'])) aria-current="page" @endif>
-                            {{ $link['label'] }}
+                        <a href="{{ $link['url'] }}" @click="closeMobileMenu(false)" class="{{ $isActive($link['key']) ? 'public-header__drawer-link public-header__drawer-link--active' : 'public-header__drawer-link' }} flex items-baseline justify-between" @if($isActive($link['key'])) aria-current="page" @endif>
+                            <span>{{ $link['label'] }}</span>
+                            <span class="text-[11px] font-sans font-medium tracking-widest text-[#C9A24D]/60" aria-hidden="true">0{{ $idx + 1 }}</span>
                         </a>
                         @if($isV2 && $link['key'] === 'services')
                             <ul class="public-header__drawer-service-groups">
@@ -310,6 +311,11 @@
                     </li>
                 @endforeach
             </ul>
+
+            <div class="mt-8 pt-5 border-t border-[#E2D9CC]/70 flex flex-col gap-1">
+                <span class="text-[10px] uppercase tracking-[0.22em] font-medium text-[#C9A24D]">Hotline Sanctuary</span>
+                <a href="tel:0902309026" class="text-sm font-medium tracking-wide text-[#231F20] hover:text-[#6A141A] transition">0902 309 026</a>
+            </div>
 
             <a
                 href="{{ $bookingUrl }}"

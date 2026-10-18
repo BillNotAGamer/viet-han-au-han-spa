@@ -18,7 +18,7 @@
     $formClass = match (true) {
         $isModal => 'space-y-3',
         $isV2Page => 'v2-booking-form',
-        default => 'rounded-2xl border border-[#E8DFC8] bg-white p-6 sm:p-10 shadow-lg space-y-6',
+        default => 'rounded-none border border-[#E2D9CC] bg-[#FBF9F4] p-6 sm:p-10 space-y-6',
     };
     $gridClass = match (true) {
         $isModal => 'grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-x-5 sm:gap-y-3',
@@ -27,34 +27,34 @@
     };
     $serviceFieldClass = 'sm:col-span-2';
     $controlClass = match (true) {
-        $isModal => 'mt-2 sm:mt-1.5 block w-full h-12 sm:h-11 rounded-xl border border-[#D8CBB7] bg-[#FFFCF8] px-4 sm:px-3.5 py-2 text-brand-text shadow-xs transition duration-200 focus:border-[#5B1121] focus:ring-1 focus:ring-[#5B1121] text-[16px]',
-        $isV2Page => 'v2-booking-form__control',
-        default => 'mt-2 block w-full rounded-xl border border-[#D8CBB7] bg-[#FFFCF8] px-4 py-3 sm:py-3.5 text-brand-text shadow-xs transition duration-200 focus:border-[#5B1121] focus:ring-1 focus:ring-[#5B1121] text-[16px] sm:text-[17px]',
+        $isModal => 'mt-2 sm:mt-1.5 block w-full h-12 sm:h-11 rounded-[2px] border border-[#E2D9CC] bg-[#FBF9F4] px-4 sm:px-3.5 py-2 text-[#181311] transition duration-200 focus:border-[#6A141A] focus:ring-1 focus:ring-[#6A141A] text-[15px]',
+        $isV2Page => 'v2-booking-form__control rounded-[2px] border-[#E2D9CC] bg-[#FBF9F4] text-[#181311] focus:border-[#6A141A] focus:ring-1 focus:ring-[#6A141A]',
+        default => 'mt-2 block w-full rounded-[2px] border border-[#E2D9CC] bg-[#FBF9F4] px-4 py-3 sm:py-3.5 text-[#181311] transition duration-200 focus:border-[#6A141A] focus:ring-1 focus:ring-[#6A141A] text-[15px] sm:text-[16px]',
     };
     $noticeClass = match (true) {
-        $isModal => 'text-[13px] leading-relaxed text-[#736965]',
-        $isV2Page => 'v2-booking-form__notice',
-        default => 'text-[14px] sm:text-[15px] leading-relaxed text-[#736965]',
+        $isModal => 'text-[12px] leading-relaxed text-[#736965]',
+        $isV2Page => 'v2-booking-form__notice text-xs text-[#736965]',
+        default => 'text-[13px] sm:text-[14px] leading-relaxed text-[#736965]',
     };
     $submitWrapClass = match (true) {
-        $isModal => 'pt-0.5',
+        $isModal => 'pt-1',
         $isV2Page => 'v2-booking-form__submit',
         default => 'pt-2 sm:pt-4',
     };
     $submitButtonClass = match (true) {
-        $isModal => 'btn-editorial-primary w-full sm:w-auto h-12 px-8 py-0 text-center',
-        $isV2Page => 'v2-button v2-button--primary',
-        default => 'btn-editorial-primary w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 text-center',
+        $isModal => 'v2-button v2-button--primary w-full sm:w-auto h-12 px-8 py-0 text-center font-medium tracking-wider uppercase text-xs',
+        $isV2Page => 'v2-button v2-button--primary font-medium tracking-wider uppercase text-xs',
+        default => 'v2-button v2-button--primary w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 text-center font-medium tracking-wider uppercase text-xs',
     };
 @endphp
 
 @if(session('booking_status'))
     <div @class([
         'v2-booking-form__status' => $isV2Page,
-        'mb-6 rounded-2xl border border-[#C5A880]/60 bg-[#FAF2EB] px-6 py-5 text-sm font-semibold text-[#5B1121] shadow-xs flex items-center gap-3' => ! $isV2Page,
+        'mb-6 border border-[#C9A24D]/60 bg-[#F5F0E8] px-6 py-5 text-sm font-semibold text-[#6A141A] shadow-xs flex items-center gap-3 rounded-[2px]' => ! $isV2Page,
     ]) role="status">
-        <span class="w-2.5 h-2.5 rounded-full bg-[#9B7B4F]"></span>
-        <span>{{ session('booking_status') }}</span>
+        <span class="w-2.5 h-2.5 rounded-full bg-[#C9A24D] shrink-0"></span>
+        <span class="leading-relaxed">{{ session('booking_status') }}</span>
     </div>
 @endif
 
@@ -63,8 +63,8 @@
 
     <div class="{{ $gridClass }}">
         <div>
-            <label for="{{ $nameId }}" class="block text-[13px] sm:text-[14px] font-semibold uppercase tracking-[0.08em] text-[#5B1121] font-sans">
-                {{ __('booking.fields.customer_name') }} <span class="text-[#9A1B34]" aria-hidden="true">*</span>
+            <label for="{{ $nameId }}" class="block text-[11px] sm:text-[12px] font-medium uppercase tracking-[0.16em] text-[#6E675F] font-sans">
+                {{ __('booking.fields.customer_name') }} <span class="text-[#6A141A]" aria-hidden="true">*</span>
             </label>
             <input
                 id="{{ $nameId }}"
@@ -79,13 +79,13 @@
                 class="{{ $controlClass }}"
             >
             @error('customer_name')
-                <p id="{{ $nameId }}_error" class="mt-2 text-xs font-medium text-[#9A1B34] font-sans">{{ $message }}</p>
+                <p id="{{ $nameId }}_error" class="mt-1.5 text-xs font-medium text-[#6A141A] font-sans">{{ $message }}</p>
             @enderror
         </div>
 
         <div>
-            <label for="{{ $phoneId }}" class="block text-[13px] sm:text-[14px] font-semibold uppercase tracking-[0.08em] text-[#5B1121] font-sans">
-                {{ __('booking.fields.phone') }} <span class="text-[#9A1B34]" aria-hidden="true">*</span>
+            <label for="{{ $phoneId }}" class="block text-[11px] sm:text-[12px] font-medium uppercase tracking-[0.16em] text-[#6E675F] font-sans">
+                {{ __('booking.fields.phone') }} <span class="text-[#6A141A]" aria-hidden="true">*</span>
             </label>
             <input
                 id="{{ $phoneId }}"
@@ -101,13 +101,13 @@
                 class="{{ $controlClass }}"
             >
             @error('phone')
-                <p id="{{ $phoneId }}_error" class="mt-2 text-xs font-medium text-[#9A1B34] font-sans">{{ $message }}</p>
+                <p id="{{ $phoneId }}_error" class="mt-1.5 text-xs font-medium text-[#6A141A] font-sans">{{ $message }}</p>
             @enderror
         </div>
 
         <div class="{{ $serviceFieldClass }}">
-            <label for="{{ $serviceInputId }}" class="block text-[13px] sm:text-[14px] font-semibold uppercase tracking-[0.08em] text-[#5B1121] font-sans">
-                {{ __('booking.fields.service') }} <span class="text-[#9A1B34]" aria-hidden="true">*</span>
+            <label for="{{ $serviceInputId }}" class="block text-[11px] sm:text-[12px] font-medium uppercase tracking-[0.16em] text-[#6E675F] font-sans">
+                {{ __('booking.fields.service') }} <span class="text-[#6A141A]" aria-hidden="true">*</span>
             </label>
             <select
                 id="{{ $serviceInputId }}"
@@ -125,16 +125,16 @@
                 @endforeach
             </select>
             @error('service_id')
-                <p id="{{ $serviceInputId }}_error" class="mt-2 text-xs font-medium text-[#9A1B34] font-sans">{{ $message }}</p>
+                <p id="{{ $serviceInputId }}_error" class="mt-1.5 text-xs font-medium text-[#6A141A] font-sans">{{ $message }}</p>
             @enderror
             @if($services->isEmpty())
-                <p class="mt-2 text-xs text-[#736965] font-sans">{{ __('booking.no_services') }}</p>
+                <p class="mt-1.5 text-xs text-[#736965] font-sans">{{ __('booking.no_services') }}</p>
             @endif
         </div>
 
         <div>
-            <label for="{{ $dateId }}" class="block text-[13px] sm:text-[14px] font-semibold uppercase tracking-[0.08em] text-[#5B1121] font-sans">
-                {{ __('booking.fields.preferred_date') }} <span class="text-[#9A1B34]" aria-hidden="true">*</span>
+            <label for="{{ $dateId }}" class="block text-[11px] sm:text-[12px] font-medium uppercase tracking-[0.16em] text-[#6E675F] font-sans">
+                {{ __('booking.fields.preferred_date') }} <span class="text-[#6A141A]" aria-hidden="true">*</span>
             </label>
             <input
                 id="{{ $dateId }}"
@@ -148,13 +148,13 @@
                 class="{{ $controlClass }}"
             >
             @error('preferred_date')
-                <p id="{{ $dateId }}_error" class="mt-2 text-xs font-medium text-[#9A1B34] font-sans">{{ $message }}</p>
+                <p id="{{ $dateId }}_error" class="mt-1.5 text-xs font-medium text-[#6A141A] font-sans">{{ $message }}</p>
             @enderror
         </div>
 
         <div>
-            <label for="{{ $timeId }}" class="block text-[13px] sm:text-[14px] font-semibold uppercase tracking-[0.08em] text-[#5B1121] font-sans">
-                {{ __('booking.fields.preferred_time') }} <span class="text-[#9A1B34]" aria-hidden="true">*</span>
+            <label for="{{ $timeId }}" class="block text-[11px] sm:text-[12px] font-medium uppercase tracking-[0.16em] text-[#6E675F] font-sans">
+                {{ __('booking.fields.preferred_time') }} <span class="text-[#6A141A]" aria-hidden="true">*</span>
             </label>
             <input
                 id="{{ $timeId }}"
@@ -167,10 +167,9 @@
                 class="{{ $controlClass }}"
             >
             @error('preferred_time')
-                <p id="{{ $timeId }}_error" class="mt-2 text-xs font-medium text-[#9A1B34] font-sans">{{ $message }}</p>
+                <p id="{{ $timeId }}_error" class="mt-1.5 text-xs font-medium text-[#6A141A] font-sans">{{ $message }}</p>
             @enderror
         </div>
-
     </div>
 
     <p class="{{ $noticeClass }}">{{ __('booking.contact_notice') }}</p>

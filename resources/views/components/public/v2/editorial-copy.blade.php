@@ -10,6 +10,6 @@
     };
 @endphp
 
-<div {{ $attributes->class([$sizeClass]) }}>
+<div {{ $attributes->class([$sizeClass, 'max-w-[65ch]']) }}>
     {{ $slot }}
 </div>

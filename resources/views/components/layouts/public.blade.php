@@ -32,12 +32,12 @@
     <x-tracking.head />
 </head>
 <body @class([
-    'min-h-full flex flex-col bg-brand-ivory text-brand-text font-sans antialiased selection:bg-brand-gold-light selection:text-brand-primary',
+    'min-h-full flex flex-col bg-[#FBF9F4] text-[#231F20] font-sans antialiased selection:bg-[#E8D8A6] selection:text-[#6A141A]',
     'v2-public-shell' => $isV2,
 ])>
     <x-tracking.body />
     <!-- Accessible Skip Link (Targeting single primary #main-content) -->
-    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-5 focus:py-3 focus:bg-brand-primary focus:text-white focus:font-semibold focus:rounded-lg focus:shadow-xl focus:ring-2 focus:ring-brand-gold focus:outline-none transition">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-5 focus:py-3 focus:bg-[#6A141A] focus:text-[#FBF9F4] focus:font-medium focus:tracking-wider focus:uppercase focus:text-xs focus:rounded-[2px] focus:shadow-2xl focus:ring-1 focus:ring-[#C9A24D] focus:outline-none transition">
         {{ __('navigation.skip_to_content') }}
     </a>
 

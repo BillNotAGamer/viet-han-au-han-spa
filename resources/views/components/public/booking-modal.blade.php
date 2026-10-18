@@ -77,17 +77,17 @@
         x-transition:leave-start="opacity-100 scale-100 translate-y-0"
         x-transition:leave-end="opacity-0 scale-[0.985] translate-y-2"
         @click.stop
-        class="v2-booking-modal__dialog relative w-full max-w-[840px] max-h-[calc(100vh-24px)] max-h-[calc(100dvh-24px)] sm:max-h-[calc(100vh-48px)] sm:max-h-[calc(100dvh-48px)] my-auto bg-[#FFFCF8] rounded-2xl sm:rounded-3xl border border-[#E8DFC8] shadow-2xl overflow-hidden flex flex-col z-10"
+        class="v2-booking-modal__dialog relative w-full max-w-[840px] max-h-[calc(100vh-24px)] max-h-[calc(100dvh-24px)] sm:max-h-[calc(100vh-48px)] sm:max-h-[calc(100dvh-48px)] my-auto bg-[#FBF9F4] rounded-none sm:rounded-[2px] border border-[#E2D9CC] shadow-2xl overflow-hidden flex flex-col z-10"
     >
         {{-- Close Button (Top Right) --}}
         <button
             type="button"
             x-ref="closeButton"
             @click="close()"
-            class="v2-booking-modal__close absolute top-3.5 right-3.5 sm:top-5 sm:right-5 z-20 flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/90 sm:bg-white/80 hover:bg-white text-[#5B1121] border border-[#E8DFC8]/80 shadow-sm transition duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B1121] focus-visible:ring-offset-2"
+            class="v2-booking-modal__close absolute top-3.5 right-3.5 sm:top-5 sm:right-5 z-20 flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-[2px] bg-[#FBF9F4]/95 hover:bg-[#F5F0E8] text-[#6A141A] border border-[#E2D9CC] shadow-sm transition duration-200 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#C9A24D]"
             aria-label="{{ $closeLabel }}"
         >
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
             </svg>
         </button>
@@ -102,13 +102,13 @@
                     class="w-full h-full object-cover object-[center_45%]"
                     loading="lazy"
                 >
-                <div class="absolute inset-0 bg-gradient-to-t from-[#FFFCF8] via-[#140F0E]/40 to-transparent"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-[#FBF9F4] via-[#181311]/45 to-transparent"></div>
                 <div class="absolute bottom-3 left-5 sm:left-8 right-14 sm:right-16">
-                    <span class="inline-flex items-center gap-2 text-[11px] sm:text-[12px] font-semibold tracking-[0.12em] uppercase text-[#C5A880] font-sans drop-shadow-sm">
-                        <span class="w-5 h-px bg-[#C5A880]"></span>
+                    <span class="inline-flex items-center gap-2 text-[11px] font-sans font-medium tracking-[0.2em] uppercase text-[#C9A24D] drop-shadow-sm">
+                        <span class="w-5 h-px bg-[#C9A24D]"></span>
                         {{ $locale === 'vi' ? 'Tiếp Nhận Lịch Hẹn' : 'Booking Concierge' }}
                     </span>
-                    <h2 id="booking-modal-title" class="text-2xl sm:text-[36px] font-semibold tracking-[-0.02em] text-[#5B1121] leading-[1.05] mt-0.5 drop-shadow-xs">
+                    <h2 id="booking-modal-title" class="font-serif text-2xl sm:text-[34px] font-medium tracking-tight text-[#6A141A] leading-[1.08] mt-0.5">
                         {{ __('booking.title') }}
                     </h2>
                 </div>
